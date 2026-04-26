@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -77,6 +77,37 @@ button, input, select, textarea {
 input, textarea, select { -webkit-appearance: none; appearance: none; }
 button { cursor: pointer; user-select: none; }
 .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+#boot-screen {
+  min-height: 100vh;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 44px 22px 24px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+#boot-screen.active { display: flex; }
+.boot-logo {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.boot-logo em { color: var(--accent); font-style: italic; }
+.boot-sub { color: var(--text-3); margin-top: 12px; font-size: 14px; }
+.boot-spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--accent);
+  margin: 24px auto 0;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 #auth-screen {
   min-height: 100vh;
@@ -181,7 +212,7 @@ button { cursor: pointer; user-select: none; }
 .user-pill span, .dup-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .launch-hero {
-  padding: 30px 20px 20px;
+  padding: 16px 20px 6px;
   text-align: center;
   position: relative;
 }
@@ -192,7 +223,7 @@ button { cursor: pointer; user-select: none; }
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 4px;
-  margin: 0 auto 26px;
+  margin: 0 auto 14px;
   gap: 2px;
   box-shadow: var(--shadow-sm);
 }
@@ -210,12 +241,12 @@ button { cursor: pointer; user-select: none; }
 .amount-display {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 78px;
+  font-size: 70px;
   line-height: 1;
   letter-spacing: -0.04em;
-  margin: 12px 0 4px;
+  margin: 8px 0 2px;
   transition: color .25s;
-  min-height: 88px;
+  min-height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -237,8 +268,39 @@ button { cursor: pointer; user-select: none; }
   color: var(--text-3);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-bottom: 18px;
+  margin-bottom: 6px;
   font-weight: 700;
+}
+
+.quick-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 2px 10px;
+  min-height: 34px;
+}
+.quick-row::-webkit-scrollbar { display: none; }
+.quick-chip {
+  flex: 0 0 auto;
+  max-width: 112px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--bg-elev-1);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.quick-chip:active {
+  background: var(--bg-elev-2);
+  color: var(--text);
 }
 
 .last-values {
@@ -246,8 +308,8 @@ button { cursor: pointer; user-select: none; }
   gap: 6px;
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 12px;
-  min-height: 28px;
+  margin-bottom: 4px;
+  min-height: 18px;
 }
 .chip-mini {
   font-size: 11px;
@@ -262,14 +324,14 @@ button { cursor: pointer; user-select: none; }
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  padding: 16px 20px 0;
+  padding: 4px 20px 0;
 }
 .keypad button {
   background: var(--bg-elev-1);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 21px 0;
-  font-size: 28px;
+  padding: 18px 0;
+  font-size: 26px;
   font-weight: 400;
   color: var(--text);
   transition: all .1s;
@@ -285,7 +347,7 @@ button { cursor: pointer; user-select: none; }
 }
 .keypad button.kp-action.del { color: var(--danger); }
 
-.desc-wrap { padding: 0 20px; position: relative; margin-top: 18px; margin-bottom: 14px; }
+.desc-wrap { padding: 0 20px; position: relative; margin-top: 12px; margin-bottom: 14px; }
 .desc-input {
   width: 100%;
   background: var(--bg-elev-1);
@@ -403,6 +465,7 @@ button { cursor: pointer; user-select: none; }
 }
 .who-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--info); }
 .who-dot.jordana { background: #FF8CD0; }
+.who-dot.ambos { background: var(--accent); }
 
 .more-options-btn {
   margin: 18px 20px 0;
@@ -615,6 +678,7 @@ button { cursor: pointer; user-select: none; }
 .tx-meta { font-size: 11px; color: var(--text-3); margin-top: 3px; display: flex; gap: 6px; align-items: center; }
 .who-mini { width: 6px; height: 6px; border-radius: 50%; background: var(--info); display: inline-block; }
 .who-mini.jordana { background: #FF8CD0; }
+.who-mini.ambos { background: var(--accent); }
 .tx-amount { font-weight: 800; font-size: 14px; text-align: right; flex-shrink: 0; }
 .tx-amount.income { color: var(--accent); }
 .tx-amount.expense { color: var(--text); }
@@ -852,14 +916,25 @@ button { cursor: pointer; user-select: none; }
 .sparkline { width: 100%; height: 64px; margin-top: 8px; }
 
 @media (max-width: 360px) {
-  .amount-display { font-size: 62px; }
+  .amount-display { font-size: 58px; min-height: 60px; }
+  .amount-display .currency { font-size: 22px; margin-top: 10px; }
   .balance-card .b-value { font-size: 40px; }
   .type-toggle button { padding-left: 20px; padding-right: 20px; }
+  .keypad button { padding: 13px 0; }
+  .launch-hero { padding-top: 10px; }
 }
 </style>
 </head>
 
 <body>
+
+<div id="boot-screen" class="active">
+  <div>
+    <div class="boot-logo">Finanças <em>a Dois</em></div>
+    <div class="boot-sub">Verificando sua sessão…</div>
+    <div class="boot-spinner" aria-hidden="true"></div>
+  </div>
+</div>
 
 <div id="auth-screen">
   <div class="auth-title">Finanças <em>a Dois</em></div>
@@ -892,6 +967,7 @@ button { cursor: pointer; user-select: none; }
     </div>
 
     <div class="launch-hero">
+      <div class="quick-row" id="quick-row"></div>
       <div class="type-toggle">
         <button id="t-expense" class="active expense" data-type="expense">Despesa</button>
         <button id="t-income" data-type="income">Receita</button>
@@ -1150,8 +1226,8 @@ button { cursor: pointer; user-select: none; }
 
 <div class="sheet" id="sheet-who">
   <div class="sheet-handle"></div>
-  <h3>Usuário</h3>
-  <p class="sub">Agora é automático pelo login. Você está lançando como:</p>
+  <h3>Quem é o responsável?</h3>
+  <p class="sub">O login escolhe automaticamente, mas você pode trocar quando precisar.</p>
   <div class="sheet-list" id="who-list"></div>
 </div>
 
@@ -1239,6 +1315,7 @@ button { cursor: pointer; user-select: none; }
   <div class="form-row"><label>Valor (R$)</label><input type="number" id="edit-amount" step="0.01" inputmode="decimal"></div>
   <div class="form-row"><label>Categoria</label><select id="edit-category"></select></div>
   <div class="form-row"><label>Data</label><input type="date" id="edit-date" style="color-scheme:dark;"></div>
+  <div class="form-row"><label>Responsável</label><select id="edit-who"><option value="arthur">Arthur</option><option value="jordana">Jordana</option><option value="ambos">Ambos</option></select></div>
   <div style="display:flex;gap:8px;margin-top:8px;">
     <button id="edit-delete" style="flex:1;padding:14px;border-radius:12px;background:var(--danger-dim);color:var(--danger);font-weight:800;">Excluir</button>
     <button id="edit-save" class="save-btn" style="margin:0;flex:2;padding:14px;">Salvar</button>
@@ -1259,6 +1336,25 @@ button { cursor: pointer; user-select: none; }
 </div>
 
 <input type="file" id="import-file" accept="application/json" style="display:none;">
+
+<script>
+// Failsafe: nunca deixar o app preso eternamente na tela inicial.
+window.__FAD_BOOT_DONE = false;
+window.__FAD_BOOT_FAILSAFE = setTimeout(function(){
+  if (window.__FAD_BOOT_DONE) return;
+  var app = document.getElementById('app');
+  if (app && app.classList.contains('active')) return;
+  var boot = document.getElementById('boot-screen');
+  var authScreen = document.getElementById('auth-screen');
+  if (boot) boot.classList.remove('active');
+  if (authScreen) authScreen.classList.add('active');
+  var err = document.getElementById('auth-error');
+  if (err) {
+    err.textContent = 'Demorou para verificar a sessão. Faça login novamente.';
+    err.style.display = 'block';
+  }
+}, 1800);
+</script>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
@@ -1289,9 +1385,21 @@ var UID_TO_USER = {
   'P6PSOhacgNf7zGgQmR9p83YTRdv2': { id: 'jordana', name: 'Jordana', color: '#FF8CD0' }
 };
 
-firebase.initializeApp(firebaseConfig);
-var auth = firebase.auth();
-var db = firebase.firestore();
+var FIREBASE_READY = false;
+var auth = null;
+var db = null;
+
+try {
+  if (window.firebase && firebase.initializeApp && firebase.auth && firebase.firestore) {
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    FIREBASE_READY = true;
+  }
+} catch (firebaseInitError) {
+  console.error('Erro ao iniciar Firebase:', firebaseInitError);
+  FIREBASE_READY = false;
+}
 
 var DEFAULT_CATEGORIES = [
   { id: 'cat_moradia', name: 'Moradia', type: 'expense', builtin: true, icon: '🏠' },
@@ -1339,7 +1447,8 @@ var KEYWORD_RULES = [
 var STATE = {
   users: [
     { id: 'arthur', name: 'Arthur', color: '#8CB8FF' },
-    { id: 'jordana', name: 'Jordana', color: '#FF8CD0' }
+    { id: 'jordana', name: 'Jordana', color: '#FF8CD0' },
+    { id: 'ambos', name: 'Ambos', color: '#A8FF8C' }
   ],
   categories: DEFAULT_CATEGORIES.slice(),
   transactions: [],
@@ -1412,6 +1521,19 @@ function escapeHtml(s){
   if (!s) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
+function appUserById(id){
+  for (var i=0;i<STATE.users.length;i++) if (STATE.users[i].id === id) return STATE.users[i];
+  return STATE.currentAppUser || STATE.users[0];
+}
+function userDotClass(id){
+  if (id === 'jordana') return ' jordana';
+  if (id === 'ambos') return ' ambos';
+  return '';
+}
+function responsibleName(id){
+  var u = appUserById(id);
+  return u ? u.name : 'Arthur';
+}
 
 function toast(msg, kind){
   var el = document.getElementById('toast');
@@ -1435,6 +1557,7 @@ function clearAuthError(){
 
 function setLoginLoading(on){
   var btn = document.getElementById('auth-login');
+  if (!btn) return;
   btn.disabled = !!on;
   btn.textContent = on ? 'Entrando…' : 'Entrar';
 }
@@ -1492,6 +1615,9 @@ function startFirestoreSync(user){
   STATE.currentAppUser = appUser;
   STATE.draft.userId = appUser.id;
 
+  window.__FAD_BOOT_DONE = true;
+  if (window.__FAD_BOOT_FAILSAFE) clearTimeout(window.__FAD_BOOT_FAILSAFE);
+  document.getElementById('boot-screen').classList.remove('active');
   document.getElementById('auth-screen').classList.remove('active');
   document.getElementById('app').classList.add('active');
   document.getElementById('header-sub-launch').textContent = 'Lançando como ' + appUser.name;
@@ -1736,9 +1862,11 @@ function renderCategoryChips(){
 }
 
 function renderMeta(){
-  var u = STATE.currentAppUser;
+  var u = appUserById(STATE.draft.userId || (STATE.currentAppUser && STATE.currentAppUser.id));
   document.getElementById('meta-who').textContent = u ? u.name : '—';
-  document.getElementById('who-dot').classList.toggle('jordana', u && u.id === 'jordana');
+  var dot = document.getElementById('who-dot');
+  dot.classList.toggle('jordana', u && u.id === 'jordana');
+  dot.classList.toggle('ambos', u && u.id === 'ambos');
 
   var d = parseDateLocal(STATE.draft.date);
   var today = ymd(new Date());
@@ -1821,7 +1949,73 @@ function renderSuggestions(query){
   host.classList.add('show');
 }
 
+function getQuickShortcuts(){
+  var userId = STATE.draft.userId || (STATE.currentAppUser && STATE.currentAppUser.id);
+  var counts = {};
+  for (var i=0;i<STATE.transactions.length;i++){
+    var t = STATE.transactions[i];
+    if (!t || t.deletedAt) continue;
+    if (userId && userId !== 'ambos' && t.userId !== userId) continue;
+    if (!t.description) continue;
+    var key = normalize(t.description).replace(/\s+\d+\/\d+$/,'');
+    if (!key) continue;
+    if (!counts[key]) counts[key] = { description: t.description.replace(/\s+\d+\/\d+$/,''), categoryId: t.categoryId, type: t.type, count: 0, last: 0 };
+    counts[key].count++;
+    counts[key].last = Math.max(counts[key].last, Number(t.createdAt) || 0);
+  }
+  var arr = [];
+  for (var k in counts) arr.push(counts[k]);
+  arr.sort(function(a,b){ return (b.count - a.count) || (b.last - a.last); });
+
+  if (arr.length < 4){
+    var learned = STATE.learned.slice().sort(function(a,b){ return (b.count||0) - (a.count||0); });
+    for (var j=0;j<learned.length && arr.length<4;j++){
+      var L = learned[j];
+      var exists = false;
+      for (var e=0;e<arr.length;e++) if (normalize(arr[e].description) === normalize(L.description)) exists = true;
+      if (!exists && L.description){
+        arr.push({ description: L.description, categoryId: L.topCategoryId, type: L.lastType || STATE.draft.type, count: L.count || 1, last: L.lastUsedAt || 0 });
+      }
+    }
+  }
+  return arr.slice(0,4);
+}
+
+function renderQuickShortcuts(){
+  var host = document.getElementById('quick-row');
+  if (!host) return;
+  host.innerHTML = '';
+  var items = getQuickShortcuts();
+  if (!items.length){ host.style.display = 'none'; return; }
+  host.style.display = 'flex';
+  for (var i=0;i<items.length;i++){
+    (function(item){
+      var b = document.createElement('button');
+      b.className = 'quick-chip';
+      b.textContent = item.description;
+      b.title = item.description;
+      b.onclick = function(){
+        STATE.draft.description = item.description;
+        if (item.type) STATE.draft.type = item.type;
+        if (item.categoryId){
+          var c = categoryById(item.categoryId);
+          if (c && c.type === STATE.draft.type){
+            STATE.draft.categoryId = item.categoryId;
+            STATE.draft.categoryAutoSuggested = true;
+          }
+        }
+        document.getElementById('desc-input').value = STATE.draft.description;
+        renderLaunchType();
+        renderCategoryChips();
+        renderLastValues(STATE.draft.description);
+      };
+      host.appendChild(b);
+    })(items[i]);
+  }
+}
+
 function renderLaunch(){
+  renderQuickShortcuts();
   renderLaunchType();
   renderAmount();
   renderCategoryChips();
@@ -1881,13 +2075,14 @@ function saveDraft(){
   var adv = STATE.draft.advanced;
   var groupId = adv.recurrenceType !== 'single' ? uid('grp') : null;
   var toAdd = [];
+  var responsibleUserId = STATE.draft.userId || STATE.currentAppUser.id;
 
   if (adv.recurrenceType === 'single'){
-    toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description, categoryId: categoryId, userId: STATE.currentAppUser.id, date: ymd(baseDate), recurrenceType: 'single' }));
+    toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description, categoryId: categoryId, userId: responsibleUserId, date: ymd(baseDate), recurrenceType: 'single' }));
   } else if (adv.recurrenceType === 'fixed'){
     for (var m=0;m<12;m++){
       var d = new Date(baseDate.getFullYear(), baseDate.getMonth()+m, baseDate.getDate());
-      toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description, categoryId: categoryId, userId: STATE.currentAppUser.id, date: ymd(d), recurrenceType: 'fixed', recurrenceGroupId: groupId }));
+      toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description, categoryId: categoryId, userId: responsibleUserId, date: ymd(d), recurrenceType: 'fixed', recurrenceGroupId: groupId }));
     }
   } else if (adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly'){
     var n = parseInt(adv.installments || 1, 10);
@@ -1897,12 +2092,12 @@ function saveDraft(){
       var dt;
       if (adv.recurrenceType === 'installment-monthly') dt = new Date(baseDate.getFullYear(), baseDate.getMonth()+i, baseDate.getDate());
       else { dt = new Date(baseDate.getTime()); dt.setDate(dt.getDate()+i*7); }
-      toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description + ' ' + (i+1) + '/' + n, categoryId: categoryId, userId: STATE.currentAppUser.id, date: ymd(dt), recurrenceType: adv.recurrenceType, recurrenceGroupId: groupId, installmentIndex: i+1, installmentTotal: n }));
+      toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description + ' ' + (i+1) + '/' + n, categoryId: categoryId, userId: responsibleUserId, date: ymd(dt), recurrenceType: adv.recurrenceType, recurrenceGroupId: groupId, installmentIndex: i+1, installmentTotal: n }));
     }
   } else if (adv.recurrenceType === 'recurring-weekly'){
     for (var w=0;w<12;w++){
       var d2 = new Date(baseDate.getTime()); d2.setDate(d2.getDate()+w*7);
-      toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description, categoryId: categoryId, userId: STATE.currentAppUser.id, date: ymd(d2), recurrenceType: 'recurring-weekly', recurrenceGroupId: groupId }));
+      toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description, categoryId: categoryId, userId: responsibleUserId, date: ymd(d2), recurrenceType: 'recurring-weekly', recurrenceGroupId: groupId }));
     }
   }
 
@@ -1924,7 +2119,7 @@ function saveDraft(){
         description: description,
         amount: amount,
         categoryId: categoryId,
-        userId: STATE.currentAppUser.id
+        userId: responsibleUserId
       };
       resetDraft();
       refreshDuplicateButton();
@@ -1964,7 +2159,7 @@ function applyDuplicate(){
   STATE.draft.description = snap.description;
   STATE.draft.categoryId = snap.categoryId;
   STATE.draft.categoryAutoSuggested = false;
-  STATE.draft.userId = STATE.currentAppUser.id;
+  STATE.draft.userId = snap.userId || (STATE.currentAppUser && STATE.currentAppUser.id);
   STATE.draft.date = ymd(new Date());
   STATE.draft.advanced = { recurrenceType: 'single', installments: null };
   renderLaunch();
@@ -1989,11 +2184,21 @@ function closeSheet(){
 function buildWhoSheet(){
   var host = document.getElementById('who-list');
   host.innerHTML = '';
-  var u = STATE.currentAppUser;
-  var b = document.createElement('button');
-  b.className = 'selected';
-  b.innerHTML = '<span><span class="who-dot ' + (u && u.id === 'jordana' ? 'jordana' : '') + '" style="display:inline-block;margin-right:8px;"></span>' + (u ? u.name : '—') + '</span><span>✓</span>';
-  host.appendChild(b);
+  for (var i=0;i<STATE.users.length;i++){
+    (function(u){
+      var b = document.createElement('button');
+      var active = STATE.draft.userId === u.id;
+      b.className = active ? 'selected' : '';
+      b.innerHTML = '<span><span class="who-dot' + userDotClass(u.id) + '" style="display:inline-block;margin-right:8px;"></span>' + escapeHtml(u.name) + '</span>' + (active ? '<span>✓</span>' : '');
+      b.onclick = function(){
+        STATE.draft.userId = u.id;
+        renderMeta();
+        renderQuickShortcuts();
+        closeSheet();
+      };
+      host.appendChild(b);
+    })(STATE.users[i]);
+  }
 }
 
 function buildDateSheet(){
@@ -2065,7 +2270,7 @@ function deltaPercent(current, previous){
 function renderMonthUserFilter(){
   var bar = document.getElementById('m-user-filter');
   bar.innerHTML = '';
-  var users = [{v:'all',l:'Ambos'}, {v:'arthur',l:'Arthur'}, {v:'jordana',l:'Jordana'}];
+  var users = [{v:'all',l:'Todos'}, {v:'arthur',l:'Arthur'}, {v:'jordana',l:'Jordana'}, {v:'ambos',l:'Ambos'}];
   for (var i=0;i<users.length;i++){
     (function(opt){
       var b = document.createElement('button');
@@ -2284,14 +2489,14 @@ function renderSpark(byMonth){
 
 function buildTxRow(t, withDate){
   var cat = categoryById(t.categoryId);
-  var u = t.userId === 'jordana' ? { name:'Jordana' } : { name:'Arthur' };
+  var u = appUserById(t.userId);
   var dt = parseDateLocal(t.date);
   var dateStr = pad(dt.getDate()) + '/' + pad(dt.getMonth()+1);
   var icon = cat && cat.icon ? cat.icon : (t.type === 'income' ? '↗' : '↘');
   var sign = t.type === 'income' ? '+' : '';
   var div = document.createElement('div');
   div.className = 'tx';
-  div.innerHTML = '<div class="tx-icon ' + t.type + '">' + icon + '</div><div class="tx-body"><div class="tx-desc">' + escapeHtml(t.description) + '</div><div class="tx-meta">' + (cat ? escapeHtml(cat.name) : '—') + ' · ' + (withDate ? dateStr + ' · ' : '') + '<span class="who-mini ' + (t.userId === 'jordana' ? 'jordana' : '') + '"></span>' + u.name + (t.recurrenceType && t.recurrenceType !== 'single' ? ' · ' + recurrenceLabel(t) : '') + '</div></div><div class="tx-amount ' + t.type + ' num">' + sign + fmtBRL(Number(t.amount)||0) + '</div>';
+  div.innerHTML = '<div class="tx-icon ' + t.type + '">' + icon + '</div><div class="tx-body"><div class="tx-desc">' + escapeHtml(t.description) + '</div><div class="tx-meta">' + (cat ? escapeHtml(cat.name) : '—') + ' · ' + (withDate ? dateStr + ' · ' : '') + '<span class="who-mini' + userDotClass(t.userId) + '"></span>' + escapeHtml(u.name) + (t.recurrenceType && t.recurrenceType !== 'single' ? ' · ' + recurrenceLabel(t) : '') + '</div></div><div class="tx-amount ' + t.type + ' num">' + sign + fmtBRL(Number(t.amount)||0) + '</div>';
   div.onclick = function(){ openEditTx(t); };
   return div;
 }
@@ -2307,8 +2512,8 @@ function renderListFilters(){
   bar.innerHTML = '';
   var opts = [
     { k:'type', v:'all', l:'Tudo' }, { k:'type', v:'expense', l:'Despesas' }, { k:'type', v:'income', l:'Receitas' },
-    { k:'user', v:'all', l:'Ambos' }, { k:'user', v:'arthur', l:'Arthur' }, { k:'user', v:'jordana', l:'Jordana' },
-    { k:'month', v:'current', l:'Este mês' }, { k:'month', v:'all', l:'Todos' }
+    { k:'user', v:'all', l:'Todos' }, { k:'user', v:'arthur', l:'Arthur' }, { k:'user', v:'jordana', l:'Jordana' }, { k:'user', v:'ambos', l:'Ambos' },
+    { k:'month', v:'current', l:'Este mês' }, { k:'month', v:'all', l:'Todos meses' }
   ];
   for (var i=0;i<opts.length;i++){
     (function(o){
@@ -2384,6 +2589,7 @@ function openEditTx(t){
   document.getElementById('edit-desc').value = t.description;
   document.getElementById('edit-amount').value = Number(t.amount).toFixed(2);
   document.getElementById('edit-date').value = t.date;
+  document.getElementById('edit-who').value = t.userId || 'arthur';
   var sel = document.getElementById('edit-category');
   sel.innerHTML = '';
   var cats = categoriesByType(t.type);
@@ -2406,6 +2612,7 @@ function saveEditTx(){
     amount: newAmt,
     categoryId: document.getElementById('edit-category').value,
     date: document.getElementById('edit-date').value || t.date,
+    userId: document.getElementById('edit-who').value || t.userId,
     updatedAt: Date.now()
   }, { merge:true }).then(function(){
     closeSheet();
@@ -2641,6 +2848,10 @@ function reRenderCurrentScreen(){
 function wire(){
   document.getElementById('auth-login').onclick = function(){
     clearAuthError();
+    if (!FIREBASE_READY || !auth){
+      showAuthError('Firebase não carregou. Atualize a página e tente novamente.');
+      return;
+    }
     var email = document.getElementById('auth-email').value.trim();
     var pass = document.getElementById('auth-pass').value;
     if (!email || !pass){ showAuthError('Preencha e-mail e senha.'); return; }
@@ -2771,15 +2982,71 @@ function wire(){
 
 function init(){
   wire();
-  document.getElementById('auth-screen').classList.add('active');
+
+  var bootEl = document.getElementById('boot-screen');
+  var authEl = document.getElementById('auth-screen');
+  var appEl = document.getElementById('app');
+
+  bootEl.classList.add('active');
+  authEl.classList.remove('active');
+  appEl.classList.remove('active');
+
+  var bootStartedAt = Date.now();
+  var authAnswered = false;
+
+  function finishBoot(){
+    window.__FAD_BOOT_DONE = true;
+    if (window.__FAD_BOOT_FAILSAFE) clearTimeout(window.__FAD_BOOT_FAILSAFE);
+  }
+
+  function showLoginAfterBoot(message){
+    var wait = Math.max(0, 700 - (Date.now() - bootStartedAt));
+    setTimeout(function(){
+      if (appEl.classList.contains('active')) return;
+      finishBoot();
+      bootEl.classList.remove('active');
+      authEl.classList.add('active');
+      setLoginLoading(false);
+      if (message) showAuthError(message);
+    }, wait);
+  }
+
+  if (!FIREBASE_READY || !auth){
+    showLoginAfterBoot('Firebase não carregou. Atualize a página e tente novamente.');
+    return;
+  }
+
+  // Segunda proteção: se por algum motivo o Firebase não responder, não deixa tela preta.
+  setTimeout(function(){
+    if (!authAnswered && !appEl.classList.contains('active')) {
+      showLoginAfterBoot('Demorou para verificar a sessão. Faça login novamente.');
+    }
+  }, 1400);
 
   auth.onAuthStateChanged(function(user){
+    authAnswered = true;
     if (user){
+      finishBoot();
       setLoginLoading(true);
       startFirestoreSync(user);
     } else {
       clearSync();
       STATE.currentFirebaseUser = null;
       STATE.currentAppUser = null;
-      document.getElementById('app').classList.remove('active');
-      document.getElementById('auth-screen').classList.add('active');
+      appEl.classList.remove('active');
+      setLoginLoading(false);
+      showLoginAfterBoot();
+    }
+  }, function(error){
+    authAnswered = true;
+    console.error('Erro no auth state:', error);
+    showLoginAfterBoot('Erro ao verificar login: ' + (error.code || 'auth'));
+  });
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
+</script>
+
+</body>
+</html>

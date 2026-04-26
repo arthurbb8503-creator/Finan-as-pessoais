@@ -715,6 +715,31 @@ button { cursor: pointer; user-select: none; }
 .danger-item .si-icon { background: var(--danger-dim); color: var(--danger); }
 .danger-item .si-title { color: var(--danger); }
 
+.limit-inline {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.limit-inline input {
+  flex: 1;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  color: var(--text);
+}
+.limit-preview {
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.limit-preview strong { color: var(--accent); font-size: 18px; }
+
+
 .nav {
   position: fixed;
   bottom: 0;
@@ -1140,11 +1165,6 @@ button { cursor: pointer; user-select: none; }
       <div class="b-value" id="y-balance">R$ 0,00</div>
     </div>
 
-    <div class="stat-grid">
-      <div class="stat-card income"><div class="s-label">Entrou</div><div class="s-value num" id="y-income">R$ 0</div></div>
-      <div class="stat-card expense"><div class="s-label">Saiu</div><div class="s-value num" id="y-expense">R$ 0</div></div>
-    </div>
-
     <div class="panel">
       <h3>Evolução mensal</h3>
       <svg class="sparkline" id="y-spark" viewBox="0 0 300 64" preserveAspectRatio="none"></svg>
@@ -1158,6 +1178,11 @@ button { cursor: pointer; user-select: none; }
     <div class="stat-grid">
       <div class="stat-card"><div class="s-label">Melhor mês</div><div class="s-value" id="y-best" style="font-size:22px;">—</div><div class="s-sub" id="y-best-sub"></div></div>
       <div class="stat-card"><div class="s-label">Pior mês</div><div class="s-value" id="y-worst" style="font-size:22px;">—</div><div class="s-sub" id="y-worst-sub"></div></div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card income"><div class="s-label">Entrou no ano</div><div class="s-value num" id="y-income" style="font-size:22px;">R$ 0</div></div>
+      <div class="stat-card expense"><div class="s-label">Saiu no ano</div><div class="s-value num" id="y-expense" style="font-size:22px;">R$ 0</div></div>
     </div>
   </section>
 
@@ -1194,6 +1219,11 @@ button { cursor: pointer; user-select: none; }
           <div class="si-body"><div class="si-title">Histórico manual</div><div class="si-sub">Meses anteriores consolidados</div></div>
           <div>›</div>
         </div>
+        <div class="settings-item" data-action="monthly-limit">
+          <div class="si-icon">⊘</div>
+          <div class="si-body"><div class="si-title">Limite mensal de gastos</div><div class="si-sub" id="settings-monthly-limit">R$ 14.000,00 por mês</div></div>
+          <div>›</div>
+        </div>
       </div>
 
       <div class="settings-group">
@@ -1223,7 +1253,7 @@ button { cursor: pointer; user-select: none; }
       </div>
 
       <div style="text-align:center;color:var(--text-3);font-size:11px;margin-top:24px;">
-        Finanças a Dois · Firebase v2.1 · <span id="sync-status">conectando…</span>
+        Finanças a Dois · Firebase v2.2 · <span id="sync-status">conectando…</span>
       </div>
     </div>
   </section>
@@ -1346,6 +1376,26 @@ button { cursor: pointer; user-select: none; }
   <button class="save-btn" id="hist-add" style="margin:8px 0 18px;width:100%;padding:14px;">Adicionar mês</button>
   <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-3);margin:12px 0 8px;font-weight:800;">Meses cadastrados</div>
   <div id="hist-list"></div>
+</div>
+
+<div class="sheet" id="sheet-monthly-limit">
+  <div class="sheet-handle"></div>
+  <h3>Limite mensal</h3>
+  <p class="sub">Defina o teto de despesas do mês. A tela Mês passa a priorizar quanto ainda pode gastar.</p>
+
+  <div class="form-row">
+    <label>Limite mensal de gastos</label>
+    <div class="limit-inline">
+      <input type="number" id="monthly-limit-input" step="0.01" inputmode="decimal" placeholder="14000">
+    </div>
+  </div>
+
+  <div class="limit-preview" id="monthly-limit-preview">
+    Limite atual: <strong>R$ 14.000,00</strong><br>
+    O app calcula: limite mensal menos despesas lançadas no mês.
+  </div>
+
+  <button class="save-btn" id="monthly-limit-save" style="margin:18px 0 0;width:100%;padding:14px;">Salvar limite</button>
 </div>
 
 <div class="sheet" id="sheet-edit-tx">
@@ -1501,6 +1551,8 @@ var STATE = {
   unsubscribers: [],
   syncReady: false,
   catEditMode: false,
+  saveConfirmOpen: false,
+  monthlyLimitDefault: 14000,
   lastTxSnapshot: null,
   draft: {
     type: 'expense',
@@ -1724,6 +1776,7 @@ function startFirestoreSync(user){
     householdQuery('budgets').onSnapshot(function(snapshot){
       STATE.budgets = snapshot.docs.map(mapDoc);
       markLoaded('budgets');
+      renderSettingsMeta();
       reRenderCurrentScreen();
     }, handleSnapshotError('budgets'))
   );
@@ -1765,6 +1818,81 @@ function defaultCategoryFor(type){
   var list = categoriesByType(type);
   for (var i=0;i<list.length;i++) if (normalize(list[i].name) === 'outros') return list[i];
   return list[0] || null;
+}
+
+function getMonthlyExpenseLimit(){
+  for (var i=0;i<STATE.budgets.length;i++){
+    var b = STATE.budgets[i];
+    if (!b.deletedAt && (b.kind === 'monthlyExpenseLimit' || b.id === 'monthlyExpenseLimit')){
+      var amount = Number(b.amount);
+      if (!isNaN(amount) && amount > 0) return amount;
+    }
+  }
+  return STATE.monthlyLimitDefault || 14000;
+}
+
+function saveMonthlyExpenseLimit(){
+  var input = document.getElementById('monthly-limit-input');
+  var amount = parseFloat(input.value);
+  if (isNaN(amount) || amount <= 0){
+    toast('Digite um limite válido', 'error');
+    return;
+  }
+  collectionRef('budgets').doc('monthlyExpenseLimit').set({
+    householdId: HOUSEHOLD_ID,
+    kind: 'monthlyExpenseLimit',
+    amount: amount,
+    updatedAt: Date.now(),
+    deletedAt: null
+  }, { merge:true }).then(function(){
+    closeSheet();
+    renderSettingsMeta();
+    reRenderCurrentScreen();
+    toast('Limite mensal atualizado', 'success');
+  }).catch(function(error){
+    toast('Erro ao salvar limite: ' + error.code, 'error');
+  });
+}
+
+function openMonthlyLimitSheet(){
+  var amount = getMonthlyExpenseLimit();
+  document.getElementById('monthly-limit-input').value = amount.toFixed(2);
+  updateMonthlyLimitPreview();
+  openSheet('sheet-monthly-limit');
+}
+
+function updateMonthlyLimitPreview(){
+  var input = document.getElementById('monthly-limit-input');
+  var amount = parseFloat(input.value);
+  if (isNaN(amount) || amount <= 0) amount = getMonthlyExpenseLimit();
+  var currentMonth = STATE.view.monthDate || new Date();
+  var totals = totalsForMonth(currentMonth, 'all');
+  var remaining = amount - totals.expense;
+  var el = document.getElementById('monthly-limit-preview');
+  if (el){
+    el.innerHTML = 'Limite: <strong>' + fmtBRL(amount) + '</strong><br>Despesa do mês selecionado: ' + fmtBRL(totals.expense) + '<br>Disponível estimado: <strong style="color:' + (remaining >= 0 ? 'var(--accent)' : 'var(--danger)') + ';">' + fmtBRL(remaining) + '</strong>';
+  }
+}
+
+function renderSettingsMeta(){
+  var el = document.getElementById('settings-monthly-limit');
+  if (el) el.textContent = fmtBRL(getMonthlyExpenseLimit()) + ' por mês';
+}
+
+function findRecentPossibleDuplicate(amount, description){
+  var list = STATE.transactions.filter(function(t){ return !t.deletedAt; }).slice();
+  if (!list.length) return null;
+  list.sort(function(a,b){ return (b.createdAt || 0) - (a.createdAt || 0); });
+  var last = list[0];
+  var sameAmount = Math.abs((Number(last.amount)||0) - amount) < 0.005;
+  if (!sameAmount) return null;
+  var ageMs = Date.now() - (last.createdAt || 0);
+  var sameCore = normalize(last.description) === normalize(description)
+    && last.type === STATE.draft.type
+    && last.date === STATE.draft.date
+    && last.userId === (STATE.draft.userId || (STATE.currentAppUser && STATE.currentAppUser.id));
+  if (sameCore || ageMs < 120000) return last;
+  return null;
 }
 
 function suggestCategoryFromDesc(desc, type){
@@ -2109,6 +2237,32 @@ function makeTx(o){
 function saveDraft(){
   if (!STATE.currentAppUser){ toast('Faça login novamente', 'error'); return; }
   if (STATE.draft.amount === 0){ toast('Digite o valor', 'error'); return; }
+  if (STATE.saveConfirmOpen) return;
+
+  var amount = STATE.draft.amount / 100;
+  var description = (STATE.draft.description || '').trim();
+  if (!description) description = STATE.draft.type === 'expense' ? 'Despesa' : 'Receita';
+
+  var dup = findRecentPossibleDuplicate(amount, description);
+  if (dup){
+    STATE.saveConfirmOpen = true;
+    confirmDialog(
+      'Salvar valor repetido?',
+      'O último lançamento também foi de ' + fmtBRL(amount) + '. Confirme para evitar duplicidade.',
+      { okText:'Salvar mesmo assim', safe:true }
+    ).then(function(ok){
+      STATE.saveConfirmOpen = false;
+      if (ok) saveDraftConfirmed();
+    });
+    return;
+  }
+
+  saveDraftConfirmed();
+}
+
+function saveDraftConfirmed(){
+  if (!STATE.currentAppUser){ toast('Faça login novamente', 'error'); return; }
+  if (STATE.draft.amount === 0){ toast('Digite o valor', 'error'); return; }
 
   var amount = STATE.draft.amount / 100;
   var description = (STATE.draft.description || '').trim();
@@ -2352,22 +2506,19 @@ function renderMonth(){
   }
 
   var balance = income - expense;
+  var limit = getMonthlyExpenseLimit();
+  var availableLimit = limit - expense;
+  var limitLabel = document.querySelector('#screen-month .balance-card .b-label');
+  if (limitLabel) limitLabel.textContent = 'Disponível do limite mensal';
   var balEl = document.getElementById('m-balance');
-  balEl.textContent = fmtBRL(balance);
-  balEl.classList.toggle('positive', balance >= 0);
-  balEl.classList.toggle('negative', balance < 0);
+  balEl.textContent = fmtBRL(availableLimit);
+  balEl.classList.toggle('positive', availableLimit >= 0);
+  balEl.classList.toggle('negative', availableLimit < 0);
 
   var prev = totalsForMonth(previousMonthDate(d), userFilter);
   var prevLabel = monthShort(previousMonthDate(d).getMonth());
   var balCompare = document.getElementById('m-balance-compare');
-  if (prev.income === 0 && prev.expense === 0){
-    balCompare.textContent = 'Sem dados em ' + prevLabel + ' pra comparar';
-  } else {
-    var dbal = deltaPercent(balance, prev.balance);
-    var cls = dbal.dir === 'up' ? 'delta-up' : (dbal.dir === 'down' ? 'delta-down' : '');
-    var arrow = dbal.dir === 'up' ? '↑ ' : (dbal.dir === 'down' ? '↓ ' : '· ');
-    balCompare.innerHTML = '<span class="' + cls + '">' + arrow + (dbal.pct === null ? 'novo' : Math.abs(dbal.pct).toFixed(0) + '%') + '</span> vs ' + prevLabel;
-  }
+  balCompare.innerHTML = 'Limite ' + fmtBRL(limit) + ' − despesas ' + fmtBRL(expense) + '<br><span style="color:var(--text-3);">Saldo real do mês: ' + fmtBRL(balance) + '</span>';
 
   document.getElementById('m-income').textContent = fmtBRLShort(income);
   document.getElementById('m-expense').textContent = fmtBRLShort(expense);
@@ -2932,7 +3083,7 @@ function reRenderCurrentScreen(){
     case 'month': renderMonth(); break;
     case 'year': renderYear(); break;
     case 'list': renderListFilters(); renderList(); break;
-    case 'settings': break;
+    case 'settings': renderSettingsMeta(); break;
   }
 }
 
@@ -3053,6 +3204,7 @@ function wire(){
       it.onclick = function(){
         if (act === 'manage-cats'){ STATE.catEditMode = false; renderCategoriesSheet(); openSheet('sheet-cats'); }
         else if (act === 'historical'){ renderHistoricalSheet(); openSheet('sheet-historical'); }
+        else if (act === 'monthly-limit'){ openMonthlyLimitSheet(); }
         else if (act === 'export'){ exportData(); }
         else if (act === 'import'){ document.getElementById('import-file').click(); }
         else if (act === 'logout'){ auth.signOut(); }
@@ -3063,6 +3215,10 @@ function wire(){
 
   document.getElementById('new-cat-add').onclick = addCategory;
   document.getElementById('hist-add').onclick = addHistoricalEntry;
+  var mlSave = document.getElementById('monthly-limit-save');
+  if (mlSave) mlSave.onclick = saveMonthlyExpenseLimit;
+  var mlInput = document.getElementById('monthly-limit-input');
+  if (mlInput) mlInput.addEventListener('input', updateMonthlyLimitPreview);
 
   var catsToggle = document.getElementById('cats-edit-toggle');
   if (catsToggle){

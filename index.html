@@ -1046,9 +1046,119 @@ button {
   .keypad button { min-height: 74px; padding: 18px 0; }
   .b-value { font-size: 48px; }
 }
+
+
+/* ===== Firebase / Login ===== */
+#login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(135deg, var(--bg-elev-1), var(--bg-elev-2));
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  box-shadow: var(--shadow-lg);
+}
+.login-card h1 {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  margin-bottom: 6px;
+}
+.login-card h1 em { color: var(--accent); font-style: italic; }
+.login-card p { color: var(--text-3); font-size: 14px; margin-bottom: 22px; line-height: 1.5; }
+.login-card label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  margin: 14px 0 6px;
+}
+.login-card input {
+  width: 100%;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  color: var(--text);
+}
+.login-card input:focus { border-color: var(--border-strong); }
+.login-btn {
+  width: 100%;
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--accent);
+  color: #0C1A08;
+  font-weight: 800;
+}
+.login-error { color: var(--danger); font-size: 13px; min-height: 20px; margin-top: 10px; }
+.login-foot { color: var(--text-3); font-size: 11px; margin-top: 18px; text-align: center; }
+.sync-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--bg-elev-1);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 700;
+}
+.sync-pill::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+.device-user-box {
+  margin: 0 20px 16px;
+  background: var(--bg-elev-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.device-user-box .du-title { font-size: 13px; font-weight: 700; }
+.device-user-box .du-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.settings-mini-btn {
+  margin: 0 20px 10px;
+  width: calc(100% - 40px);
+  padding: 13px;
+  border-radius: var(--radius-md);
+  background: var(--bg-elev-1);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  font-weight: 700;
+}
+
 </style>
 </head>
 <body>
+<div id="login-screen" style="display:none;">
+  <div class="login-card">
+    <h1>Finanças <em>a Dois</em></h1>
+    <p>Entre com o login do Arthur ou da Jordana. O app vai reconhecer automaticamente quem está lançando e sincronizar os dados pelo Firebase.</p>
+    <form id="login-form">
+      <label for="login-email">E-mail</label>
+      <input id="login-email" type="email" autocomplete="email" placeholder="seu@email.com" required>
+      <label for="login-password">Senha</label>
+      <input id="login-password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+      <button id="login-btn" class="login-btn" type="submit">Entrar</button>
+      <div id="login-error" class="login-error"></div>
+    </form>
+    <div class="login-foot">v1.1 Firebase · base compartilhada Arthur & Jordana</div>
+  </div>
+</div>
+
 <div id="app">
   <section id="screen-launch" class="screen active">
     <div class="header">
@@ -1145,7 +1255,17 @@ button {
 
   <section id="screen-settings" class="screen">
     <div class="header"><div><h1>Ajustes<em>.</em></h1><div class="header-sub">Preferências e dados</div></div></div>
-    <div class="settings-list">
+    <div class="device-user-box">
+  <div>
+    <div class="du-title">Logado como <span id="logged-user-name">—</span></div>
+    <div class="du-sub"><span id="logged-user-email">—</span></div>
+  </div>
+  <div class="sync-pill" id="sync-status">Conectando...</div>
+</div>
+<button id="migrate-local-btn" class="settings-mini-btn" type="button">Migrar dados locais para Firebase</button>
+<button id="logout-btn" class="settings-mini-btn" type="button">Sair da conta</button>
+
+<div class="settings-list">
       <div class="settings-group">
         <div class="settings-item" data-action="manage-cats"><div class="si-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg></div><div class="si-body"><div class="si-title">Gerenciar categorias</div><div class="si-sub">Criar, editar ou remover</div></div><div class="si-arrow">›</div></div>
         <div class="settings-item" data-action="historical"><div class="si-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div><div class="si-body"><div class="si-title">Histórico manual</div><div class="si-sub">Meses anteriores consolidados</div></div><div class="si-arrow">›</div></div>
@@ -1182,10 +1302,86 @@ button {
 <div class="confirm" id="confirm"><div class="confirm-box"><h4 id="cf-title">Confirmar?</h4><p id="cf-message"></p><div class="actions"><button class="cancel" id="cf-cancel">Cancelar</button><button class="ok" id="cf-ok">Confirmar</button></div></div></div>
 <input type="file" id="import-file" accept="application/json" style="display:none;">
 
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script>
 'use strict';
 
-var KEYS = {
+/* FINANÇAS A DOIS — v1.1 Firebase
+   Fonte principal: Firebase Auth + Cloud Firestore.
+   localStorage fica só como apoio para migração/backup manual. */
+
+var firebaseConfig = {
+  apiKey: "AIzaSyA7Xji7mfj-owWeE4m5GRfNwI90xMFeiPg",
+  authDomain: "financas-a-dois-bf424.firebaseapp.com",
+  projectId: "financas-a-dois-bf424",
+  storageBucket: "financas-a-dois-bf424.firebasestorage.app",
+  messagingSenderId: "158164712865",
+  appId: "1:158164712865:web:f2d7b97301de8891711fe0",
+  measurementId: "G-2QE1LTLM7D"
+};
+
+var HOUSEHOLD_ID = 'arthur-jordana';
+var UID_TO_PROFILE = {
+  'qWLABBFK7UUX202KuulNl1HmUlP2': { id: 'arthur', name: 'Arthur', color: '#8CB8FF' },
+  'P6PSOhacgNf7zGgQmR9p83YTRdv2': { id: 'jordana', name: 'Jordana', color: '#FF8CD0' }
+};
+
+firebase.initializeApp(firebaseConfig);
+var auth = firebase.auth();
+var db = firebase.firestore();
+try { db.enablePersistence({ synchronizeTabs: true }); } catch(e) {}
+
+var DEFAULT_USERS = [
+  { id: 'arthur', name: 'Arthur', color: '#8CB8FF' },
+  { id: 'jordana', name: 'Jordana', color: '#FF8CD0' }
+];
+
+var DEFAULT_CATEGORIES = [
+  { id: 'cat_moradia', name: 'Moradia', type: 'expense', builtin: true, icon: '🏠' },
+  { id: 'cat_alim', name: 'Alimentação', type: 'expense', builtin: true, icon: '🍽️' },
+  { id: 'cat_transp', name: 'Transporte', type: 'expense', builtin: true, icon: '🚗' },
+  { id: 'cat_saude', name: 'Saúde', type: 'expense', builtin: true, icon: '💊' },
+  { id: 'cat_edu', name: 'Educação', type: 'expense', builtin: true, icon: '📚' },
+  { id: 'cat_filhos', name: 'Filhos', type: 'expense', builtin: true, icon: '🧒' },
+  { id: 'cat_lazer', name: 'Lazer', type: 'expense', builtin: true, icon: '🎬' },
+  { id: 'cat_assin', name: 'Assinaturas', type: 'expense', builtin: true, icon: '📺' },
+  { id: 'cat_doacao', name: 'Doações', type: 'expense', builtin: true, icon: '🙏' },
+  { id: 'cat_compras', name: 'Compras', type: 'expense', builtin: true, icon: '🛍️' },
+  { id: 'cat_pess_a', name: 'Pessoal Arthur', type: 'expense', builtin: true, icon: '👤' },
+  { id: 'cat_pess_j', name: 'Pessoal Jordana', type: 'expense', builtin: true, icon: '👤' },
+  { id: 'cat_trab', name: 'Trabalho', type: 'expense', builtin: true, icon: '💼' },
+  { id: 'cat_imp', name: 'Impostos e Taxas', type: 'expense', builtin: true, icon: '🧾' },
+  { id: 'cat_invest', name: 'Investimento', type: 'expense', builtin: true, icon: '📈', neutral: true },
+  { id: 'cat_transf', name: 'Transferência interna', type: 'expense', builtin: true, icon: '↔️', neutral: true },
+  { id: 'cat_outros_e', name: 'Outros', type: 'expense', builtin: true, icon: '•' },
+  { id: 'cat_sal_a', name: 'Salário Arthur', type: 'income', builtin: true, icon: '💰' },
+  { id: 'cat_sal_j', name: 'Salário Jordana', type: 'income', builtin: true, icon: '💰' },
+  { id: 'cat_extra', name: 'Renda Extra', type: 'income', builtin: true, icon: '✨' },
+  { id: 'cat_reemb', name: 'Reembolso', type: 'income', builtin: true, icon: '↩️' },
+  { id: 'cat_venda', name: 'Venda', type: 'income', builtin: true, icon: '🏷️' },
+  { id: 'cat_rend', name: 'Rendimentos', type: 'income', builtin: true, icon: '📈' },
+  { id: 'cat_outros_i', name: 'Outros', type: 'income', builtin: true, icon: '•' }
+];
+
+var KEYWORD_RULES = [
+  { cat: 'cat_transp', words: ['gasolina','combustivel','combustível','posto','etanol','alcool','álcool','uber','99','taxi','táxi','estacionamento','onibus','ônibus','metro','metrô','pedagio','pedágio','ipva','licenciamento','oficina','mecanico','mecânico'] },
+  { cat: 'cat_alim', words: ['mercado','supermercado','feira','atacadao','atacadão','hortifruti','padaria','restaurante','lanche','lanchonete','delivery','ifood','rappi','pizza','hamburguer','hambúrguer','almoco','almoço','jantar','cafe','café'] },
+  { cat: 'cat_saude', words: ['farmacia','farmácia','remedio','remédio','consulta','exame','medico','médico','dentista','psicologo','psicólogo','psicologa','psicóloga','plano de saude','plano de saúde','hospital','laboratorio','laboratório'] },
+  { cat: 'cat_edu', words: ['escola','curso','livro','material escolar','faculdade','mensalidade','udemy','alura'] },
+  { cat: 'cat_moradia', words: ['aluguel','condominio','condomínio','energia','luz','agua','água','internet','iptu','gas','gás','vivo','tim','claro','oi'] },
+  { cat: 'cat_assin', words: ['netflix','spotify','disney','apple','google','amazon prime','hbo','globoplay','youtube'] },
+  { cat: 'cat_doacao', words: ['doacao','doação','dizimo','dízimo','oferta','igreja'] },
+  { cat: 'cat_compras', words: ['roupa','sapato','presente','shopping','magazine','amazon','shopee','mercado livre','aliexpress'] },
+  { cat: 'cat_lazer', words: ['cinema','show','viagem','hotel','passeio','parque','game','jogo'] },
+  { cat: 'cat_sal_a', words: ['salario arthur','salário arthur'] },
+  { cat: 'cat_sal_j', words: ['salario jordana','salário jordana'] },
+  { cat: 'cat_extra', words: ['salario','salário','renda','extra','bico','freela','freelance'] },
+  { cat: 'cat_reemb', words: ['reembolso','estorno'] }
+];
+
+var LOCAL_KEYS = {
   users: 'fad:users',
   categories: 'fad:categories',
   transactions: 'fad:transactions',
@@ -1194,286 +1390,305 @@ var KEYS = {
   settings: 'fad:settings',
   budgets: 'fad:budgets'
 };
-var QUOTA_WARNED = false;
-
-function uid(prefix){ return (prefix || 'id') + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8); }
-function load(key, fallback){ try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch(e){ return fallback; } }
-function save(key, value){ try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch(e){ if (!QUOTA_WARNED){ QUOTA_WARNED = true; setTimeout(function(){ toast('Memória cheia: exporte um backup', 'error'); }, 100); } return false; } }
-function pad(n){ return n < 10 ? '0' + n : '' + n; }
-function ymd(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
-function parseDateLocal(s){ if (!s) return new Date(); var p = s.split('-'); return new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10)); }
-function fmtBRL(n){ if (n === null || n === undefined || isNaN(n)) n = 0; var sign = n < 0 ? '-' : ''; var s = Math.abs(n).toFixed(2).replace('.', ','); s = s.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); return sign + 'R$ ' + s; }
-function fmtBRLShort(n){ if (n === null || n === undefined || isNaN(n)) n = 0; var sign = n < 0 ? '-' : ''; var abs = Math.abs(n); var s = abs.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); return sign + 'R$ ' + s; }
-function normalize(s){ if (!s) return ''; return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(); }
-function monthName(i){ return ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'][i]; }
-function monthShort(i){ return ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][i]; }
-function escapeHtml(s){ if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-
-var DEFAULT_CATEGORIES = [
-  {id:'cat_moradia',name:'Moradia',type:'expense',builtin:true,icon:'🏠'},
-  {id:'cat_alim',name:'Alimentação',type:'expense',builtin:true,icon:'🍽️'},
-  {id:'cat_transp',name:'Transporte',type:'expense',builtin:true,icon:'🚗'},
-  {id:'cat_saude',name:'Saúde',type:'expense',builtin:true,icon:'💊'},
-  {id:'cat_edu',name:'Educação',type:'expense',builtin:true,icon:'📚'},
-  {id:'cat_filhos',name:'Filhos',type:'expense',builtin:true,icon:'🧒'},
-  {id:'cat_lazer',name:'Lazer',type:'expense',builtin:true,icon:'🎬'},
-  {id:'cat_assin',name:'Assinaturas',type:'expense',builtin:true,icon:'📺'},
-  {id:'cat_doacao',name:'Doações',type:'expense',builtin:true,icon:'🙏'},
-  {id:'cat_compras',name:'Compras',type:'expense',builtin:true,icon:'🛍️'},
-  {id:'cat_pess_a',name:'Pessoal Arthur',type:'expense',builtin:true,icon:'👤'},
-  {id:'cat_pess_j',name:'Pessoal Jordana',type:'expense',builtin:true,icon:'👤'},
-  {id:'cat_trab',name:'Trabalho',type:'expense',builtin:true,icon:'💼'},
-  {id:'cat_imp',name:'Impostos e Taxas',type:'expense',builtin:true,icon:'🧾'},
-  {id:'cat_invest',name:'Investimento',type:'expense',builtin:true,icon:'📈',neutral:true},
-  {id:'cat_transf',name:'Transferência interna',type:'expense',builtin:true,icon:'↔️',neutral:true},
-  {id:'cat_outros_e',name:'Outros',type:'expense',builtin:true,icon:'•'},
-  {id:'cat_sal_a',name:'Salário Arthur',type:'income',builtin:true,icon:'💰'},
-  {id:'cat_sal_j',name:'Salário Jordana',type:'income',builtin:true,icon:'💰'},
-  {id:'cat_extra',name:'Renda Extra',type:'income',builtin:true,icon:'✨'},
-  {id:'cat_reemb',name:'Reembolso',type:'income',builtin:true,icon:'↩️'},
-  {id:'cat_venda',name:'Venda',type:'income',builtin:true,icon:'🏷️'},
-  {id:'cat_rend',name:'Rendimentos',type:'income',builtin:true,icon:'📈'},
-  {id:'cat_outros_i',name:'Outros',type:'income',builtin:true,icon:'•'}
-];
-var DEFAULT_USERS = [
-  {id:'arthur',name:'Arthur',color:'#8CB8FF'},
-  {id:'jordana',name:'Jordana',color:'#FF8CD0'}
-];
-var KEYWORD_RULES = [
-  {cat:'cat_transp', words:['gasolina','combustivel','combustível','posto','etanol','alcool','álcool','uber','99','taxi','táxi','estacionamento','onibus','ônibus','metro','metrô','pedagio','pedágio','ipva','licenciamento','oficina','mecanico','mecânico']},
-  {cat:'cat_alim', words:['mercado','supermercado','feira','atacadao','atacadão','hortifruti','padaria','restaurante','lanche','lanchonete','delivery','ifood','rappi','pizza','hamburguer','hambúrguer','almoco','almoço','jantar','cafe','café']},
-  {cat:'cat_saude', words:['farmacia','farmácia','remedio','remédio','consulta','exame','medico','médico','dentista','psicologo','psicólogo','plano de saude','plano de saúde','hospital','laboratorio','laboratório']},
-  {cat:'cat_edu', words:['escola','curso','livro','material escolar','faculdade','mensalidade','udemy','alura']},
-  {cat:'cat_moradia', words:['aluguel','condominio','condomínio','energia','luz','agua','água','internet','iptu','gas','gás','vivo','tim','claro','oi']},
-  {cat:'cat_assin', words:['netflix','spotify','disney','apple','google','amazon prime','hbo','globoplay','youtube']},
-  {cat:'cat_doacao', words:['doacao','doação','dizimo','dízimo','oferta','igreja']},
-  {cat:'cat_compras', words:['roupa','sapato','presente','shopping','magazine','amazon','shopee','mercado livre','aliexpress']},
-  {cat:'cat_lazer', words:['cinema','show','viagem','hotel','passeio','parque','game','jogo']},
-  {cat:'cat_sal_a', words:['salario arthur','salário arthur']},
-  {cat:'cat_sal_j', words:['salario jordana','salário jordana']},
-  {cat:'cat_extra', words:['salario','salário','renda','extra','bico','freela','freelance']},
-  {cat:'cat_reemb', words:['reembolso','estorno']}
-];
 
 var STATE = {
-  users: load(KEYS.users, null) || DEFAULT_USERS,
-  categories: load(KEYS.categories, null) || DEFAULT_CATEGORIES,
-  transactions: load(KEYS.transactions, []),
-  learned: load(KEYS.learned, []),
-  historical: load(KEYS.historical, []),
-  budgets: load(KEYS.budgets, []),
-  settings: load(KEYS.settings, { defaultUserId: 'arthur', firstRun: true, lastBackupAt: null }),
-  draft: { type:'expense', amount:0, description:'', categoryId:null, categoryAutoSuggested:false, date:ymd(new Date()), userId:'arthur', advanced:{ recurrenceType:'single', installments:null } },
-  view: { currentScreen:'launch', monthDate:new Date(new Date().getFullYear(), new Date().getMonth(), 1), monthFilterUser:'all', yearDate:new Date(new Date().getFullYear(), 0, 1), listFilterType:'all', listFilterMonth:'current', listFilterUser:'all', listSearch:'' },
+  currentUser: null,
+  users: DEFAULT_USERS,
+  categories: [],
+  transactions: [],
+  learned: [],
+  historical: [],
+  budgets: [],
+  ready: false,
+  seedAttempted: false,
+  unsubscribers: [],
+  draft: {
+    type: 'expense',
+    amount: 0,
+    description: '',
+    categoryId: null,
+    categoryAutoSuggested: false,
+    date: ymd(new Date()),
+    userId: 'arthur',
+    advanced: { recurrenceType: 'single', installments: null }
+  },
+  view: {
+    currentScreen: 'launch',
+    monthDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    monthFilterUser: 'all',
+    yearDate: new Date(new Date().getFullYear(), 0, 1),
+    listFilterType: 'all',
+    listFilterMonth: 'current',
+    listFilterUser: 'all',
+    listSearch: ''
+  },
   lastTxSnapshot: null
 };
 
-if (!load(KEYS.users, null)) save(KEYS.users, STATE.users);
-if (!load(KEYS.categories, null)) save(KEYS.categories, STATE.categories);
-if (!load(KEYS.settings, null)) save(KEYS.settings, STATE.settings);
+function $(id){ return document.getElementById(id); }
+function uid(prefix){ return (prefix||'id') + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8); }
+function pad(n){ return n < 10 ? '0'+n : ''+n; }
+function ymd(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+function parseDateLocal(s){ if(!s) return new Date(); var p=s.split('-'); return new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10)); }
+function fmtBRL(n){ if(n===null||n===undefined||isNaN(n)) n=0; var sign=n<0?'-':''; var s=Math.abs(n).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g,'.'); return sign+'R$ '+s; }
+function fmtBRLShort(n){ if(n===null||n===undefined||isNaN(n)) n=0; var sign=n<0?'-':''; var abs=Math.abs(n); return sign+'R$ '+abs.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+function normalize(s){ if(!s) return ''; return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim(); }
+function monthName(i){ return ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'][i]; }
+function monthShort(i){ return ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][i]; }
+function escapeHtml(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function loadLocal(key, fallback){ try{ var raw=localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }catch(e){ return fallback; } }
+function docData(doc){ var d=doc.data(); d.id=doc.id; return d; }
+function userProfileFromAuth(user){ return UID_TO_PROFILE[user.uid] || { id: user.uid, name: user.email || 'Usuário', color: '#8CB8FF' }; }
+function userById(id){ for(var i=0;i<STATE.users.length;i++){ if(STATE.users[i].id===id) return STATE.users[i]; } return null; }
+function userNameById(id){ var u=userById(id); return u ? u.name : id; }
+function categoryById(id){ for(var i=0;i<STATE.categories.length;i++){ if(STATE.categories[i].id===id) return STATE.categories[i]; } return null; }
+function categoriesByType(type){ return STATE.categories.filter(function(c){ return c.type===type; }); }
+function isNeutralCategory(id){ var c=categoryById(id); return !!(c && c.neutral); }
+function defaultCategoryFor(type){ var list=categoriesByType(type); for(var i=0;i<list.length;i++){ if(normalize(list[i].name)==='outros') return list[i]; } return list[0] || null; }
 
-function persistAll(){ save(KEYS.users, STATE.users); save(KEYS.categories, STATE.categories); save(KEYS.transactions, STATE.transactions); save(KEYS.learned, STATE.learned); save(KEYS.historical, STATE.historical); save(KEYS.budgets, STATE.budgets); save(KEYS.settings, STATE.settings); }
+function collectionWhere(name){ return db.collection(name).where('householdId','==',HOUSEHOLD_ID); }
+function ref(name, id){ return db.collection(name).doc(id); }
+function baseDoc(extra){ var o=extra || {}; o.householdId = HOUSEHOLD_ID; return o; }
 
-var toastTimer = null;
 function toast(msg, kind, action){
-  var el = document.getElementById('toast');
-  el.className = 'toast show' + (kind ? ' ' + kind : '');
-  el.innerHTML = '<span>' + escapeHtml(msg) + '</span>';
-  if (action) {
-    var btn = document.createElement('button');
-    btn.className = 'toast-action';
-    btn.textContent = action.label || 'Desfazer';
-    btn.onclick = function(e){ e.stopPropagation(); el.classList.remove('show'); if (toastTimer) clearTimeout(toastTimer); action.onClick(); };
-    el.appendChild(btn);
-  }
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, action && action.durationMs ? action.durationMs : 2400);
-}
-function confirmDialog(title, message, opts){
-  opts = opts || {};
-  var box = document.getElementById('confirm');
-  document.getElementById('cf-title').textContent = title;
-  document.getElementById('cf-message').textContent = message;
-  var ok = document.getElementById('cf-ok');
-  var cancel = document.getElementById('cf-cancel');
-  ok.textContent = opts.okText || 'Confirmar';
-  box.classList.add('show');
-  function close(){ box.classList.remove('show'); ok.onclick = null; cancel.onclick = null; }
-  return new Promise(function(resolve){ ok.onclick = function(){ close(); resolve(true); }; cancel.onclick = function(){ close(); resolve(false); }; });
+  var el=$('toast'); if(!el) return; el.className='toast show'+(kind?' '+kind:''); el.innerHTML=''; var span=document.createElement('span'); span.textContent=msg; el.appendChild(span);
+  if(action){ var btn=document.createElement('button'); btn.className='toast-action'; btn.textContent=action.label || 'Desfazer'; btn.onclick=function(e){ e.stopPropagation(); el.classList.remove('show'); action.onClick(); }; el.appendChild(btn); }
+  clearTimeout(toast._t); toast._t=setTimeout(function(){ el.classList.remove('show'); }, action && action.durationMs ? action.durationMs : 2600);
 }
 
-function categoriesByType(type){ return STATE.categories.filter(function(c){ return c.type === type; }); }
-function categoryById(id){ for (var i=0;i<STATE.categories.length;i++) if (STATE.categories[i].id === id) return STATE.categories[i]; return null; }
-function isNeutralCategory(id){ var c = categoryById(id); return !!(c && c.neutral); }
-function defaultCategoryFor(type){ var list = categoriesByType(type); for (var i=0;i<list.length;i++) if (normalize(list[i].name) === 'outros') return list[i]; return list[0] || null; }
-function suggestCategoryFromDesc(desc, type){
-  var d = normalize(desc); if (!d) return null;
-  for (var i=0;i<STATE.learned.length;i++){ var L = STATE.learned[i]; if (normalize(L.description) === d && L.lastType === type) return L.topCategoryId; }
-  for (var j=0;j<STATE.learned.length;j++){ var L2 = STATE.learned[j]; var nL = normalize(L2.description); if ((nL.indexOf(d) === 0 || d.indexOf(nL) === 0) && L2.lastType === type) return L2.topCategoryId; }
-  for (var k=0;k<KEYWORD_RULES.length;k++){ var rule = KEYWORD_RULES[k]; var cat = categoryById(rule.cat); if (!cat || cat.type !== type) continue; for (var w=0;w<rule.words.length;w++){ if (d.indexOf(normalize(rule.words[w])) !== -1) return rule.cat; } }
+function confirmDialog(title, message, opts){
+  opts=opts||{}; var box=$('confirm'); $('cf-title').textContent=title; $('cf-message').textContent=message; var ok=$('cf-ok'); var cancel=$('cf-cancel'); ok.textContent=opts.okText||'Confirmar'; ok.className='ok'+(opts.safe?' safe':''); box.classList.add('show');
+  return new Promise(function(resolve){ function close(v){ box.classList.remove('show'); ok.onclick=null; cancel.onclick=null; resolve(v); } ok.onclick=function(){ close(true); }; cancel.onclick=function(){ close(false); }; });
+}
+
+function showLogin(){ $('login-screen').style.display='flex'; $('app').style.display='none'; }
+function showApp(){ $('login-screen').style.display='none'; $('app').style.display='block'; }
+function setSyncBadge(text){ var el=$('sync-status'); if(el) el.textContent=text; }
+
+function initAuthUI(){
+  $('login-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var email=$('login-email').value.trim(); var pass=$('login-password').value;
+    $('login-error').textContent=''; $('login-btn').disabled=true; $('login-btn').textContent='Entrando...';
+    auth.signInWithEmailAndPassword(email, pass).catch(function(err){
+      $('login-error').textContent = firebaseError(err);
+    }).finally(function(){ $('login-btn').disabled=false; $('login-btn').textContent='Entrar'; });
+  });
+}
+function firebaseError(err){
+  var code=err && err.code ? err.code : '';
+  if(code.indexOf('wrong-password')>-1 || code.indexOf('invalid-credential')>-1) return 'E-mail ou senha incorretos.';
+  if(code.indexOf('user-not-found')>-1) return 'Usuário não encontrado no Firebase.';
+  if(code.indexOf('network')>-1) return 'Falha de conexão. Tente novamente.';
+  return (err && err.message) ? err.message : 'Erro ao entrar.';
+}
+
+function startAppForUser(user){
+  STATE.currentUser=user;
+  var profile=userProfileFromAuth(user);
+  STATE.draft.userId=profile.id;
+  $('logged-user-name').textContent=profile.name;
+  $('logged-user-email').textContent=user.email || '';
+  $('header-sub-launch').textContent='Lançando como '+profile.name;
+  showApp();
+  setSyncBadge('Conectando...');
+  wireOnce();
+  subscribeAll();
+  navigate('launch');
+}
+function stopApp(){
+  for(var i=0;i<STATE.unsubscribers.length;i++){ try{ STATE.unsubscribers[i](); }catch(e){} }
+  STATE.unsubscribers=[]; STATE.currentUser=null; STATE.ready=false; showLogin();
+}
+
+function subscribeAll(){
+  for(var i=0;i<STATE.unsubscribers.length;i++){ try{ STATE.unsubscribers[i](); }catch(e){} }
+  STATE.unsubscribers=[];
+  STATE.unsubscribers.push(collectionWhere('categories').onSnapshot(function(snap){
+    STATE.categories=snap.docs.map(docData).sort(function(a,b){ return (a.order||0)-(b.order||0) || a.name.localeCompare(b.name); });
+    if(!STATE.seedAttempted && snap.empty){ STATE.seedAttempted=true; seedDefaultCategories(); }
+    reRenderCurrentScreen();
+  }, firestoreError));
+  STATE.unsubscribers.push(collectionWhere('transactions').onSnapshot(function(snap){
+    STATE.transactions=snap.docs.map(docData); setSyncBadge('Sincronizado'); reRenderCurrentScreen();
+  }, firestoreError));
+  STATE.unsubscribers.push(collectionWhere('learnedDescriptions').onSnapshot(function(snap){ STATE.learned=snap.docs.map(docData); }, firestoreError));
+  STATE.unsubscribers.push(collectionWhere('historicalSummaries').onSnapshot(function(snap){ STATE.historical=snap.docs.map(docData); reRenderCurrentScreen(); }, firestoreError));
+  STATE.unsubscribers.push(collectionWhere('budgets').onSnapshot(function(snap){ STATE.budgets=snap.docs.map(docData); reRenderCurrentScreen(); }, firestoreError));
+}
+function firestoreError(err){ console.error(err); setSyncBadge('Erro de sincronização'); toast('Erro no Firebase: '+(err.message||err.code),'error'); }
+function seedDefaultCategories(){
+  var batch=db.batch();
+  for(var i=0;i<DEFAULT_CATEGORIES.length;i++){
+    var c=Object.assign({}, DEFAULT_CATEGORIES[i], { householdId: HOUSEHOLD_ID, order: i, createdAtMs: Date.now(), updatedAtMs: Date.now() });
+    batch.set(ref('categories', c.id), c, { merge: true });
+  }
+  batch.commit().then(function(){ toast('Categorias padrão criadas','success'); }).catch(firestoreError);
+}
+
+function getBudget(categoryId, year, month){
+  for(var i=0;i<STATE.budgets.length;i++){ var b=STATE.budgets[i]; if(b.categoryId===categoryId && b.year===year && b.month===month) return b; }
+  for(var j=0;j<STATE.budgets.length;j++){ var b2=STATE.budgets[j]; if(b2.categoryId===categoryId && (b2.month===null || b2.month===undefined) && (b2.year===null || b2.year===undefined)) return b2; }
   return null;
 }
-function suggestTypeFromDesc(desc){ var d = normalize(desc); if (!d) return null; for (var i=0;i<STATE.learned.length;i++){ if (normalize(STATE.learned[i].description) === d) return STATE.learned[i].lastType; } return null; }
-function recencyWeight(timestamp){ var ageDays = (Date.now() - (timestamp || 0)) / 86400000; return Math.pow(0.5, ageDays / 60); }
-function levenshtein(a,b){ if (a===b) return 0; if (!a.length) return b.length; if (!b.length) return a.length; if (Math.abs(a.length-b.length)>4) return 99; var dp=[],i,j; for(i=0;i<=a.length;i++){ dp[i]=[]; dp[i][0]=i; } for(j=0;j<=b.length;j++) dp[0][j]=j; for(i=1;i<=a.length;i++){ for(j=1;j<=b.length;j++){ var cost=a.charAt(i-1)===b.charAt(j-1)?0:1; dp[i][j]=Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost); } } return dp[a.length][b.length]; }
-function searchSuggestions(query, limit){
-  limit = limit || 5; var q = normalize(query); if (!q) return [];
-  var starts=[], contains=[], fuzzy=[];
-  for (var i=0;i<STATE.learned.length;i++){ var L=STATE.learned[i], n=normalize(L.description); L._fuzzyDist=0; if(n===q||n.indexOf(q)===0) starts.push(L); else if(n.indexOf(q)!==-1) contains.push(L); else if(q.length>=4&&n.length>=4){ var dist=levenshtein(q,n); if(dist<=2){ L._fuzzyDist=dist; fuzzy.push(L); } } }
-  function scored(arr){ return arr.map(function(L){ var w=(L.count||1)*recencyWeight(L.lastUsedAt); if(L._fuzzyDist) w=w/(1+L._fuzzyDist); return {L:L,score:w}; }).sort(function(a,b){ return b.score-a.score; }).map(function(x){ return x.L; }); }
-  return scored(starts).concat(scored(contains)).concat(scored(fuzzy)).slice(0,limit);
+
+function suggestCategoryFromDesc(desc,type){
+  var d=normalize(desc); if(!d) return null;
+  for(var i=0;i<STATE.learned.length;i++){ var L=STATE.learned[i]; if(normalize(L.description)===d && L.lastType===type) return L.topCategoryId; }
+  for(var j=0;j<STATE.learned.length;j++){ var L2=STATE.learned[j]; var n=normalize(L2.description); if((n.indexOf(d)===0 || d.indexOf(n)===0) && L2.lastType===type) return L2.topCategoryId; }
+  for(var k=0;k<KEYWORD_RULES.length;k++){ var rule=KEYWORD_RULES[k], cat=categoryById(rule.cat); if(!cat || cat.type!==type) continue; for(var w=0;w<rule.words.length;w++){ if(d.indexOf(normalize(rule.words[w]))!==-1) return rule.cat; } }
+  return null;
 }
-function lastValuesFor(desc){ var d=normalize(desc); if(!d) return []; var matches=STATE.transactions.filter(function(t){ return normalize(t.description)===d; }).sort(function(a,b){ return b.createdAt-a.createdAt; }); var seen={}, out=[]; for(var i=0;i<matches.length&&out.length<3;i++){ var v=matches[i].amount.toFixed(2); if(!seen[v]){ seen[v]=true; out.push(matches[i].amount); } } return out; }
+function suggestTypeFromDesc(desc){ var d=normalize(desc); for(var i=0;i<STATE.learned.length;i++){ if(normalize(STATE.learned[i].description)===d) return STATE.learned[i].lastType; } return null; }
+function recencyWeight(timestamp){ var ms=timestamp || 0; var age=(Date.now()-ms)/(1000*60*60*24); return Math.pow(0.5, age/60); }
+function searchSuggestions(query, limit){
+  limit=limit||5; var q=normalize(query); if(!q) return [];
+  var a=[]; for(var i=0;i<STATE.learned.length;i++){ var L=STATE.learned[i]; var n=normalize(L.description); if(n.indexOf(q)===0 || n.indexOf(q)!==-1){ a.push(L); } }
+  a.sort(function(x,y){ return ((y.count||1)*recencyWeight(y.lastUsedAtMs)) - ((x.count||1)*recencyWeight(x.lastUsedAtMs)); });
+  return a.slice(0,limit);
+}
+function lastValuesFor(desc){ var d=normalize(desc); if(!d) return []; var arr=STATE.transactions.filter(function(t){ return normalize(t.description).replace(/\s+\d+\/\d+$/,'')===d; }).sort(function(a,b){ return (b.createdAtMs||0)-(a.createdAtMs||0); }); var seen={}, out=[]; for(var i=0;i<arr.length && out.length<3;i++){ var v=Number(arr[i].amount||0).toFixed(2); if(!seen[v]){ seen[v]=true; out.push(Number(arr[i].amount||0)); } } return out; }
 function recordLearning(desc, categoryId, type){
-  var d=normalize(desc); if(!d) return; var found=null;
-  for(var i=0;i<STATE.learned.length;i++){ if(normalize(STATE.learned[i].description)===d){ found=STATE.learned[i]; break; } }
-  if(!found){ found={description:desc.trim(),count:0,categoryCounts:{},typeCounts:{},lastUsedAt:Date.now(),topCategoryId:null,lastType:type}; STATE.learned.push(found); }
-  found.count=(found.count||0)+1; found.lastUsedAt=Date.now();
-  if(categoryId){ found.categoryCounts[categoryId]=(found.categoryCounts[categoryId]||0)+1; var topId=null, topN=-1; for(var k in found.categoryCounts){ if(found.categoryCounts[k]>topN){ topN=found.categoryCounts[k]; topId=k; } } found.topCategoryId=topId; }
-  found.typeCounts[type]=(found.typeCounts[type]||0)+1; var tt=null, tc=-1; for(var t in found.typeCounts){ if(found.typeCounts[t]>tc){ tc=found.typeCounts[t]; tt=t; } } found.lastType=tt; save(KEYS.learned, STATE.learned);
+  var key=normalize(desc).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'') || uid('desc');
+  var doc=ref('learnedDescriptions', HOUSEHOLD_ID+'_'+key);
+  return doc.set({ householdId:HOUSEHOLD_ID, description:desc.trim(), topCategoryId:categoryId, lastType:type, count:firebase.firestore.FieldValue.increment(1), lastUsedAtMs:Date.now(), updatedAt:firebase.firestore.FieldValue.serverTimestamp() }, { merge:true });
 }
 
 function renderLaunchType(){
-  var t=STATE.draft.type;
-  var e=document.getElementById('t-expense'), i=document.getElementById('t-income');
-  e.className = t === 'expense' ? 'active expense' : '';
-  i.className = t === 'income' ? 'active income' : '';
-  var disp=document.getElementById('amount-display');
-  disp.classList.remove('expense','income','zero');
-  disp.classList.add(STATE.draft.amount===0 ? 'zero' : t);
+  var t=STATE.draft.type; $('t-expense').classList.toggle('active',t==='expense'); $('t-expense').classList.toggle('expense',t==='expense'); $('t-income').classList.toggle('active',t==='income'); $('t-income').classList.toggle('income',t==='income'); var disp=$('amount-display'); disp.classList.remove('expense','income','zero'); disp.classList.add(STATE.draft.amount===0?'zero':t);
 }
-function renderAmount(){ document.getElementById('amount-value').textContent=(STATE.draft.amount/100).toFixed(2).replace('.',','); document.getElementById('btn-save').disabled=STATE.draft.amount===0; renderLaunchType(); }
+function renderAmount(){ var v=STATE.draft.amount/100; $('amount-value').textContent=v.toFixed(2).replace('.',','); $('btn-save').disabled=STATE.draft.amount===0 || !STATE.currentUser; }
 function renderCategoryChips(){
-  var host=document.getElementById('chip-row'); host.innerHTML='';
-  var cats=categoriesByType(STATE.draft.type); var current=categoryById(STATE.draft.categoryId);
-  if(!current || current.type!==STATE.draft.type){ var def=defaultCategoryFor(STATE.draft.type); STATE.draft.categoryId=def?def.id:null; STATE.draft.categoryAutoSuggested=false; }
-  cats.forEach(function(cat){ var b=document.createElement('button'); var isActive=cat.id===STATE.draft.categoryId; b.className='chip'+(isActive?' active':'')+(isActive&&STATE.draft.categoryAutoSuggested?' auto-suggested':''); b.innerHTML=(cat.icon?cat.icon+' ':'')+escapeHtml(cat.name); b.onclick=function(){ STATE.draft.categoryId=cat.id; STATE.draft.categoryAutoSuggested=false; renderCategoryChips(); }; host.appendChild(b); });
-  var sl=document.getElementById('sl-current-cat'), sel=categoryById(STATE.draft.categoryId); if(sel){ sl.textContent=(sel.icon?sel.icon+' ':'')+sel.name; sl.classList.toggle('auto', !!STATE.draft.categoryAutoSuggested); } else { sl.textContent='-'; sl.classList.remove('auto'); }
+  var host=$('chip-row'); host.innerHTML=''; var cats=categoriesByType(STATE.draft.type); var cur=categoryById(STATE.draft.categoryId); if(!cur || cur.type!==STATE.draft.type){ var def=defaultCategoryFor(STATE.draft.type); STATE.draft.categoryId=def?def.id:null; STATE.draft.categoryAutoSuggested=false; }
+  for(var i=0;i<cats.length;i++){ (function(cat){ var b=document.createElement('button'); var active=cat.id===STATE.draft.categoryId; b.className='chip'+(active?' active':'')+(active&&STATE.draft.categoryAutoSuggested?' auto-suggested':''); b.innerHTML=(cat.icon?cat.icon+' ':'')+escapeHtml(cat.name); b.onclick=function(){ STATE.draft.categoryId=cat.id; STATE.draft.categoryAutoSuggested=false; renderCategoryChips(); }; host.appendChild(b); })(cats[i]); }
+  var sl=$('sl-current-cat'); var sel=categoryById(STATE.draft.categoryId); sl.textContent=sel?((sel.icon?sel.icon+' ':'')+sel.name):'—'; sl.classList.toggle('auto', !!STATE.draft.categoryAutoSuggested);
 }
-function renderMeta(){
-  var u=STATE.users.filter(function(x){ return x.id===STATE.draft.userId; })[0]; document.getElementById('meta-who').textContent=u?u.name:'-'; document.getElementById('who-dot').classList.toggle('jordana', STATE.draft.userId==='jordana');
-  var today=ymd(new Date()), yd=new Date(); yd.setDate(yd.getDate()-1); var label='Hoje'; if(STATE.draft.date!==today){ label=STATE.draft.date===ymd(yd)?'Ontem':(pad(parseDateLocal(STATE.draft.date).getDate())+'/'+pad(parseDateLocal(STATE.draft.date).getMonth()+1)); } document.getElementById('meta-date').textContent=label;
-}
-function renderAdvancedSummary(){ var adv=STATE.draft.advanced, box=document.getElementById('advanced-summary'); if(adv.recurrenceType==='single'){ box.style.display='none'; return; } box.style.display='grid'; var labels={fixed:'Fixo mensal','installment-monthly':'Parcelado '+(adv.installments||0)+'x mensal','installment-weekly':'Parcelado '+(adv.installments||0)+'x semanal','recurring-weekly':'Recorrente semanal'}; document.getElementById('adv-summary-text').textContent=labels[adv.recurrenceType]||'-'; }
-function renderLastValues(desc){ var host=document.getElementById('last-values'); host.innerHTML=''; lastValuesFor(desc).forEach(function(v){ var c=document.createElement('div'); c.className='chip-mini'; c.textContent=fmtBRL(v); c.onclick=function(){ STATE.draft.amount=Math.round(v*100); renderAmount(); }; host.appendChild(c); }); }
-function renderSuggestions(query){
-  var host=document.getElementById('suggestions'), s=searchSuggestions(query,5); host.innerHTML=''; if(!s.length){ host.classList.remove('show'); return; }
-  s.forEach(function(item){ var cat=categoryById(item.topCategoryId); var el=document.createElement('div'); el.className='suggestion'; el.innerHTML='<div class="s-desc">'+escapeHtml(item.description)+'</div><div class="s-meta">'+(cat?escapeHtml(cat.name):'-')+' · '+item.count+'x</div>'; el.onclick=function(){ document.getElementById('desc-input').value=item.description; STATE.draft.description=item.description; if(item.lastType) STATE.draft.type=item.lastType; if(item.topCategoryId){ var c=categoryById(item.topCategoryId); if(c&&c.type===STATE.draft.type){ STATE.draft.categoryId=item.topCategoryId; STATE.draft.categoryAutoSuggested=true; } } host.classList.remove('show'); renderLaunch(); renderLastValues(item.description); }; host.appendChild(el); }); host.classList.add('show');
-}
-function renderLaunch(){ renderLaunchType(); renderAmount(); renderCategoryChips(); renderMeta(); renderAdvancedSummary(); document.getElementById('desc-input').value=STATE.draft.description||''; }
-function keypadHandler(key){ if(key==='clear') STATE.draft.amount=0; else if(key==='del') STATE.draft.amount=Math.floor(STATE.draft.amount/10); else { var d=parseInt(key,10); if(isNaN(d)||STATE.draft.amount>=99999999) return; STATE.draft.amount=STATE.draft.amount*10+d; } renderAmount(); }
+function renderMeta(){ var profile=userById(STATE.draft.userId) || userProfileFromAuth(STATE.currentUser||{}); $('meta-who').textContent=profile.name; $('who-dot').classList.toggle('jordana', STATE.draft.userId==='jordana'); var d=parseDateLocal(STATE.draft.date); var today=ymd(new Date()); var yd=new Date(); yd.setDate(yd.getDate()-1); $('meta-date').textContent=STATE.draft.date===today?'Hoje':(STATE.draft.date===ymd(yd)?'Ontem':pad(d.getDate())+'/'+pad(d.getMonth()+1)); }
+function renderAdvancedSummary(){ var adv=STATE.draft.advanced, box=$('advanced-summary'); if(adv.recurrenceType==='single'){ box.style.display='none'; return; } box.style.display='grid'; var labels={ fixed:'Fixo mensal', 'installment-monthly':'Parcelado '+(adv.installments||0)+'x mensal', 'installment-weekly':'Parcelado '+(adv.installments||0)+'x semanal', 'recurring-weekly':'Recorrente semanal' }; $('adv-summary-text').textContent=labels[adv.recurrenceType]||'—'; }
+function renderLastValues(desc){ var host=$('last-values'); host.innerHTML=''; lastValuesFor(desc).forEach(function(v){ var c=document.createElement('button'); c.className='chip-mini'; c.textContent=fmtBRL(v); c.onclick=function(){ STATE.draft.amount=Math.round(v*100); renderAmount(); renderLaunchType(); }; host.appendChild(c); }); }
+function renderSuggestions(query){ var host=$('suggestions'); var s=searchSuggestions(query,5); host.innerHTML=''; if(!s.length){ host.classList.remove('show'); return; } s.forEach(function(item){ var cat=categoryById(item.topCategoryId); var el=document.createElement('div'); el.className='suggestion'; el.innerHTML='<div class="s-desc">'+escapeHtml(item.description)+'</div><div class="s-meta">'+(cat?escapeHtml(cat.name):'—')+' · '+(item.count||1)+'x</div>'; el.onclick=function(){ $('desc-input').value=item.description; STATE.draft.description=item.description; if(item.lastType && item.lastType!==STATE.draft.type){ STATE.draft.type=item.lastType; renderLaunchType(); } if(item.topCategoryId){ STATE.draft.categoryId=item.topCategoryId; STATE.draft.categoryAutoSuggested=true; } host.classList.remove('show'); renderCategoryChips(); renderLastValues(item.description); }; host.appendChild(el); }); host.classList.add('show'); }
+function renderLaunch(){ renderLaunchType(); renderAmount(); renderCategoryChips(); renderMeta(); renderAdvancedSummary(); $('desc-input').value=STATE.draft.description||''; }
+function keypadHandler(key){ if(key==='clear') STATE.draft.amount=0; else if(key==='del') STATE.draft.amount=Math.floor(STATE.draft.amount/10); else { var d=parseInt(key,10); if(!isNaN(d) && STATE.draft.amount<99999999) STATE.draft.amount=STATE.draft.amount*10+d; } renderAmount(); renderLaunchType(); }
 
-function makeTx(o){ return { id:uid('tx'), type:o.type, amount:o.amount, description:o.description, categoryId:o.categoryId, userId:o.userId, date:o.date, createdAt:Date.now(), recurrenceType:o.recurrenceType||'single', recurrenceGroupId:o.recurrenceGroupId||null, installmentIndex:o.installmentIndex||null, installmentTotal:o.installmentTotal||null, isManualHistory:false }; }
+function makeTx(o){
+  var profile=userById(o.userId) || userProfileFromAuth(STATE.currentUser);
+  return baseDoc({ id:o.id||uid('tx'), type:o.type, amount:Number(o.amount||0), description:o.description, categoryId:o.categoryId, userId:o.userId, userUid:STATE.currentUser.uid, userName:profile.name, date:o.date, recurrenceType:o.recurrenceType||'single', recurrenceGroupId:o.recurrenceGroupId||null, installmentIndex:o.installmentIndex||null, installmentTotal:o.installmentTotal||null, createdAtMs:Date.now(), updatedAtMs:Date.now(), createdAt:firebase.firestore.FieldValue.serverTimestamp(), updatedAt:firebase.firestore.FieldValue.serverTimestamp(), deletedAt:null });
+}
 function saveDraft(){
+  if(!STATE.currentUser){ toast('Faça login primeiro','error'); return; }
   if(STATE.draft.amount===0){ toast('Digite o valor','error'); return; }
-  var amount=STATE.draft.amount/100, description=(STATE.draft.description||'').trim() || (STATE.draft.type==='expense'?'Despesa':'Receita');
-  var cat=categoryById(STATE.draft.categoryId); if(!cat || cat.type!==STATE.draft.type){ var sid=suggestCategoryFromDesc(description,STATE.draft.type); if(sid) cat=categoryById(sid); if(!cat || cat.type!==STATE.draft.type) cat=defaultCategoryFor(STATE.draft.type); }
-  var categoryId=cat?cat.id:null, baseDate=parseDateLocal(STATE.draft.date), adv=STATE.draft.advanced, groupId=adv.recurrenceType!=='single'?uid('grp'):null, toAdd=[];
-  if(adv.recurrenceType==='single') toAdd.push(makeTx({type:STATE.draft.type,amount:amount,description:description,categoryId:categoryId,userId:STATE.draft.userId,date:ymd(baseDate),recurrenceType:'single'}));
-  else if(adv.recurrenceType==='fixed'){ for(var m=0;m<12;m++){ var d=new Date(baseDate.getFullYear(),baseDate.getMonth()+m,baseDate.getDate()); toAdd.push(makeTx({type:STATE.draft.type,amount:amount,description:description,categoryId:categoryId,userId:STATE.draft.userId,date:ymd(d),recurrenceType:'fixed',recurrenceGroupId:groupId})); } }
-  else if(adv.recurrenceType==='installment-monthly'||adv.recurrenceType==='installment-weekly'){ var n=parseInt(adv.installments||1,10); if(n<2)n=2; for(var i=0;i<n;i++){ var dt=adv.recurrenceType==='installment-monthly'?new Date(baseDate.getFullYear(),baseDate.getMonth()+i,baseDate.getDate()):new Date(baseDate.getTime()+i*7*86400000); toAdd.push(makeTx({type:STATE.draft.type,amount:amount,description:description+' '+(i+1)+'/'+n,categoryId:categoryId,userId:STATE.draft.userId,date:ymd(dt),recurrenceType:adv.recurrenceType,recurrenceGroupId:groupId,installmentIndex:i+1,installmentTotal:n})); } }
-  else if(adv.recurrenceType==='recurring-weekly'){ for(var w=0;w<12;w++){ var d2=new Date(baseDate.getTime()+w*7*86400000); toAdd.push(makeTx({type:STATE.draft.type,amount:amount,description:description,categoryId:categoryId,userId:STATE.draft.userId,date:ymd(d2),recurrenceType:'recurring-weekly',recurrenceGroupId:groupId})); } }
-  toAdd.forEach(function(t){ STATE.transactions.push(t); }); save(KEYS.transactions, STATE.transactions); recordLearning(description, categoryId, STATE.draft.type);
-  STATE.lastTxSnapshot={type:STATE.draft.type,description:description,amount:amount,categoryId:categoryId,userId:STATE.draft.userId}; var addedIds=toAdd.map(function(t){return t.id;});
-  STATE.draft.amount=0; STATE.draft.description=''; STATE.draft.categoryId=null; STATE.draft.categoryAutoSuggested=false; STATE.draft.date=ymd(new Date()); STATE.draft.advanced={recurrenceType:'single',installments:null}; STATE.draft.type='expense'; renderLaunch(); refreshDuplicateButton();
-  toast(toAdd.length===1?'Salvo · '+fmtBRL(amount):toAdd.length+' lançamentos criados','success',{label:'Desfazer',durationMs:5000,onClick:function(){ STATE.transactions=STATE.transactions.filter(function(t){return addedIds.indexOf(t.id)===-1;}); save(KEYS.transactions,STATE.transactions); STATE.lastTxSnapshot=null; refreshDuplicateButton(); reRenderCurrentScreen(); toast('Desfeito','success'); }});
+  var amount=STATE.draft.amount/100; var description=(STATE.draft.description||'').trim() || (STATE.draft.type==='expense'?'Despesa':'Receita');
+  var cat=categoryById(STATE.draft.categoryId); if(!cat || cat.type!==STATE.draft.type){ var sug=suggestCategoryFromDesc(description, STATE.draft.type); cat=sug?categoryById(sug):null; if(!cat || cat.type!==STATE.draft.type) cat=defaultCategoryFor(STATE.draft.type); }
+  var categoryId=cat?cat.id:null; var baseDate=parseDateLocal(STATE.draft.date); var adv=STATE.draft.advanced; var groupId=adv.recurrenceType!=='single'?uid('grp'):null; var arr=[];
+  if(adv.recurrenceType==='single') arr.push(makeTx({type:STATE.draft.type,amount:amount,description:description,categoryId:categoryId,userId:STATE.draft.userId,date:ymd(baseDate)}));
+  else if(adv.recurrenceType==='fixed') for(var m=0;m<12;m++){ arr.push(makeTx({type:STATE.draft.type,amount:amount,description:description,categoryId:categoryId,userId:STATE.draft.userId,date:ymd(new Date(baseDate.getFullYear(),baseDate.getMonth()+m,baseDate.getDate())),recurrenceType:'fixed',recurrenceGroupId:groupId})); }
+  else if(adv.recurrenceType==='installment-monthly' || adv.recurrenceType==='installment-weekly'){ var n=parseInt(adv.installments||3,10); if(n<2)n=2; if(n>60)n=60; for(var i=0;i<n;i++){ var dt=adv.recurrenceType==='installment-monthly'?new Date(baseDate.getFullYear(),baseDate.getMonth()+i,baseDate.getDate()):new Date(baseDate.getTime()+i*7*24*60*60*1000); arr.push(makeTx({type:STATE.draft.type,amount:amount,description:description+' '+(i+1)+'/'+n,categoryId:categoryId,userId:STATE.draft.userId,date:ymd(dt),recurrenceType:adv.recurrenceType,recurrenceGroupId:groupId,installmentIndex:i+1,installmentTotal:n})); } }
+  else if(adv.recurrenceType==='recurring-weekly') for(var w=0;w<12;w++){ var d2=new Date(baseDate.getTime()+w*7*24*60*60*1000); arr.push(makeTx({type:STATE.draft.type,amount:amount,description:description,categoryId:categoryId,userId:STATE.draft.userId,date:ymd(d2),recurrenceType:'recurring-weekly',recurrenceGroupId:groupId})); }
+  var batch=db.batch(); arr.forEach(function(tx){ batch.set(ref('transactions', tx.id), tx); });
+  batch.commit().then(function(){ return recordLearning(description, categoryId, STATE.draft.type); }).then(function(){
+    STATE.lastTxSnapshot={type:STATE.draft.type,description:description,amount:amount,categoryId:categoryId,userId:STATE.draft.userId};
+    STATE.draft.amount=0; STATE.draft.description=''; STATE.draft.categoryId=null; STATE.draft.categoryAutoSuggested=false; STATE.draft.date=ymd(new Date()); STATE.draft.advanced={recurrenceType:'single',installments:null}; STATE.draft.type='expense'; renderLaunch(); refreshDuplicateButton(); toast(arr.length===1?'Salvo · '+fmtBRL(amount):arr.length+' lançamentos criados','success');
+  }).catch(firestoreError);
 }
 
 var openSheetEl=null;
-function openSheet(id){ closeSheet(); document.getElementById('backdrop').classList.add('show'); var el=document.getElementById(id); el.classList.add('show'); openSheetEl=el; document.body.style.overflow='hidden'; }
-function closeSheet(){ if(openSheetEl){ openSheetEl.classList.remove('show'); openSheetEl=null; } document.getElementById('backdrop').classList.remove('show'); document.body.style.overflow=''; }
-function buildWhoSheet(){ var host=document.getElementById('who-list'); host.innerHTML=''; STATE.users.forEach(function(u){ var b=document.createElement('button'); b.className=u.id===STATE.draft.userId?'selected':''; b.innerHTML='<span><span class="who-dot '+(u.id==='jordana'?'jordana':'')+'" style="display:inline-block;margin-right:8px;"></span>'+escapeHtml(u.name)+'</span>'+(u.id===STATE.draft.userId?'<span>✓</span>':''); b.onclick=function(){ STATE.draft.userId=u.id; STATE.settings.defaultUserId=u.id; save(KEYS.settings,STATE.settings); renderMeta(); closeSheet(); }; host.appendChild(b); }); }
-function buildDateSheet(){ var quick=document.getElementById('date-quick'); quick.innerHTML=''; var today=new Date(), yest=new Date(), two=new Date(); yest.setDate(yest.getDate()-1); two.setDate(two.getDate()-2); [{l:'Hoje',d:ymd(today)},{l:'Ontem',d:ymd(yest)},{l:'Anteontem',d:ymd(two)}].forEach(function(o){ var b=document.createElement('button'); b.className=o.d===STATE.draft.date?'selected':''; b.innerHTML='<span>'+o.l+'</span>'+(o.d===STATE.draft.date?'<span>✓</span>':''); b.onclick=function(){ STATE.draft.date=o.d; renderMeta(); closeSheet(); }; quick.appendChild(b); }); document.getElementById('date-picker').value=STATE.draft.date; }
-function buildAdvancedSheet(){ var current=STATE.draft.advanced.recurrenceType; Array.prototype.forEach.call(document.querySelectorAll('#adv-type-seg button'),function(b){ b.classList.toggle('active', b.getAttribute('data-r')===current); }); document.getElementById('adv-installments-wrap').style.display=(current==='installment-monthly'||current==='installment-weekly')?'block':'none'; document.getElementById('adv-installments').value=STATE.draft.advanced.installments||3; updateAdvExplanation(); }
-function updateAdvExplanation(){ var r=STATE.draft.advanced.recurrenceType; var txt={single:'Lançamento único, registrado apenas na data escolhida.', fixed:'Despesa/receita fixa mensal. Gera 12 meses a partir da data.', 'installment-monthly':'Cada parcela vira um lançamento separado. O valor digitado é o valor de UMA parcela.', 'installment-weekly':'Cada parcela vira um lançamento separado, com 7 dias entre cada uma.', 'recurring-weekly':'Gera 12 ocorrências semanais a partir da data.'}[r]; document.getElementById('adv-explanation').textContent=txt; }
+function openSheet(id){ closeSheet(); $('backdrop').classList.add('show'); var el=$(id); el.classList.add('show'); openSheetEl=el; document.body.style.overflow='hidden'; }
+function closeSheet(){ if(openSheetEl){ openSheetEl.classList.remove('show'); openSheetEl=null; } $('backdrop').classList.remove('show'); document.body.style.overflow=''; }
+function buildWhoSheet(){ var host=$('who-list'); host.innerHTML='<div style="padding:12px 4px;color:var(--text-3);font-size:13px;line-height:1.5;">Agora o usuário é automático pelo login. Para lançar como outra pessoa, saia e entre com o login dela.</div>'; }
+function buildDateSheet(){ var quick=$('date-quick'); quick.innerHTML=''; var today=new Date(), yest=new Date(), two=new Date(); yest.setDate(yest.getDate()-1); two.setDate(two.getDate()-2); [{l:'Hoje',d:ymd(today)},{l:'Ontem',d:ymd(yest)},{l:'Anteontem',d:ymd(two)}].forEach(function(o){ var b=document.createElement('button'); b.className=o.d===STATE.draft.date?'selected':''; b.innerHTML='<span>'+o.l+'</span>'+(o.d===STATE.draft.date?'<span class="check">✓</span>':''); b.onclick=function(){ STATE.draft.date=o.d; renderMeta(); closeSheet(); }; quick.appendChild(b); }); $('date-picker').value=STATE.draft.date; }
+function buildAdvancedSheet(){ var seg=$('adv-type-seg'), current=STATE.draft.advanced.recurrenceType; Array.prototype.forEach.call(seg.querySelectorAll('button'),function(b){ b.classList.toggle('active', b.getAttribute('data-r')===current); }); $('adv-installments-wrap').style.display=(current==='installment-monthly'||current==='installment-weekly')?'block':'none'; $('adv-installments').value=STATE.draft.advanced.installments||3; var msg={single:'Lançamento único, registrado apenas na data escolhida.',fixed:'Despesa/receita fixa mensal. Gera 12 meses a partir da data.', 'installment-monthly':'Cada parcela vira um lançamento separado. O valor digitado é o valor de UMA parcela.', 'installment-weekly':'Cada parcela vira um lançamento separado, com 7 dias entre cada uma.', 'recurring-weekly':'Gera 12 ocorrências semanais a partir da data.'}; $('adv-explanation').textContent=msg[current]||msg.single; }
 
 function txInMonth(date,userFilter){ var y=date.getFullYear(), m=date.getMonth(); return STATE.transactions.filter(function(t){ var d=parseDateLocal(t.date); return d.getFullYear()===y && d.getMonth()===m && (!userFilter || userFilter==='all' || t.userId===userFilter); }); }
-function totalsForMonth(date,userFilter){ var list=txInMonth(date,userFilter), income=0, expense=0; list.forEach(function(t){ if(t.type==='income') income+=t.amount; else if(!isNeutralCategory(t.categoryId)) expense+=t.amount; }); return {income:income,expense:expense,balance:income-expense}; }
-function deltaPercent(current, previous){ if(previous===0 && current===0) return {pct:0,dir:'flat'}; if(previous===0) return {pct:null,dir:current>=0?'up':'down'}; var pct=(current-previous)/Math.abs(previous)*100; return {pct:pct,dir:Math.abs(pct)<1?'flat':(pct>0?'up':'down')}; }
-function renderMonthUserFilter(){ var bar=document.getElementById('m-user-filter'); bar.innerHTML=''; [{v:'all',l:'Ambos'},{v:'arthur',l:'Arthur',dot:'arthur'},{v:'jordana',l:'Jordana',dot:'jordana'}].forEach(function(opt){ var b=document.createElement('button'); b.className='chip'+(STATE.view.monthFilterUser===opt.v?' active':''); b.innerHTML=opt.dot?'<span class="who-mini '+(opt.dot==='jordana'?'jordana':'')+'" style="margin-right:6px;"></span>'+opt.l:opt.l; b.onclick=function(){ STATE.view.monthFilterUser=opt.v; renderMonth(); }; bar.appendChild(b); }); }
+function totalsForMonth(date,userFilter){ var list=txInMonth(date,userFilter), inc=0, exp=0; list.forEach(function(t){ if(t.type==='income') inc+=Number(t.amount||0); else if(!isNeutralCategory(t.categoryId)) exp+=Number(t.amount||0); }); return { income:inc, expense:exp, balance:inc-exp }; }
+function previousMonthDate(d){ return new Date(d.getFullYear(), d.getMonth()-1, 1); }
+function deltaPercent(current,previous){ if(previous===0 && current===0) return {pct:0,dir:'flat'}; if(previous===0) return {pct:null,dir:current>=0?'up':'down'}; var pct=((current-previous)/Math.abs(previous))*100; return {pct:pct,dir:Math.abs(pct)<1?'flat':(pct>0?'up':'down')}; }
+function renderMonthUserFilter(){ var bar=$('m-user-filter'); bar.innerHTML=''; [{v:'all',l:'Ambos'},{v:'arthur',l:'Arthur',dot:'arthur'},{v:'jordana',l:'Jordana',dot:'jordana'}].forEach(function(o){ var b=document.createElement('button'); b.className='chip'+(STATE.view.monthFilterUser===o.v?' active':''); b.innerHTML=o.dot?'<span class="who-mini '+(o.dot==='jordana'?'jordana':'')+'" style="margin-right:6px;"></span>'+o.l:o.l; b.onclick=function(){ STATE.view.monthFilterUser=o.v; renderMonth(); }; bar.appendChild(b); }); }
 function renderMonth(){
-  var d=STATE.view.monthDate, userFilter=STATE.view.monthFilterUser; document.getElementById('m-label').innerHTML=monthName(d.getMonth())+' <em>'+d.getFullYear()+'</em>'; renderMonthUserFilter();
+  var d=STATE.view.monthDate, userFilter=STATE.view.monthFilterUser; $('m-label').innerHTML=monthName(d.getMonth())+' <em>'+d.getFullYear()+'</em>'; renderMonthUserFilter();
   var list=txInMonth(d,userFilter), income=0, expense=0, incomeCount=0, expenseCount=0, byCat={}, typeMix={single:0,fixed:0,installment:0,recurring:0};
-  list.forEach(function(t){ var neutral=isNeutralCategory(t.categoryId); if(t.type==='income'){ income+=t.amount; incomeCount++; } else if(!neutral){ expense+=t.amount; expenseCount++; byCat[t.categoryId]=(byCat[t.categoryId]||0)+t.amount; } var rt=t.recurrenceType||'single'; if(rt==='single') typeMix.single++; else if(rt==='fixed') typeMix.fixed++; else if(rt.indexOf('installment')===0) typeMix.installment++; else typeMix.recurring++; });
-  var balance=income-expense, balEl=document.getElementById('m-balance'); balEl.textContent=fmtBRL(balance); balEl.classList.toggle('negative',balance<0);
-  var prevDate=new Date(d.getFullYear(),d.getMonth()-1,1), prev=totalsForMonth(prevDate,userFilter), prevLabel=monthShort(prevDate.getMonth()); document.getElementById('m-balance-compare').textContent=(prev.income===0&&prev.expense===0)?'Sem dados em '+prevLabel+' pra comparar':'vs '+prevLabel+' ('+fmtBRLShort(prev.balance)+')';
-  document.getElementById('m-income').textContent=fmtBRLShort(income); document.getElementById('m-expense').textContent=fmtBRLShort(expense); document.getElementById('m-income-sub').textContent=incomeCount+(incomeCount===1?' lançamento':' lançamentos'); document.getElementById('m-expense-sub').textContent=expenseCount+(expenseCount===1?' lançamento':' lançamentos');
-  var dIn=deltaPercent(income,prev.income), dEx=deltaPercent(expense,prev.expense); document.getElementById('m-income-compare').innerHTML=prev.income||income?'<span class="'+(dIn.dir==='up'?'delta-up':dIn.dir==='down'?'delta-down':'')+'">'+(dIn.pct===null?'novo':Math.abs(dIn.pct).toFixed(0)+'%')+'</span> vs '+prevLabel:''; document.getElementById('m-expense-compare').innerHTML=prev.expense||expense?'<span class="'+(dEx.dir==='up'?'delta-down':dEx.dir==='down'?'delta-up':'')+'">'+(dEx.pct===null?'novo':Math.abs(dEx.pct).toFixed(0)+'%')+'</span> vs '+prevLabel:'';
-  renderMonthCategories(byCat, expense, d); renderMonthTop(list); renderProjection(list,d,income,expense,incomeCount,expenseCount); document.getElementById('m-type-mix').innerHTML='<div class="tm"><div class="tm-l">Únicos</div><div class="tm-v num">'+typeMix.single+'</div></div><div class="tm"><div class="tm-l">Fixos</div><div class="tm-v num">'+typeMix.fixed+'</div></div><div class="tm"><div class="tm-l">Parcelas</div><div class="tm-v num">'+typeMix.installment+'</div></div><div class="tm"><div class="tm-l">Recorr.</div><div class="tm-v num">'+typeMix.recurring+'</div></div>';
-  var recent=list.slice().sort(function(a,b){ return parseDateLocal(b.date)-parseDateLocal(a.date)||b.createdAt-a.createdAt; }).slice(0,8); var rh=document.getElementById('m-recent'); rh.innerHTML=''; if(!recent.length) rh.innerHTML='<div class="empty"><div class="ei">Nada por aqui ainda</div><div class="et">Vá pra aba Lançar e registre algo.</div></div>'; else recent.forEach(function(t){ rh.appendChild(buildTxRow(t,false)); });
+  list.forEach(function(t){ var amt=Number(t.amount||0), neutral=isNeutralCategory(t.categoryId); if(t.type==='income'){ income+=amt; incomeCount++; } else if(!neutral){ expense+=amt; expenseCount++; byCat[t.categoryId]=(byCat[t.categoryId]||0)+amt; } var rt=t.recurrenceType||'single'; if(rt==='single')typeMix.single++; else if(rt==='fixed')typeMix.fixed++; else if(rt.indexOf('installment')===0)typeMix.installment++; else typeMix.recurring++; });
+  var balance=income-expense, balEl=$('m-balance'); balEl.textContent=fmtBRL(balance); balEl.classList.toggle('positive',balance>=0); balEl.classList.toggle('negative',balance<0);
+  var prev=totalsForMonth(previousMonthDate(d),userFilter), prevLabel=monthShort(previousMonthDate(d).getMonth()); var dBal=deltaPercent(balance,prev.balance); $('m-balance-compare').innerHTML=(prev.income===0&&prev.expense===0)?'Sem dados em '+prevLabel+' pra comparar':'<span class="'+(dBal.dir==='up'?'delta-up':dBal.dir==='down'?'delta-down':'')+'">'+(dBal.dir==='flat'?'·':dBal.dir==='up'?'↑':'↓')+' '+(dBal.pct===null?'':Math.abs(dBal.pct).toFixed(0)+'%')+'</span> vs '+prevLabel+' ('+fmtBRLShort(prev.balance)+')';
+  $('m-income').textContent=fmtBRLShort(income); $('m-expense').textContent=fmtBRLShort(expense); $('m-income-sub').textContent=incomeCount+(incomeCount===1?' lançamento':' lançamentos'); $('m-expense-sub').textContent=expenseCount+(expenseCount===1?' lançamento':' lançamentos');
+  var di=deltaPercent(income,prev.income); $('m-income-compare').innerHTML=(prev.income===0&&income===0)?'':'<span class="'+(di.dir==='up'?'delta-up':di.dir==='down'?'delta-down':'delta-flat')+'">'+(di.pct===null?'novo':Math.abs(di.pct).toFixed(0)+'%')+'</span> vs '+prevLabel;
+  var de=deltaPercent(expense,prev.expense); $('m-expense-compare').innerHTML=(prev.expense===0&&expense===0)?'':'<span class="'+(de.dir==='up'?'delta-down':de.dir==='down'?'delta-up':'delta-flat')+'">'+(de.pct===null?'novo':Math.abs(de.pct).toFixed(0)+'%')+'</span> vs '+prevLabel;
+  renderMonthCategories(byCat, expense, d); renderMonthProjection(d,list,income,expense,incomeCount,expenseCount); renderMonthLists(list,typeMix);
 }
-function getBudget(categoryId,year,month){ for(var i=0;i<STATE.budgets.length;i++){ var b=STATE.budgets[i]; if(b.categoryId===categoryId && b.year===year && b.month===month) return b; } for(var j=0;j<STATE.budgets.length;j++){ var b2=STATE.budgets[j]; if(b2.categoryId===categoryId && b2.month===null && b2.year===null) return b2; } return null; }
-function renderMonthCategories(byCat, expense, d){
-  var entries=[]; for(var k in byCat){ var c=categoryById(k), bdg=getBudget(k,d.getFullYear(),d.getMonth()); entries.push({id:k,name:c?c.name:'-',icon:c?c.icon:'•',amount:byCat[k],budget:bdg?bdg.amount:null}); } entries.sort(function(a,b){return b.amount-a.amount;});
-  var host=document.getElementById('m-categories'); host.innerHTML=''; if(!entries.length){ host.innerHTML='<div style="color:var(--text-3);font-size:13px;padding:8px 0;">Sem despesas neste mês.</div>'; return; } var max=entries[0].amount;
-  entries.forEach(function(e){ var pct=e.budget?Math.min(100,Math.round(e.amount/e.budget*100)):(max?Math.round(e.amount/max*100):0); var totalPct=expense?(e.amount/expense*100):0; var cls=e.budget&&e.amount>e.budget?'over':(e.budget&&e.amount>e.budget*0.8?'warn':''); var sub=e.budget?((e.budget-e.amount)>=0?fmtBRLShort(e.budget-e.amount)+' restam · meta '+fmtBRLShort(e.budget):'<span style="color:var(--danger);font-weight:800;">Estourou '+fmtBRLShort(e.amount-e.budget)+'</span> · meta '+fmtBRLShort(e.budget)):totalPct.toFixed(0)+'% das despesas'; var row=document.createElement('div'); row.className='cat-row'; row.innerHTML='<div class="cat-info"><div class="cat-name">'+e.icon+' '+escapeHtml(e.name)+'</div><div class="cat-bar"><div class="cat-bar-fill '+cls+'" style="width:'+pct+'%"></div></div><div class="cat-budget-sub">'+sub+'</div></div><div><div class="cat-amount num">'+fmtBRLShort(e.amount)+'</div><div class="cat-pct">'+(e.budget?pct+'%':totalPct.toFixed(0)+'%')+'</div></div>'; host.appendChild(row); });
-}
-function renderMonthTop(list){ var top=list.filter(function(t){return t.type==='expense';}).sort(function(a,b){return b.amount-a.amount;}).slice(0,5); var host=document.getElementById('m-top'); host.innerHTML=''; if(!top.length) host.innerHTML='<div style="color:var(--text-3);font-size:13px;padding:8px 0;">-</div>'; else top.forEach(function(t){ host.appendChild(buildTxRow(t,false)); }); }
-function renderProjection(list,d,income,expense,incomeCount,expenseCount){ var today=new Date(), isCurrent=today.getFullYear()===d.getFullYear()&&today.getMonth()===d.getMonth(); var projEl=document.getElementById('m-projection'), sub=document.getElementById('m-proj-sub'), detail=document.getElementById('m-proj-detail'); if(isCurrent){ var dayNum=today.getDate(), totalDays=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(), realized=0, futureFixed=0; list.forEach(function(t){ if(t.type!=='expense') return; var dx=parseDateLocal(t.date); if(t.recurrenceType==='fixed'||(t.recurrenceType||'').indexOf('installment')===0){ if(dx>today) futureFixed+=t.amount; else realized+=t.amount; } else if(dx<=today) realized+=t.amount; }); var daily=dayNum?realized/dayNum:0, projectedTotal=realized+daily*(totalDays-dayNum)+futureFixed, projectedBalance=income-projectedTotal; projEl.textContent=fmtBRL(projectedBalance); projEl.style.color=projectedBalance>=0?'var(--accent)':'var(--danger)'; sub.textContent='· dia '+dayNum+'/'+totalDays; detail.textContent='Despesa projetada: '+fmtBRL(projectedTotal)+' · média '+fmtBRL(daily)+'/dia'; } else { var balance=income-expense; projEl.textContent=fmtBRL(balance); projEl.style.color=balance>=0?'var(--accent)':'var(--danger)'; sub.textContent='· fechado'; detail.textContent='Mês finalizado · '+(incomeCount+expenseCount)+' lançamentos'; } }
+function renderMonthCategories(byCat, expense, d){ var entries=[]; for(var k in byCat){ var c=categoryById(k), bdg=getBudget(k,d.getFullYear(),d.getMonth()); entries.push({id:k,name:c?c.name:'—',icon:c?c.icon:'•',amount:byCat[k],budget:bdg?bdg.amount:null}); } entries.sort(function(a,b){ return b.amount-a.amount; }); var max=entries.length?entries[0].amount:0, host=$('m-categories'); host.innerHTML=''; if(!entries.length){ host.innerHTML='<div style="color:var(--text-3);font-size:13px;padding:8px 0;">Sem despesas neste mês.</div>'; } entries.forEach(function(e){ var has=e.budget!==null&&e.budget>0, pct=has?Math.min(100,Math.round(e.amount/e.budget*100)):(max?Math.round(e.amount/max*100):0), pctTotal=expense?e.amount/expense*100:0, barClass='', sub=''; if(has){ var rem=e.budget-e.amount; if(e.amount>e.budget)barClass='over'; else if(e.amount>e.budget*.8)barClass='warn'; sub=rem>=0?fmtBRLShort(rem)+' restam · meta '+fmtBRLShort(e.budget):'<span style="color:var(--danger);font-weight:700;">Estourou '+fmtBRLShort(-rem)+'</span> · meta '+fmtBRLShort(e.budget); } else sub=pctTotal.toFixed(0)+'% das despesas'; var row=document.createElement('div'); row.className='cat-row'; row.innerHTML='<div class="cat-info"><div class="cat-name">'+(e.icon||'•')+' '+escapeHtml(e.name)+'</div><div class="cat-bar"><div class="cat-bar-fill '+barClass+'" style="width:'+pct+'%"></div></div><div class="cat-budget-sub">'+sub+'</div></div><div><div class="cat-amount num">'+fmtBRLShort(e.amount)+'</div><div class="cat-pct">'+(has?pct:pctTotal.toFixed(0))+'%</div></div>'; host.appendChild(row); }); var alert=$('m-alert-host'); alert.innerHTML=''; var outros=STATE.categories.filter(function(c){return c.type==='expense'&&normalize(c.name)==='outros';})[0]; if(outros&&expense>0){ var amt=byCat[outros.id]||0, p=amt/expense; if(p>=.2&&amt>0) alert.innerHTML='<div class="alert-card"><div class="ai">⚠</div><div class="at"><strong>Categoria "Outros" alta.</strong> '+(p*100).toFixed(0)+'% das despesas ('+fmtBRL(amt)+') estão em "Outros".</div></div>'; } }
+function renderMonthProjection(d,list,income,expense,incomeCount,expenseCount){ var today=new Date(), current=today.getFullYear()===d.getFullYear()&&today.getMonth()===d.getMonth(), el=$('m-projection'), sub=$('m-proj-sub'), detail=$('m-proj-detail'); if(current){ var day=today.getDate(), totalDays=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(), realized=0, future=0; list.forEach(function(t){ if(t.type!=='expense'||isNeutralCategory(t.categoryId)) return; var txd=parseDateLocal(t.date); if(t.recurrenceType==='fixed'||String(t.recurrenceType||'').indexOf('installment')===0){ if(txd>today) future+=Number(t.amount||0); else realized+=Number(t.amount||0); } else if(txd<=today) realized+=Number(t.amount||0); }); var avg=day?realized/day:0, projected=realized+(avg*(totalDays-day))+future, bal=income-projected; el.textContent=fmtBRL(bal); el.style.color=bal>=0?'var(--accent)':'var(--danger)'; sub.textContent='· dia '+day+'/'+totalDays; detail.textContent='Despesa projetada: '+fmtBRL(projected)+' · média '+fmtBRL(avg)+'/dia'; } else { var bal=income-expense; el.textContent=fmtBRL(bal); el.style.color=bal>=0?'var(--accent)':'var(--danger)'; sub.textContent='· fechado'; detail.textContent='Mês finalizado · '+(incomeCount+expenseCount)+' lançamentos'; } }
+function renderMonthLists(list,typeMix){ var top=list.filter(function(t){return t.type==='expense';}).sort(function(a,b){return b.amount-a.amount;}).slice(0,5), topHost=$('m-top'); topHost.innerHTML=top.length?'':'<div style="color:var(--text-3);font-size:13px;padding:8px 0;">—</div>'; top.forEach(function(t){ topHost.appendChild(buildTxRow(t,false)); }); $('m-type-mix').innerHTML='<div class="tm"><div class="tm-l">Únicos</div><div class="tm-v num">'+typeMix.single+'</div></div><div class="tm"><div class="tm-l">Fixos</div><div class="tm-v num">'+typeMix.fixed+'</div></div><div class="tm"><div class="tm-l">Parcelas</div><div class="tm-v num">'+typeMix.installment+'</div></div><div class="tm"><div class="tm-l">Recorr.</div><div class="tm-v num">'+typeMix.recurring+'</div></div>'; var recent=list.slice().sort(function(a,b){ return parseDateLocal(b.date)-parseDateLocal(a.date) || (b.createdAtMs||0)-(a.createdAtMs||0); }).slice(0,8), rh=$('m-recent'); rh.innerHTML=recent.length?'':'<div class="empty"><div class="ei">Nada por aqui ainda</div><div class="et">Vá pra aba Lançar e registre algo.</div></div>'; recent.forEach(function(t){ rh.appendChild(buildTxRow(t,false)); }); }
 
-function renderYear(){
-  var year=STATE.view.yearDate.getFullYear(); document.getElementById('y-label').textContent=year; var byMonth=[]; for(var m=0;m<12;m++) byMonth.push({income:0,expense:0,count:0,manual:false});
-  STATE.transactions.forEach(function(t){ var d=parseDateLocal(t.date); if(d.getFullYear()!==year) return; var bm=byMonth[d.getMonth()]; if(t.type==='income') bm.income+=t.amount; else if(!isNeutralCategory(t.categoryId)) bm.expense+=t.amount; bm.count++; });
-  STATE.historical.forEach(function(h){ if(h.year===year && byMonth[h.month].count===0){ byMonth[h.month].income=h.income; byMonth[h.month].expense=h.expense; byMonth[h.month].manual=true; } });
-  var totalIn=0,totalEx=0,best=-Infinity,bestIdx=-1,worst=Infinity,worstIdx=-1,monthsWithData=0; byMonth.forEach(function(bm,idx){ totalIn+=bm.income; totalEx+=bm.expense; var has=bm.count>0||bm.manual; if(has){ monthsWithData++; var bal=bm.income-bm.expense; if(bal>best){best=bal;bestIdx=idx;} if(bal<worst){worst=bal;worstIdx=idx;} } });
-  var bal=totalIn-totalEx, balEl=document.getElementById('y-balance'); balEl.textContent=fmtBRL(bal); balEl.classList.toggle('negative',bal<0); document.getElementById('y-income').textContent=fmtBRLShort(totalIn); document.getElementById('y-expense').textContent=fmtBRLShort(totalEx); document.getElementById('y-best').textContent=bestIdx>=0?monthName(bestIdx):'-'; document.getElementById('y-best-sub').textContent=bestIdx>=0?fmtBRL(best):'Sem dados'; document.getElementById('y-worst').textContent=worstIdx>=0?monthName(worstIdx):'-'; document.getElementById('y-worst-sub').textContent=worstIdx>=0?fmtBRL(worst):'Sem dados'; document.getElementById('y-avg').textContent=fmtBRL(monthsWithData?totalEx/monthsWithData:0);
-  var catTotals={}; STATE.transactions.forEach(function(t){ if(t.type!=='expense'||isNeutralCategory(t.categoryId)) return; var dt=parseDateLocal(t.date); if(dt.getFullYear()!==year) return; catTotals[t.categoryId]=(catTotals[t.categoryId]||0)+t.amount; }); var topCatId=null, topVal=0; for(var ck in catTotals){ if(catTotals[ck]>topVal){ topVal=catTotals[ck]; topCatId=ck; } } var topCat=topCatId?categoryById(topCatId):null; document.getElementById('y-top-cat').textContent=topCat?(topCat.icon+' '+topCat.name):'-'; document.getElementById('y-top-cat-sub').textContent=topCat?fmtBRL(topVal)+' no ano':'Sem despesas categorizadas';
-  var grid=document.getElementById('y-months'); grid.innerHTML=''; byMonth.forEach(function(bm,idx){ var has=bm.count>0||bm.manual, b=bm.income-bm.expense; var cell=document.createElement('div'); cell.className='month-cell'+(idx===bestIdx&&has?' best':'')+(idx===worstIdx&&has&&bestIdx!==worstIdx?' worst':''); var tag=bm.manual?'<span class="mc-tag manual">manual</span>':(idx===bestIdx&&has?'<span class="mc-tag">melhor</span>':''); cell.innerHTML='<div class="mc-name">'+monthShort(idx)+' '+tag+'</div><div class="mc-bal '+(!has?'empty':b>=0?'pos':'neg')+' num">'+(!has?'-':fmtBRLShort(b))+'</div><div class="mc-detail">'+(has?fmtBRLShort(bm.income)+' · -'+fmtBRLShort(bm.expense):'sem dados')+'</div>'; cell.onclick=function(){ STATE.view.monthDate=new Date(year,idx,1); navigate('month'); }; grid.appendChild(cell); });
-  renderSpark(byMonth);
-}
-function renderSpark(byMonth){ var spark=document.getElementById('y-spark'); var maxAbs=1; byMonth.forEach(function(bm){ maxAbs=Math.max(maxAbs, Math.abs(bm.income-bm.expense), bm.expense, bm.income); }); var pathInc='', pathExp=''; byMonth.forEach(function(bm,i){ var x=i/11*300, inY=30-(bm.income/maxAbs)*25, exY=30+(bm.expense/maxAbs)*25; pathInc+=(i===0?'M':'L')+x+' '+inY+' '; pathExp+=(i===0?'M':'L')+x+' '+exY+' '; }); spark.innerHTML='<line x1="0" y1="30" x2="300" y2="30" stroke="rgba(255,255,255,0.08)" stroke-width="1"></line><path d="'+pathInc+'" stroke="#A8FF8C" stroke-width="2" fill="none" stroke-linejoin="round"></path><path d="'+pathExp+'" stroke="#FF8C7A" stroke-width="2" fill="none" stroke-linejoin="round"></path>'; }
+function renderYear(){ var year=STATE.view.yearDate.getFullYear(); $('y-label').textContent=year; var by=[]; for(var m=0;m<12;m++) by.push({income:0,expense:0,count:0,manual:false}); STATE.transactions.forEach(function(t){ var d=parseDateLocal(t.date); if(d.getFullYear()!==year) return; var b=by[d.getMonth()]; if(t.type==='income') b.income+=Number(t.amount||0); else if(!isNeutralCategory(t.categoryId)) b.expense+=Number(t.amount||0); b.count++; }); STATE.historical.forEach(function(h){ if(h.year!==year) return; if(by[h.month].count>0) return; by[h.month].income=Number(h.income||0); by[h.month].expense=Number(h.expense||0); by[h.month].manual=true; }); var inc=0, exp=0, months=0, best=-Infinity,bestI=-1,worst=Infinity,worstI=-1; by.forEach(function(b,i){ inc+=b.income; exp+=b.expense; var has=b.count>0||b.manual; if(has){ months++; var bal=b.income-b.expense; if(bal>best){best=bal;bestI=i;} if(bal<worst){worst=bal;worstI=i;} } }); var bal=inc-exp, be=$('y-balance'); be.textContent=fmtBRL(bal); be.classList.toggle('positive',bal>=0); be.classList.toggle('negative',bal<0); $('y-income').textContent=fmtBRLShort(inc); $('y-expense').textContent=fmtBRLShort(exp); $('y-best').textContent=bestI>=0?monthName(bestI):'—'; $('y-best-sub').textContent=bestI>=0?fmtBRL(best):'Sem dados'; $('y-worst').textContent=worstI>=0?monthName(worstI):'—'; $('y-worst-sub').textContent=worstI>=0?fmtBRL(worst):'Sem dados'; var catTotals={}; STATE.transactions.forEach(function(t){ var d=parseDateLocal(t.date); if(d.getFullYear()===year&&t.type==='expense'&&!isNeutralCategory(t.categoryId)) catTotals[t.categoryId]=(catTotals[t.categoryId]||0)+Number(t.amount||0); }); var topId=null, topVal=0; for(var k in catTotals){ if(catTotals[k]>topVal){ topVal=catTotals[k]; topId=k; } } var top=categoryById(topId); $('y-top-cat').textContent=top?((top.icon||'')+' '+top.name):'—'; $('y-top-cat-sub').textContent=top?fmtBRL(topVal)+' no ano':'Sem despesas categorizadas'; $('y-avg').textContent=fmtBRL(months?exp/months:0); renderYearGrid(by,year,bestI,worstI); renderSpark(by); }
+function renderYearGrid(by,year,bestI,worstI){ var grid=$('y-months'); grid.innerHTML=''; by.forEach(function(b,i){ var has=b.count>0||b.manual, bal=b.income-b.expense, cell=document.createElement('div'); cell.className='month-cell'+(i===bestI&&has?' best':'')+(i===worstI&&has&&bestI!==worstI?' worst':''); var tag=b.manual?'<span class="mc-tag manual">manual</span>':(i===bestI&&has?'<span class="mc-tag">melhor</span>':''); cell.innerHTML='<div class="mc-name">'+monthShort(i)+' '+tag+'</div><div class="mc-bal '+(!has?'empty':bal>=0?'pos':'neg')+' num">'+(has?fmtBRLShort(bal):'—')+'</div><div class="mc-detail">'+(has?(fmtBRLShort(b.income)+' · -'+fmtBRLShort(b.expense).replace('R$ ','R$ ')):'sem dados')+'</div>'; cell.onclick=function(){ STATE.view.monthDate=new Date(year,i,1); navigate('month'); }; grid.appendChild(cell); }); }
+function renderSpark(by){ var spark=$('y-spark'); var max=1; by.forEach(function(b){ max=Math.max(max,Math.abs(b.income-b.expense),b.income,b.expense); }); var pi='', pe=''; by.forEach(function(b,i){ var x=(i/11)*300, iy=30-(b.income/max)*25, ey=30+(b.expense/max)*25; pi+=(i?'L':'M')+x+' '+iy+' '; pe+=(i?'L':'M')+x+' '+ey+' '; }); spark.innerHTML='<line x1="0" y1="30" x2="300" y2="30" stroke="rgba(255,255,255,0.08)" stroke-width="1"></line><path d="'+pi+'" stroke="#A8FF8C" stroke-width="2" fill="none" stroke-linejoin="round"></path><path d="'+pe+'" stroke="#FF8C7A" stroke-width="2" fill="none" stroke-linejoin="round"></path>'; }
 
-function recurrenceLabel(t){ if(t.recurrenceType==='fixed') return 'fixa'; if(t.recurrenceType==='installment-monthly'||t.recurrenceType==='installment-weekly') return (t.installmentIndex||'?')+'/'+(t.installmentTotal||'?'); if(t.recurrenceType==='recurring-weekly') return 'semanal'; return ''; }
-function buildTxRow(t,withDate){ var cat=categoryById(t.categoryId), u=STATE.users.filter(function(x){return x.id===t.userId;})[0], dt=parseDateLocal(t.date), dateStr=pad(dt.getDate())+'/'+pad(dt.getMonth()+1), icon=cat&&cat.icon?cat.icon:(t.type==='income'?'↗':'↘'), sign=t.type==='income'?'+':''; var div=document.createElement('div'); div.className='tx'; div.innerHTML='<div class="tx-icon '+t.type+'">'+icon+'</div><div class="tx-body"><div class="tx-desc">'+escapeHtml(t.description)+'</div><div class="tx-meta">'+(cat?escapeHtml(cat.name):'-')+' · '+(withDate?dateStr+' · ':'')+'<span class="who-mini '+(t.userId==='jordana'?'jordana':'')+'"></span>'+(u?escapeHtml(u.name):'-')+(t.recurrenceType&&t.recurrenceType!=='single'?' · '+recurrenceLabel(t):'')+'</div></div><div class="tx-amount '+t.type+' num">'+sign+fmtBRL(t.amount)+'</div>'; div.onclick=function(){ openEditTx(t); }; return div; }
-function renderListFilters(){ var bar=document.getElementById('list-filters'); bar.innerHTML=''; [{v:'all',l:'Tudo'},{v:'expense',l:'Despesas'},{v:'income',l:'Receitas'}].forEach(function(opt){ var b=document.createElement('button'); b.className='chip'+(STATE.view.listFilterType===opt.v?' active':''); b.textContent=opt.l; b.onclick=function(){ STATE.view.listFilterType=opt.v; renderListFilters(); renderList(); }; bar.appendChild(b); }); [{v:'all',l:'Ambos'},{v:'arthur',l:'Arthur'},{v:'jordana',l:'Jordana'}].forEach(function(opt){ var b=document.createElement('button'); b.className='chip'+(STATE.view.listFilterUser===opt.v?' active':''); b.textContent=opt.l; b.onclick=function(){ STATE.view.listFilterUser=opt.v; renderListFilters(); renderList(); }; bar.appendChild(b); }); [{v:'current',l:'Este mês'},{v:'all',l:'Todos'}].forEach(function(opt){ var b=document.createElement('button'); b.className='chip'+(STATE.view.listFilterMonth===opt.v?' active':''); b.textContent=opt.l; b.onclick=function(){ STATE.view.listFilterMonth=opt.v; renderListFilters(); renderList(); }; bar.appendChild(b); }); }
-function renderList(){ var host=document.getElementById('list-host'); host.innerHTML=''; var list=STATE.transactions.slice(); if(STATE.view.listFilterType!=='all') list=list.filter(function(t){return t.type===STATE.view.listFilterType;}); if(STATE.view.listFilterUser!=='all') list=list.filter(function(t){return t.userId===STATE.view.listFilterUser;}); if(STATE.view.listFilterMonth==='current'){ var today=new Date(); list=list.filter(function(t){ var d=parseDateLocal(t.date); return d.getFullYear()===today.getFullYear()&&d.getMonth()===today.getMonth(); }); } if(STATE.view.listSearch){ var q=normalize(STATE.view.listSearch); list=list.filter(function(t){ return normalize(t.description).indexOf(q)!==-1; }); } if(!list.length){ host.innerHTML='<div class="empty"><div class="ei">Nada encontrado</div><div class="et">Tente ajustar os filtros ou registre um lançamento.</div></div>'; return; } list.sort(function(a,b){ return parseDateLocal(b.date)-parseDateLocal(a.date)||b.createdAt-a.createdAt; }); var last=null; list.forEach(function(t){ if(t.date!==last){ last=t.date; var d=parseDateLocal(t.date), today=new Date(), yest=new Date(); yest.setDate(yest.getDate()-1); var label=ymd(today)===t.date?'Hoje':(ymd(yest)===t.date?'Ontem':pad(d.getDate())+' '+monthShort(d.getMonth())+' '+d.getFullYear()); var h=document.createElement('div'); h.className='tx-day-header'; h.textContent=label; host.appendChild(h); } host.appendChild(buildTxRow(t,false)); }); }
+function recurrenceLabel(t){ if(t.recurrenceType==='fixed')return'fixa'; if(t.recurrenceType==='installment-monthly'||t.recurrenceType==='installment-weekly')return(t.installmentIndex||'?')+'/'+(t.installmentTotal||'?'); if(t.recurrenceType==='recurring-weekly')return'semanal'; return''; }
+function buildTxRow(t,withDate){ var cat=categoryById(t.categoryId), d=parseDateLocal(t.date), div=document.createElement('div'); div.className='tx'; div.innerHTML='<div class="tx-icon '+t.type+'">'+(cat&&cat.icon?cat.icon:(t.type==='income'?'↗':'↘'))+'</div><div class="tx-body"><div class="tx-desc">'+escapeHtml(t.description)+'</div><div class="tx-meta">'+(cat?escapeHtml(cat.name):'—')+' · '+(withDate?pad(d.getDate())+'/'+pad(d.getMonth()+1)+' · ':'')+'<span class="who-mini '+(t.userId==='jordana'?'jordana':'')+'"></span>'+escapeHtml(t.userName||userNameById(t.userId))+(t.recurrenceType&&t.recurrenceType!=='single'?' · '+recurrenceLabel(t):'')+'</div></div><div class="tx-amount '+t.type+' num">'+(t.type==='income'?'+':'')+fmtBRL(Number(t.amount||0))+'</div>'; div.onclick=function(){ openEditTx(t); }; return div; }
+function renderListFilters(){ var bar=$('list-filters'); bar.innerHTML=''; [{v:'all',l:'Tudo'},{v:'expense',l:'Despesas'},{v:'income',l:'Receitas'}].forEach(function(o){ var b=document.createElement('button'); b.className='chip'+(STATE.view.listFilterType===o.v?' active':''); b.textContent=o.l; b.onclick=function(){ STATE.view.listFilterType=o.v; renderListFilters(); renderList(); }; bar.appendChild(b); }); var sep=document.createElement('div'); sep.style.cssText='width:1px;background:var(--border);margin:0 4px;flex-shrink:0;'; bar.appendChild(sep); [{v:'all',l:'Ambos'},{v:'arthur',l:'Arthur',dot:'arthur'},{v:'jordana',l:'Jordana',dot:'jordana'}].forEach(function(o){ var b=document.createElement('button'); b.className='chip'+(STATE.view.listFilterUser===o.v?' active':''); b.innerHTML=o.dot?'<span class="who-mini '+(o.dot==='jordana'?'jordana':'')+'" style="margin-right:6px;"></span>'+o.l:o.l; b.onclick=function(){ STATE.view.listFilterUser=o.v; renderListFilters(); renderList(); }; bar.appendChild(b); }); var sep2=document.createElement('div'); sep2.style.cssText='width:1px;background:var(--border);margin:0 4px;flex-shrink:0;'; bar.appendChild(sep2); [{v:'current',l:'Este mês'},{v:'all',l:'Todos'}].forEach(function(o){ var b=document.createElement('button'); b.className='chip'+(STATE.view.listFilterMonth===o.v?' active':''); b.textContent=o.l; b.onclick=function(){ STATE.view.listFilterMonth=o.v; renderListFilters(); renderList(); }; bar.appendChild(b); }); var months={}; STATE.transactions.forEach(function(t){ months[t.date.slice(0,7)]=true; }); Object.keys(months).sort().reverse().slice(0,6).forEach(function(mk){ var b=document.createElement('button'), parts=mk.split('-'); b.className='chip'+(STATE.view.listFilterMonth===mk?' active':''); b.textContent=monthShort(parseInt(parts[1],10)-1)+'/'+parts[0].slice(2); b.onclick=function(){ STATE.view.listFilterMonth=mk; renderListFilters(); renderList(); }; bar.appendChild(b); }); }
+function renderList(){ var list=STATE.transactions.slice(); if(STATE.view.listFilterType!=='all') list=list.filter(function(t){return t.type===STATE.view.listFilterType;}); if(STATE.view.listFilterUser!=='all') list=list.filter(function(t){return t.userId===STATE.view.listFilterUser;}); if(STATE.view.listFilterMonth==='current'){ var today=new Date(); list=list.filter(function(t){ var d=parseDateLocal(t.date); return d.getFullYear()===today.getFullYear()&&d.getMonth()===today.getMonth(); }); } else if(STATE.view.listFilterMonth!=='all') list=list.filter(function(t){ return t.date.indexOf(STATE.view.listFilterMonth)===0; }); if(STATE.view.listSearch){ var q=normalize(STATE.view.listSearch); list=list.filter(function(t){ return normalize(t.description).indexOf(q)!==-1; }); } list.sort(function(a,b){ return parseDateLocal(b.date)-parseDateLocal(a.date) || (b.createdAtMs||0)-(a.createdAtMs||0); }); var host=$('list-host'); host.innerHTML=''; if(!list.length){ host.innerHTML='<div class="empty"><div class="ei">Nada encontrado</div><div class="et">Tente ajustar os filtros.</div></div>'; return; } var last=''; list.forEach(function(t){ if(t.date!==last){ last=t.date; var d=parseDateLocal(t.date), today=new Date(), yest=new Date(); yest.setDate(yest.getDate()-1); var label=ymd(today)===t.date?'Hoje':(ymd(yest)===t.date?'Ontem':pad(d.getDate())+' '+monthShort(d.getMonth())+' '+d.getFullYear()); var h=document.createElement('div'); h.className='tx-day-header'; h.textContent=label; host.appendChild(h); } host.appendChild(buildTxRow(t,false)); }); }
 
 var editingTxId=null;
-function openEditTx(t){ editingTxId=t.id; document.getElementById('edit-tx-sub').textContent=(t.type==='expense'?'Despesa':'Receita')+(t.recurrenceType&&t.recurrenceType!=='single'?' · '+recurrenceLabel(t)+' (afeta só esta ocorrência)':''); document.getElementById('edit-desc').value=t.description; document.getElementById('edit-amount').value=t.amount.toFixed(2); document.getElementById('edit-date').value=t.date; document.getElementById('edit-who').value=t.userId; var sel=document.getElementById('edit-category'); sel.innerHTML=''; categoriesByType(t.type).forEach(function(c){ var opt=document.createElement('option'); opt.value=c.id; opt.textContent=c.name; if(c.id===t.categoryId) opt.selected=true; sel.appendChild(opt); }); openSheet('sheet-edit-tx'); }
-function saveEditTx(){ var t=STATE.transactions.filter(function(x){return x.id===editingTxId;})[0]; if(!t){ closeSheet(); return; } var amt=parseFloat(document.getElementById('edit-amount').value); if(isNaN(amt)||amt<=0){ toast('Valor inválido','error'); return; } t.description=document.getElementById('edit-desc').value.trim()||t.description; t.amount=amt; t.categoryId=document.getElementById('edit-category').value; t.date=document.getElementById('edit-date').value||t.date; t.userId=document.getElementById('edit-who').value; save(KEYS.transactions,STATE.transactions); closeSheet(); toast('Atualizado','success'); reRenderCurrentScreen(); }
-function deleteEditTx(){ confirmDialog('Excluir lançamento?','Esta ação não pode ser desfeita.').then(function(ok){ if(!ok) return; STATE.transactions=STATE.transactions.filter(function(t){return t.id!==editingTxId;}); save(KEYS.transactions,STATE.transactions); closeSheet(); toast('Excluído','success'); reRenderCurrentScreen(); }); }
-function renderCategoriesSheet(){ function build(host,type){ host.innerHTML=''; categoriesByType(type).forEach(function(cat){ var row=document.createElement('div'); row.className='cat-list-row'; row.innerHTML='<div class="clr-name">'+(cat.icon||'•')+' '+escapeHtml(cat.name)+'</div>'; var actions=document.createElement('div'); actions.className='clr-actions'; if(cat.builtin){ actions.innerHTML='<span class="clr-builtin">padrão</span>'; } else { var rn=document.createElement('button'); rn.textContent='Renomear'; rn.onclick=function(){ var n=prompt('Novo nome:',cat.name); if(n&&n.trim()){ cat.name=n.trim(); save(KEYS.categories,STATE.categories); renderCategoriesSheet(); reRenderCurrentScreen(); } }; var dl=document.createElement('button'); dl.className='del'; dl.textContent='Excluir'; dl.onclick=function(){ confirmDialog('Excluir categoria?','Se houver lançamentos, eles serão movidos para Outros.').then(function(ok){ if(!ok)return; var fb=defaultCategoryFor(cat.type); STATE.transactions.forEach(function(t){ if(t.categoryId===cat.id) t.categoryId=fb?fb.id:null; }); STATE.categories=STATE.categories.filter(function(c){return c.id!==cat.id;}); persistAll(); renderCategoriesSheet(); reRenderCurrentScreen(); }); }; actions.appendChild(rn); actions.appendChild(dl); } row.appendChild(actions); host.appendChild(row); }); } build(document.getElementById('cats-expense'),'expense'); build(document.getElementById('cats-income'),'income'); }
-function renderHistoricalSheet(){ var monthSel=document.getElementById('hist-month'); if(!monthSel.options.length){ for(var m=0;m<12;m++){ var opt=document.createElement('option'); opt.value=m; opt.textContent=monthName(m); monthSel.appendChild(opt); } monthSel.value=new Date().getMonth(); document.getElementById('hist-year').value=new Date().getFullYear(); } var host=document.getElementById('hist-list'); host.innerHTML=''; if(!STATE.historical.length){ host.innerHTML='<div style="color:var(--text-3);font-size:13px;padding:8px 0;">Nenhum mês manual cadastrado.</div>'; return; } STATE.historical.slice().sort(function(a,b){return b.year*12+b.month-(a.year*12+a.month);}).forEach(function(h){ var row=document.createElement('div'); row.className='hist-row'; var bal=h.income-h.expense; row.innerHTML='<div><div class="h-mn">'+monthName(h.month)+' '+h.year+'</div><div class="h-vals">+'+fmtBRLShort(h.income)+' · -'+fmtBRLShort(h.expense)+' · saldo '+fmtBRLShort(bal)+(h.note?' · '+escapeHtml(h.note):'')+'</div></div><button class="h-del">Excluir</button>'; row.querySelector('.h-del').onclick=function(){ STATE.historical=STATE.historical.filter(function(x){return x.id!==h.id;}); save(KEYS.historical,STATE.historical); renderHistoricalSheet(); if(STATE.view.currentScreen==='year') renderYear(); }; host.appendChild(row); }); }
-function addHistoricalEntry(){ var month=parseInt(document.getElementById('hist-month').value,10), year=parseInt(document.getElementById('hist-year').value,10), income=parseFloat(document.getElementById('hist-income').value)||0, expense=parseFloat(document.getElementById('hist-expense').value)||0, note=document.getElementById('hist-note').value.trim(); if(isNaN(month)||isNaN(year)||(income===0&&expense===0)){ toast('Preencha mês, ano e valor','error'); return; } for(var i=0;i<STATE.historical.length;i++){ if(STATE.historical[i].month===month&&STATE.historical[i].year===year){ toast('Este mês já está cadastrado','error'); return; } } STATE.historical.push({id:uid('hist'),month:month,year:year,income:income,expense:expense,note:note,createdAt:Date.now()}); save(KEYS.historical,STATE.historical); document.getElementById('hist-income').value=''; document.getElementById('hist-expense').value=''; document.getElementById('hist-note').value=''; renderHistoricalSheet(); toast('Mês adicionado','success'); }
-function exportData(){ var dump={version:1,exportedAt:new Date().toISOString(),users:STATE.users,categories:STATE.categories,transactions:STATE.transactions,learned:STATE.learned,historical:STATE.historical,settings:STATE.settings,budgets:STATE.budgets}; var blob=new Blob([JSON.stringify(dump,null,2)],{type:'application/json'}); var url=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=url; a.download='financas-a-dois-'+ymd(new Date())+'.json'; document.body.appendChild(a); a.click(); setTimeout(function(){document.body.removeChild(a); URL.revokeObjectURL(url);},100); toast('Backup exportado','success'); }
-function importData(file){ var reader=new FileReader(); reader.onload=function(e){ try{ var data=JSON.parse(e.target.result); confirmDialog('Importar backup?','Os dados atuais serão substituídos.').then(function(ok){ if(!ok)return; STATE.users=data.users||STATE.users; STATE.categories=data.categories||STATE.categories; STATE.transactions=data.transactions||STATE.transactions; STATE.learned=data.learned||STATE.learned; STATE.historical=data.historical||STATE.historical; STATE.settings=data.settings||STATE.settings; STATE.budgets=data.budgets||STATE.budgets; persistAll(); reRenderCurrentScreen(); toast('Backup importado','success'); }); }catch(err){ toast('Arquivo inválido','error'); } }; reader.readAsText(file); }
-function resetData(){ confirmDialog('Apagar TODOS os dados?','Lançamentos, categorias customizadas e histórico manual serão removidos.').then(function(ok){ if(!ok)return; Object.keys(KEYS).forEach(function(k){ localStorage.removeItem(KEYS[k]); }); STATE.users=DEFAULT_USERS.slice(); STATE.categories=DEFAULT_CATEGORIES.slice(); STATE.transactions=[]; STATE.learned=[]; STATE.historical=[]; STATE.budgets=[]; STATE.settings={defaultUserId:'arthur',firstRun:true}; persistAll(); STATE.draft={type:'expense',amount:0,description:'',categoryId:null,categoryAutoSuggested:false,date:ymd(new Date()),userId:'arthur',advanced:{recurrenceType:'single',installments:null}}; reRenderCurrentScreen(); toast('Dados apagados','success'); }); }
+function openEditTx(t){ editingTxId=t.id; $('edit-tx-sub').textContent=(t.type==='expense'?'Despesa':'Receita')+(t.recurrenceType&&t.recurrenceType!=='single'?' · '+recurrenceLabel(t)+' (só esta ocorrência)':''); $('edit-desc').value=t.description; $('edit-amount').value=Number(t.amount||0).toFixed(2); $('edit-date').value=t.date; $('edit-who').value=t.userId; var sel=$('edit-category'); sel.innerHTML=''; categoriesByType(t.type).forEach(function(c){ var opt=document.createElement('option'); opt.value=c.id; opt.textContent=c.name; opt.selected=c.id===t.categoryId; sel.appendChild(opt); }); openSheet('sheet-edit-tx'); }
+function saveEditTx(){ var t=STATE.transactions.filter(function(x){return x.id===editingTxId;})[0]; if(!t)return closeSheet(); var amt=parseFloat($('edit-amount').value); if(isNaN(amt)||amt<=0){ toast('Valor inválido','error'); return; } var newUser=$('edit-who').value, profile=userById(newUser); ref('transactions', editingTxId).update({ description:$('edit-desc').value.trim()||t.description, amount:amt, categoryId:$('edit-category').value, date:$('edit-date').value||t.date, userId:newUser, userName:profile?profile.name:t.userName, updatedAtMs:Date.now(), updatedAt:firebase.firestore.FieldValue.serverTimestamp() }).then(function(){ closeSheet(); toast('Atualizado','success'); }).catch(firestoreError); }
+function deleteEditTx(){ confirmDialog('Excluir lançamento?','Esta ação não pode ser desfeita.').then(function(ok){ if(!ok)return; ref('transactions', editingTxId).delete().then(function(){ closeSheet(); toast('Excluído','success'); }).catch(firestoreError); }); }
 
-function navigate(screen){ STATE.view.currentScreen=screen; ['launch','month','year','list','settings'].forEach(function(s){ document.getElementById('screen-'+s).classList.toggle('active',s===screen); }); var navBtns=document.querySelectorAll('.nav-item'), activeIdx=0; Array.prototype.forEach.call(navBtns,function(btn,idx){ var active=btn.getAttribute('data-screen')===screen; btn.classList.toggle('active',active); if(active) activeIdx=idx; }); document.getElementById('nav-indicator').style.left='calc('+(activeIdx*20)+'% + 12px)'; closeSheet(); window.scrollTo(0,0); reRenderCurrentScreen(); }
-function reRenderCurrentScreen(){ if(STATE.view.currentScreen==='launch') renderLaunch(); else if(STATE.view.currentScreen==='month') renderMonth(); else if(STATE.view.currentScreen==='year') renderYear(); else if(STATE.view.currentScreen==='list'){ renderListFilters(); renderList(); } }
-function refreshDuplicateButton(){ var btn=document.getElementById('btn-duplicate'); if(STATE.lastTxSnapshot){ btn.style.display='flex'; var label=STATE.lastTxSnapshot.description.length>12?STATE.lastTxSnapshot.description.slice(0,12)+'...':STATE.lastTxSnapshot.description; document.getElementById('dup-text').textContent=label; } else btn.style.display='none'; }
+function renderCategoriesSheet(){ function build(host,type){ host.innerHTML=''; categoriesByType(type).forEach(function(cat){ var row=document.createElement('div'); row.className='cat-list-row'; row.innerHTML='<div class="clr-name">'+(cat.icon||'•')+' '+escapeHtml(cat.name)+'</div>'; var actions=document.createElement('div'); actions.className='clr-actions'; if(cat.builtin){ actions.innerHTML='<span class="clr-builtin">padrão</span>'; } else { var rn=document.createElement('button'); rn.textContent='Renomear'; rn.onclick=function(){ var name=prompt('Novo nome:',cat.name); if(name&&name.trim()) ref('categories',cat.id).update({name:name.trim(),updatedAtMs:Date.now()}).catch(firestoreError); }; var dl=document.createElement('button'); dl.className='del'; dl.textContent='Excluir'; dl.onclick=function(){ confirmDialog('Excluir categoria?','Lançamentos com esta categoria serão movidos para Outros.').then(function(ok){ if(!ok)return; var fallback=defaultCategoryFor(cat.type), batch=db.batch(); STATE.transactions.forEach(function(t){ if(t.categoryId===cat.id) batch.update(ref('transactions',t.id), {categoryId:fallback?fallback.id:null, updatedAtMs:Date.now()}); }); batch.delete(ref('categories',cat.id)); batch.commit().catch(firestoreError); }); }; actions.appendChild(rn); actions.appendChild(dl); } row.appendChild(actions); host.appendChild(row); }); } build($('cats-expense'),'expense'); build($('cats-income'),'income'); }
+function renderHistoricalSheet(){ var monthSel=$('hist-month'); if(!monthSel.options.length){ for(var m=0;m<12;m++){ var opt=document.createElement('option'); opt.value=m; opt.textContent=monthName(m); monthSel.appendChild(opt); } monthSel.value=new Date().getMonth(); $('hist-year').value=new Date().getFullYear(); } var host=$('hist-list'); host.innerHTML=''; if(!STATE.historical.length){ host.innerHTML='<div style="color:var(--text-3);font-size:13px;padding:8px 0;">Nenhum mês manual cadastrado.</div>'; return; } STATE.historical.slice().sort(function(a,b){return (b.year*12+b.month)-(a.year*12+a.month);}).forEach(function(h){ var row=document.createElement('div'); row.className='hist-row'; var bal=Number(h.income||0)-Number(h.expense||0); row.innerHTML='<div><div class="h-mn">'+monthName(h.month)+' '+h.year+'</div><div class="h-vals">+'+fmtBRLShort(h.income)+' · -'+fmtBRLShort(h.expense)+' · saldo '+fmtBRLShort(bal)+(h.note?' · '+escapeHtml(h.note):'')+'</div></div><button class="h-del">Excluir</button>'; row.querySelector('.h-del').onclick=function(){ ref('historicalSummaries',h.id).delete().catch(firestoreError); }; host.appendChild(row); }); }
+function addHistoricalEntry(){ var month=parseInt($('hist-month').value,10), year=parseInt($('hist-year').value,10), income=parseFloat($('hist-income').value)||0, expense=parseFloat($('hist-expense').value)||0, note=$('hist-note').value.trim(); if(isNaN(month)||isNaN(year)||(income===0&&expense===0)){ toast('Preencha mês, ano e valor','error'); return; } var id=HOUSEHOLD_ID+'_'+year+'_'+pad(month+1); ref('historicalSummaries', id).set(baseDoc({ id:id, month:month, year:year, income:income, expense:expense, note:note, createdAtMs:Date.now(), updatedAtMs:Date.now(), updatedAt:firebase.firestore.FieldValue.serverTimestamp() }), { merge:true }).then(function(){ $('hist-income').value=''; $('hist-expense').value=''; $('hist-note').value=''; toast('Mês adicionado','success'); }).catch(firestoreError); }
+function addCategory(){ var name=$('new-cat-name').value.trim(), type=$('new-cat-type').value; if(!name){ toast('Digite um nome','error'); return; } for(var i=0;i<STATE.categories.length;i++){ if(STATE.categories[i].type===type && normalize(STATE.categories[i].name)===normalize(name)){ toast('Já existe','error'); return; } } var id=uid('cat'); ref('categories',id).set(baseDoc({ id:id, name:name, type:type, builtin:false, icon:'•', order:999, createdAtMs:Date.now(), updatedAtMs:Date.now() })).then(function(){ $('new-cat-name').value=''; toast('Categoria criada','success'); }).catch(firestoreError); }
+
+function exportData(){ var dump={version:2,source:'firebase',exportedAt:new Date().toISOString(),householdId:HOUSEHOLD_ID,categories:STATE.categories,transactions:STATE.transactions,learned:STATE.learned,historical:STATE.historical,budgets:STATE.budgets}; var blob=new Blob([JSON.stringify(dump,null,2)],{type:'application/json'}); var url=URL.createObjectURL(blob), a=document.createElement('a'); a.href=url; a.download='financas-a-dois-firebase-'+ymd(new Date())+'.json'; document.body.appendChild(a); a.click(); setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); },100); }
+function migrateLocalToFirebase(){
+  var localTx=loadLocal(LOCAL_KEYS.transactions, []), localCats=loadLocal(LOCAL_KEYS.categories, []), localHist=loadLocal(LOCAL_KEYS.historical, []), localLearned=loadLocal(LOCAL_KEYS.learned, []);
+  if(!localTx.length && !localCats.length && !localHist.length){ toast('Não encontrei dados locais para migrar','error'); return; }
+  confirmDialog('Migrar dados locais?', 'Vou copiar os dados deste navegador para o Firebase sem apagar o que já existe.').then(function(ok){ if(!ok)return; var batch=db.batch(), count=0; localCats.forEach(function(c,i){ if(!c.id)return; batch.set(ref('categories',c.id), Object.assign({}, c, {householdId:HOUSEHOLD_ID, order:c.order||i, updatedAtMs:Date.now()}), {merge:true}); count++; }); localTx.forEach(function(t){ var id=t.id||uid('tx'); batch.set(ref('transactions',id), Object.assign({}, t, {id:id, householdId:HOUSEHOLD_ID, userName:userNameById(t.userId), userUid:null, updatedAtMs:Date.now()}), {merge:true}); count++; }); localHist.forEach(function(h){ var id=h.id||HOUSEHOLD_ID+'_'+h.year+'_'+pad(Number(h.month)+1); batch.set(ref('historicalSummaries',id), Object.assign({}, h, {id:id, householdId:HOUSEHOLD_ID, updatedAtMs:Date.now()}), {merge:true}); count++; }); localLearned.forEach(function(l){ var key=normalize(l.description||'x').replace(/[^a-z0-9]+/g,'_'); var id=HOUSEHOLD_ID+'_'+key; batch.set(ref('learnedDescriptions',id), Object.assign({}, l, {id:id, householdId:HOUSEHOLD_ID, updatedAtMs:Date.now()}), {merge:true}); count++; }); batch.commit().then(function(){ toast(count+' registros migrados','success'); }).catch(firestoreError); });
+}
+function importData(file){ var reader=new FileReader(); reader.onload=function(e){ try{ var data=JSON.parse(e.target.result); confirmDialog('Importar JSON para Firebase?', 'Vou copiar os dados do arquivo para a nuvem.').then(function(ok){ if(!ok)return; var batch=db.batch(), count=0; (data.categories||[]).forEach(function(c){ if(!c.id)c.id=uid('cat'); c.householdId=HOUSEHOLD_ID; batch.set(ref('categories',c.id),c,{merge:true}); count++; }); (data.transactions||[]).forEach(function(t){ if(!t.id)t.id=uid('tx'); t.householdId=HOUSEHOLD_ID; if(!t.userName)t.userName=userNameById(t.userId); batch.set(ref('transactions',t.id),t,{merge:true}); count++; }); (data.historical||[]).forEach(function(h){ if(!h.id)h.id=HOUSEHOLD_ID+'_'+h.year+'_'+pad(Number(h.month)+1); h.householdId=HOUSEHOLD_ID; batch.set(ref('historicalSummaries',h.id),h,{merge:true}); count++; }); batch.commit().then(function(){ toast(count+' registros importados','success'); }).catch(firestoreError); }); }catch(err){ toast('Arquivo inválido','error'); } }; reader.readAsText(file); }
+function clearFirebaseData(){ confirmDialog('Apagar dados da nuvem?', 'Isso remove lançamentos, categorias customizadas e histórico do Firebase. Use com cuidado.').then(function(ok){ if(!ok)return; var batch=db.batch(); STATE.transactions.forEach(function(t){ batch.delete(ref('transactions',t.id)); }); STATE.historical.forEach(function(h){ batch.delete(ref('historicalSummaries',h.id)); }); STATE.learned.forEach(function(l){ batch.delete(ref('learnedDescriptions',l.id)); }); STATE.budgets.forEach(function(b){ batch.delete(ref('budgets',b.id)); }); STATE.categories.filter(function(c){return !c.builtin;}).forEach(function(c){ batch.delete(ref('categories',c.id)); }); batch.commit().then(function(){ toast('Dados apagados da nuvem','success'); }).catch(firestoreError); }); }
+
+function navigate(screen){ STATE.view.currentScreen=screen; ['launch','month','year','list','settings'].forEach(function(s){ var el=$('screen-'+s); if(el) el.classList.toggle('active',s===screen); }); var navBtns=document.querySelectorAll('.nav-item'), idx=0; Array.prototype.forEach.call(navBtns,function(btn,i){ var active=btn.getAttribute('data-screen')===screen; btn.classList.toggle('active',active); if(active)idx=i; }); $('nav-indicator').style.left='calc('+(idx*20)+'% + 12px)'; closeSheet(); window.scrollTo(0,0); reRenderCurrentScreen(); }
+function reRenderCurrentScreen(){ if(!$('app') || $('app').style.display==='none') return; if(STATE.view.currentScreen==='launch') renderLaunch(); else if(STATE.view.currentScreen==='month') renderMonth(); else if(STATE.view.currentScreen==='year') renderYear(); else if(STATE.view.currentScreen==='list'){ renderListFilters(); renderList(); } }
+function refreshDuplicateButton(){ var btn=$('btn-duplicate'); if(!btn)return; if(STATE.lastTxSnapshot){ btn.style.display='flex'; $('dup-text').textContent=STATE.lastTxSnapshot.description.length>12?STATE.lastTxSnapshot.description.slice(0,12)+'...':STATE.lastTxSnapshot.description; } else btn.style.display='none'; }
 function applyDuplicate(){ var s=STATE.lastTxSnapshot; if(!s)return; STATE.draft.type=s.type; STATE.draft.amount=Math.round(s.amount*100); STATE.draft.description=s.description; STATE.draft.categoryId=s.categoryId; STATE.draft.categoryAutoSuggested=false; STATE.draft.userId=s.userId; STATE.draft.date=ymd(new Date()); STATE.draft.advanced={recurrenceType:'single',installments:null}; renderLaunch(); toast('Pronto pra salvar · revise se quiser','success'); }
 
-function wire(){
-  document.getElementById('t-expense').onclick=function(){ STATE.draft.type='expense'; renderLaunch(); };
-  document.getElementById('t-income').onclick=function(){ STATE.draft.type='income'; renderLaunch(); };
-  document.getElementById('btn-duplicate').onclick=applyDuplicate;
+var WIRED=false;
+function wireOnce(){
+  if(WIRED) return; WIRED=true;
+  $('t-expense').onclick=function(){ STATE.draft.type='expense'; renderLaunch(); };
+  $('t-income').onclick=function(){ STATE.draft.type='income'; renderLaunch(); };
+  $('btn-duplicate').onclick=applyDuplicate;
   Array.prototype.forEach.call(document.querySelectorAll('.keypad button'),function(b){ b.onclick=function(){ keypadHandler(b.getAttribute('data-key')); }; });
-  var di=document.getElementById('desc-input'); di.addEventListener('input',function(){ STATE.draft.description=di.value; renderSuggestions(di.value); renderLastValues(di.value); if(di.value.length>=2){ var st=suggestTypeFromDesc(di.value); if(st&&st!==STATE.draft.type&&STATE.draft.amount===0){ STATE.draft.type=st; renderLaunchType(); } var sug=suggestCategoryFromDesc(di.value,STATE.draft.type); if(sug){ var c=categoryById(sug); if(c&&c.type===STATE.draft.type&&STATE.draft.categoryId!==sug){ STATE.draft.categoryId=sug; STATE.draft.categoryAutoSuggested=true; renderCategoryChips(); } } } }); di.addEventListener('blur',function(){ setTimeout(function(){ document.getElementById('suggestions').classList.remove('show'); },150); }); di.addEventListener('focus',function(){ if(di.value) renderSuggestions(di.value); });
-  document.getElementById('open-who-sheet').onclick=function(){ buildWhoSheet(); openSheet('sheet-who'); };
-  document.getElementById('open-date-sheet').onclick=function(){ buildDateSheet(); openSheet('sheet-date'); };
-  document.getElementById('date-picker').onchange=function(){ STATE.draft.date=this.value||STATE.draft.date; renderMeta(); closeSheet(); };
-  document.getElementById('open-advanced').onclick=function(){ buildAdvancedSheet(); openSheet('sheet-advanced'); };
-  document.getElementById('adv-clear').onclick=function(){ STATE.draft.advanced={recurrenceType:'single',installments:null}; renderAdvancedSummary(); };
-  document.getElementById('adv-type-seg').addEventListener('click',function(e){ var btn=e.target.closest('button[data-r]'); if(!btn)return; STATE.draft.advanced.recurrenceType=btn.getAttribute('data-r'); buildAdvancedSheet(); });
-  document.getElementById('adv-confirm').onclick=function(){ var r=STATE.draft.advanced.recurrenceType; if(r==='installment-monthly'||r==='installment-weekly'){ var n=parseInt(document.getElementById('adv-installments').value,10); if(isNaN(n)||n<2)n=2; if(n>60)n=60; STATE.draft.advanced.installments=n; } else STATE.draft.advanced.installments=null; closeSheet(); renderAdvancedSummary(); toast('Opção aplicada','success'); };
-  document.getElementById('btn-save').onclick=saveDraft;
-  document.getElementById('backdrop').onclick=closeSheet;
+  var di=$('desc-input'); di.addEventListener('input',function(){ STATE.draft.description=di.value; renderSuggestions(di.value); renderLastValues(di.value); if(di.value.length>=2){ var st=suggestTypeFromDesc(di.value); if(st && st!==STATE.draft.type && STATE.draft.amount===0){ STATE.draft.type=st; renderLaunchType(); } var sug=suggestCategoryFromDesc(di.value,STATE.draft.type); if(sug && STATE.draft.categoryId!==sug){ STATE.draft.categoryId=sug; STATE.draft.categoryAutoSuggested=true; renderCategoryChips(); } } });
+  di.addEventListener('blur',function(){ setTimeout(function(){ $('suggestions').classList.remove('show'); },150); });
+  di.addEventListener('focus',function(){ if(di.value) renderSuggestions(di.value); });
+  $('open-who-sheet').onclick=function(){ buildWhoSheet(); openSheet('sheet-who'); };
+  $('open-date-sheet').onclick=function(){ buildDateSheet(); openSheet('sheet-date'); };
+  $('date-picker').onchange=function(){ STATE.draft.date=this.value||STATE.draft.date; renderMeta(); closeSheet(); };
+  $('open-advanced').onclick=function(){ buildAdvancedSheet(); openSheet('sheet-advanced'); };
+  $('adv-clear').onclick=function(){ STATE.draft.advanced={recurrenceType:'single',installments:null}; renderAdvancedSummary(); };
+  $('adv-type-seg').addEventListener('click',function(e){ var btn=e.target.closest('button[data-r]'); if(!btn)return; STATE.draft.advanced.recurrenceType=btn.getAttribute('data-r'); buildAdvancedSheet(); });
+  $('adv-confirm').onclick=function(){ var r=STATE.draft.advanced.recurrenceType; if(r==='installment-monthly'||r==='installment-weekly'){ var n=parseInt($('adv-installments').value,10); if(isNaN(n)||n<2)n=2; if(n>60)n=60; STATE.draft.advanced.installments=n; } else STATE.draft.advanced.installments=null; closeSheet(); renderAdvancedSummary(); toast('Opção aplicada','success'); };
+  $('btn-save').onclick=saveDraft;
+  $('backdrop').onclick=closeSheet;
   Array.prototype.forEach.call(document.querySelectorAll('.nav-item'),function(btn){ btn.onclick=function(){ navigate(btn.getAttribute('data-screen')); }; });
-  document.getElementById('m-prev').onclick=function(){ STATE.view.monthDate=new Date(STATE.view.monthDate.getFullYear(),STATE.view.monthDate.getMonth()-1,1); renderMonth(); };
-  document.getElementById('m-next').onclick=function(){ STATE.view.monthDate=new Date(STATE.view.monthDate.getFullYear(),STATE.view.monthDate.getMonth()+1,1); renderMonth(); };
-  document.getElementById('y-prev').onclick=function(){ STATE.view.yearDate=new Date(STATE.view.yearDate.getFullYear()-1,0,1); renderYear(); };
-  document.getElementById('y-next').onclick=function(){ STATE.view.yearDate=new Date(STATE.view.yearDate.getFullYear()+1,0,1); renderYear(); };
-  document.getElementById('list-search').addEventListener('input',function(){ STATE.view.listSearch=this.value; renderList(); });
-  document.getElementById('edit-save').onclick=saveEditTx;
-  document.getElementById('edit-delete').onclick=deleteEditTx;
-  Array.prototype.forEach.call(document.querySelectorAll('.settings-item'),function(it){ it.onclick=function(){ var act=it.getAttribute('data-action'); if(act==='manage-cats'){ renderCategoriesSheet(); openSheet('sheet-cats'); } else if(act==='historical'){ renderHistoricalSheet(); openSheet('sheet-historical'); } else if(act==='export') exportData(); else if(act==='import') document.getElementById('import-file').click(); else if(act==='reset') resetData(); }; });
-  document.getElementById('import-file').onchange=function(e){ var f=e.target.files[0]; if(f) importData(f); this.value=''; };
-  document.getElementById('new-cat-add').onclick=function(){ var name=document.getElementById('new-cat-name').value.trim(), type=document.getElementById('new-cat-type').value; if(!name){ toast('Digite um nome','error'); return; } for(var i=0;i<STATE.categories.length;i++){ if(STATE.categories[i].type===type&&normalize(STATE.categories[i].name)===normalize(name)){ toast('Já existe','error'); return; } } STATE.categories.push({id:uid('cat'),name:name,type:type,builtin:false,icon:'•'}); save(KEYS.categories,STATE.categories); document.getElementById('new-cat-name').value=''; renderCategoriesSheet(); reRenderCurrentScreen(); toast('Categoria criada','success'); };
-  document.getElementById('hist-add').onclick=addHistoricalEntry;
+  $('m-prev').onclick=function(){ STATE.view.monthDate=new Date(STATE.view.monthDate.getFullYear(),STATE.view.monthDate.getMonth()-1,1); renderMonth(); };
+  $('m-next').onclick=function(){ STATE.view.monthDate=new Date(STATE.view.monthDate.getFullYear(),STATE.view.monthDate.getMonth()+1,1); renderMonth(); };
+  $('y-prev').onclick=function(){ STATE.view.yearDate=new Date(STATE.view.yearDate.getFullYear()-1,0,1); renderYear(); };
+  $('y-next').onclick=function(){ STATE.view.yearDate=new Date(STATE.view.yearDate.getFullYear()+1,0,1); renderYear(); };
+  $('list-search').addEventListener('input',function(){ STATE.view.listSearch=this.value; renderList(); });
+  $('edit-save').onclick=saveEditTx; $('edit-delete').onclick=deleteEditTx;
+  Array.prototype.forEach.call(document.querySelectorAll('.settings-item'),function(it){ it.onclick=function(){ var act=it.getAttribute('data-action'); if(act==='manage-cats'){ renderCategoriesSheet(); openSheet('sheet-cats'); } else if(act==='historical'){ renderHistoricalSheet(); openSheet('sheet-historical'); } else if(act==='export') exportData(); else if(act==='import') $('import-file').click(); else if(act==='reset') clearFirebaseData(); }; });
+  $('new-cat-add').onclick=addCategory; $('hist-add').onclick=addHistoricalEntry; $('import-file').onchange=function(e){ var f=e.target.files[0]; if(f) importData(f); this.value=''; };
+  $('logout-btn').onclick=function(){ auth.signOut(); };
+  $('migrate-local-btn').onclick=migrateLocalToFirebase;
 }
-function init(){ if(STATE.settings && STATE.settings.defaultUserId) STATE.draft.userId=STATE.settings.defaultUserId; wire(); navigate('launch'); if(STATE.settings.firstRun){ setTimeout(function(){ toast('Bem-vindos · vocês podem começar a lançar','success'); },400); STATE.settings.firstRun=false; save(KEYS.settings,STATE.settings); } }
+
+function init(){
+  initAuthUI(); showLogin();
+  auth.onAuthStateChanged(function(user){ if(user) startAppForUser(user); else stopApp(); });
+}
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+
 </script>
 </body>
 </html>

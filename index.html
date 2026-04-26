@@ -1155,7 +1155,7 @@ button {
       <button id="login-btn" class="login-btn" type="submit">Entrar</button>
       <div id="login-error" class="login-error"></div>
     </form>
-    <div class="login-foot">v1.1 Firebase · base compartilhada Arthur & Jordana</div>
+    <div class="login-foot">v1.2 Firebase · login corrigido</div>
   </div>
 </div>
 
@@ -1465,22 +1465,77 @@ function showLogin(){ $('login-screen').style.display='flex'; $('app').style.dis
 function showApp(){ $('login-screen').style.display='none'; $('app').style.display='block'; }
 function setSyncBadge(text){ var el=$('sync-status'); if(el) el.textContent=text; }
 
+var LOGIN_IN_PROGRESS = false;
+function setLoginLoading(isLoading){
+  var btn = $('login-btn');
+  if(!btn) return;
+  btn.disabled = !!isLoading;
+  btn.textContent = isLoading ? 'Entrando...' : 'Entrar';
+}
+function showLoginError(msg){
+  var el = $('login-error');
+  if(el) el.textContent = msg || 'Erro ao entrar.';
+}
 function initAuthUI(){
   $('login-form').addEventListener('submit', function(e){
     e.preventDefault();
-    var email=$('login-email').value.trim(); var pass=$('login-password').value;
-    $('login-error').textContent=''; $('login-btn').disabled=true; $('login-btn').textContent='Entrando...';
-    auth.signInWithEmailAndPassword(email, pass).catch(function(err){
-      $('login-error').textContent = firebaseError(err);
-    }).finally(function(){ $('login-btn').disabled=false; $('login-btn').textContent='Entrar'; });
+    if(LOGIN_IN_PROGRESS) return;
+
+    var email=$('login-email').value.trim();
+    var pass=$('login-password').value;
+    if(!email || !pass){ showLoginError('Informe e-mail e senha.'); return; }
+
+    LOGIN_IN_PROGRESS = true;
+    showLoginError('');
+    setLoginLoading(true);
+
+    var finished = false;
+    var timeoutId = setTimeout(function(){
+      if(finished) return;
+      finished = true;
+      LOGIN_IN_PROGRESS = false;
+      setLoginLoading(false);
+      showLoginError('Login demorou demais. Verifique internet, e-mail/senha e domínio autorizado no Firebase Auth.');
+    }, 18000);
+
+    function endOk(){
+      if(finished) return;
+      finished = true;
+      clearTimeout(timeoutId);
+      LOGIN_IN_PROGRESS = false;
+      setLoginLoading(false);
+      // A abertura do app acontece no onAuthStateChanged.
+    }
+    function endErr(err){
+      if(finished) return;
+      finished = true;
+      clearTimeout(timeoutId);
+      LOGIN_IN_PROGRESS = false;
+      setLoginLoading(false);
+      showLoginError(firebaseError(err));
+      console.error('Erro no login Firebase:', err);
+    }
+
+    try {
+      auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(function(){ return auth.signInWithEmailAndPassword(email, pass); })
+        .then(endOk)
+        .catch(endErr);
+    } catch(err) {
+      endErr(err);
+    }
   });
 }
 function firebaseError(err){
   var code=err && err.code ? err.code : '';
   if(code.indexOf('wrong-password')>-1 || code.indexOf('invalid-credential')>-1) return 'E-mail ou senha incorretos.';
   if(code.indexOf('user-not-found')>-1) return 'Usuário não encontrado no Firebase.';
+  if(code.indexOf('too-many-requests')>-1) return 'Muitas tentativas. Aguarde um pouco e tente novamente.';
+  if(code.indexOf('unauthorized-domain')>-1) return 'Domínio não autorizado no Firebase Auth. Adicione seu domínio do GitHub Pages em Authentication > Settings > Authorized domains.';
+  if(code.indexOf('operation-not-allowed')>-1) return 'Login por e-mail/senha não está ativado no Firebase Authentication.';
   if(code.indexOf('network')>-1) return 'Falha de conexão. Tente novamente.';
-  return (err && err.message) ? err.message : 'Erro ao entrar.';
+  if(code.indexOf('invalid-email')>-1) return 'E-mail inválido.';
+  return (err && (err.code || err.message)) ? ((err.code ? err.code + ': ' : '') + (err.message || '')) : 'Erro ao entrar.';
 }
 
 function startAppForUser(user){
@@ -1684,8 +1739,26 @@ function wireOnce(){
 }
 
 function init(){
-  initAuthUI(); showLogin();
-  auth.onAuthStateChanged(function(user){ if(user) startAppForUser(user); else stopApp(); });
+  window.addEventListener('error', function(ev){
+    var msg = ev && ev.message ? ev.message : 'Erro inesperado no app.';
+    if($('login-screen') && $('login-screen').style.display !== 'none'){
+      showLoginError('Erro no carregamento: ' + msg);
+      setLoginLoading(false);
+      LOGIN_IN_PROGRESS = false;
+    }
+  });
+
+  initAuthUI();
+  showLogin();
+  auth.onAuthStateChanged(function(user){
+    if(user) startAppForUser(user);
+    else stopApp();
+  }, function(err){
+    showLogin();
+    showLoginError(firebaseError(err));
+    setLoginLoading(false);
+    LOGIN_IN_PROGRESS = false;
+  });
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 

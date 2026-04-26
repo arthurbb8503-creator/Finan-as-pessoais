@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -2783,14 +2783,3 @@ function init(){
       STATE.currentAppUser = null;
       document.getElementById('app').classList.remove('active');
       document.getElementById('auth-screen').classList.add('active');
-      setLoginLoading(false);
-    }
-  });
-}
-
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-else init();
-</script>
-
-</body>
-</html>

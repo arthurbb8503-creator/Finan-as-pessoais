@@ -773,6 +773,41 @@ button { cursor: pointer; user-select: none; }
   box-shadow: 0 8px 20px var(--accent-glow);
 }
 .center-action .nav-label { margin-top: 38px; }
+.nav.launch-active .center-action .ca-bubble { display: none; }
+.nav.launch-active .center-action .nav-label { margin-top: 0; }
+.nav.launch-active .center-action { padding-top: 6px; }
+
+.cat-edit-tools {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.cat-edit-tools .hint { font-size: 12px; color: var(--text-3); line-height: 1.35; }
+.cat-edit-toggle {
+  padding: 9px 12px;
+  border-radius: 999px;
+  background: var(--bg-elev-3);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.cat-edit-toggle.active { background: var(--warn); color: #1A1408; }
+.cat-emoji-input {
+  width: 50px;
+  text-align: center;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 8px;
+  color: var(--text);
+}
 
 .sheet-backdrop {
   position: fixed;
@@ -1188,7 +1223,7 @@ button { cursor: pointer; user-select: none; }
       </div>
 
       <div style="text-align:center;color:var(--text-3);font-size:11px;margin-top:24px;">
-        Finanças a Dois · Firebase v2 · <span id="sync-status">conectando…</span>
+        Finanças a Dois · Firebase v2.1 · <span id="sync-status">conectando…</span>
       </div>
     </div>
   </section>
@@ -1273,7 +1308,13 @@ button { cursor: pointer; user-select: none; }
   <h3>Categorias</h3>
   <p class="sub">Categorias criadas aqui sincronizam para os dois celulares</p>
 
+  <div class="cat-edit-tools">
+    <div class="hint">Edição de categorias padrão fica bloqueada para evitar apagar ou renomear sem querer.</div>
+    <button id="cats-edit-toggle" class="cat-edit-toggle">Editar padrão</button>
+  </div>
+
   <div style="display:flex;gap:6px;margin-bottom:14px;">
+    <input type="text" id="new-cat-icon" class="cat-emoji-input" placeholder="🙂" maxlength="4" aria-label="Emoji da categoria">
     <input type="text" id="new-cat-name" placeholder="Nova categoria" style="flex:1;background:var(--bg-elev-2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);">
     <select id="new-cat-type" style="background:var(--bg-elev-2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);">
       <option value="expense">Despesa</option>
@@ -1459,6 +1500,7 @@ var STATE = {
   currentAppUser: null,
   unsubscribers: [],
   syncReady: false,
+  catEditMode: false,
   lastTxSnapshot: null,
   draft: {
     type: 'expense',
@@ -1690,9 +1732,18 @@ function startFirestoreSync(user){
 }
 
 function mergeCategories(defaults, custom){
-  var out = defaults.slice();
+  var byId = {};
+  for (var c=0;c<custom.length;c++) byId[custom[c].id] = custom[c];
+  var out = [];
   var seen = {};
-  for (var i=0;i<out.length;i++) seen[out[i].id] = true;
+  for (var i=0;i<defaults.length;i++){
+    var base = defaults[i];
+    var override = byId[base.id];
+    seen[base.id] = true;
+    if (override && override.deletedAt) continue;
+    if (override) out.push(Object.assign({}, base, override, { builtin: true }));
+    else out.push(base);
+  }
   for (var j=0;j<custom.length;j++){
     if (!custom[j].deletedAt && !seen[custom[j].id]) out.push(custom[j]);
   }
@@ -2635,6 +2686,22 @@ function findTx(id){
 }
 
 function renderCategoriesSheet(){
+  var toggle = document.getElementById('cats-edit-toggle');
+  if (toggle){
+    toggle.textContent = STATE.catEditMode ? 'Concluir edição' : 'Editar padrão';
+    toggle.classList.toggle('active', !!STATE.catEditMode);
+  }
+  function upsertCategory(cat, patch){
+    var payload = Object.assign({
+      householdId: HOUSEHOLD_ID,
+      type: cat.type,
+      builtin: !!cat.builtin,
+      updatedAt: Date.now(),
+      deletedAt: null
+    }, patch);
+    collectionRef('categories').doc(cat.id).set(payload, { merge:true })
+      .catch(function(error){ toast('Erro na categoria: ' + error.code, 'error'); });
+  }
   function build(host, type){
     host.innerHTML = '';
     var cats = categoriesByType(type);
@@ -2642,26 +2709,45 @@ function renderCategoriesSheet(){
       (function(cat){
         var row = document.createElement('div');
         row.className = 'cat-list-row';
-        row.innerHTML = '<div>' + (cat.icon || '•') + ' ' + escapeHtml(cat.name) + (cat.builtin ? '<div style="font-size:10px;color:var(--text-3);margin-top:2px;">padrão</div>' : '') + '</div>';
+        var locked = cat.builtin && !STATE.catEditMode;
+        row.innerHTML = '<div>' + (cat.icon || '•') + ' ' + escapeHtml(cat.name) + (cat.builtin ? '<div style="font-size:10px;color:var(--text-3);margin-top:2px;">padrão' + (locked ? ' · bloqueada' : ' · em edição') + '</div>' : '') + '</div>';
         var actions = document.createElement('div');
         actions.className = 'cat-actions';
-        if (!cat.builtin){
+        if (!locked){
+          var em = document.createElement('button');
+          em.textContent = 'Emoji';
+          em.onclick = function(){
+            var newIcon = prompt('Emoji da categoria:', cat.icon || '•');
+            if (newIcon === null) return;
+            newIcon = newIcon.trim() || '•';
+            upsertCategory(cat, { icon:newIcon });
+          };
           var rn = document.createElement('button');
           rn.textContent = 'Renomear';
           rn.onclick = function(){
             var newName = prompt('Novo nome:', cat.name);
             if (!newName || !newName.trim()) return;
-            collectionRef('categories').doc(cat.id).set({ name:newName.trim(), updatedAt:Date.now() }, { merge:true });
+            upsertCategory(cat, { name:newName.trim(), icon:cat.icon || '•' });
           };
           var dl = document.createElement('button');
           dl.className = 'del';
           dl.textContent = 'Excluir';
           dl.onclick = function(){
-            confirmDialog('Excluir categoria?', 'Lançamentos antigos continuam com o ID, mas a categoria sai da lista.').then(function(ok){
+            var msg = cat.builtin
+              ? 'Esta é uma categoria padrão. Ela sairá da lista para os dois celulares, mas você pode recriá-la depois se quiser.'
+              : 'Lançamentos antigos continuam salvos, mas a categoria sai da lista.';
+            confirmDialog('Excluir categoria?', msg).then(function(ok){
               if (!ok) return;
-              collectionRef('categories').doc(cat.id).set({ deletedAt:Date.now(), updatedAt:Date.now() }, { merge:true });
+              collectionRef('categories').doc(cat.id).set({
+                householdId: HOUSEHOLD_ID,
+                type: cat.type,
+                builtin: !!cat.builtin,
+                deletedAt: Date.now(),
+                updatedAt: Date.now()
+              }, { merge:true }).catch(function(error){ toast('Erro ao excluir: ' + error.code, 'error'); });
             });
           };
+          actions.appendChild(em);
           actions.appendChild(rn);
           actions.appendChild(dl);
         }
@@ -2676,6 +2762,8 @@ function renderCategoriesSheet(){
 
 function addCategory(){
   var name = document.getElementById('new-cat-name').value.trim();
+  var iconInput = document.getElementById('new-cat-icon');
+  var icon = iconInput ? iconInput.value.trim() : '';
   var type = document.getElementById('new-cat-type').value;
   if (!name){ toast('Digite um nome', 'error'); return; }
   for (var i=0;i<STATE.categories.length;i++){
@@ -2689,12 +2777,13 @@ function addCategory(){
     name: name,
     type: type,
     builtin: false,
-    icon: '•',
+    icon: icon || '•',
     createdAt: Date.now(),
     updatedAt: Date.now(),
     deletedAt: null
   }).then(function(){
     document.getElementById('new-cat-name').value = '';
+    if (iconInput) iconInput.value = '';
     toast('Categoria criada', 'success');
   }).catch(function(error){ toast('Erro: ' + error.code, 'error'); });
 }
@@ -2820,6 +2909,8 @@ function navigate(screen){
   for (var i=0;i<screens.length;i++){
     document.getElementById('screen-' + screens[i]).classList.toggle('active', screens[i] === screen);
   }
+  var navEl = document.querySelector('.nav');
+  if (navEl) navEl.classList.toggle('launch-active', screen === 'launch');
   var navBtns = document.querySelectorAll('.nav-item');
   var activeIdx = 0;
   for (var b=0;b<navBtns.length;b++){
@@ -2960,7 +3051,7 @@ function wire(){
     (function(it){
       var act = it.getAttribute('data-action');
       it.onclick = function(){
-        if (act === 'manage-cats'){ renderCategoriesSheet(); openSheet('sheet-cats'); }
+        if (act === 'manage-cats'){ STATE.catEditMode = false; renderCategoriesSheet(); openSheet('sheet-cats'); }
         else if (act === 'historical'){ renderHistoricalSheet(); openSheet('sheet-historical'); }
         else if (act === 'export'){ exportData(); }
         else if (act === 'import'){ document.getElementById('import-file').click(); }
@@ -2972,6 +3063,15 @@ function wire(){
 
   document.getElementById('new-cat-add').onclick = addCategory;
   document.getElementById('hist-add').onclick = addHistoricalEntry;
+
+  var catsToggle = document.getElementById('cats-edit-toggle');
+  if (catsToggle){
+    catsToggle.onclick = function(){
+      STATE.catEditMode = !STATE.catEditMode;
+      renderCategoriesSheet();
+      toast(STATE.catEditMode ? 'Edição liberada' : 'Edição bloqueada', 'success');
+    };
+  }
 
   document.getElementById('import-file').onchange = function(e){
     var f = e.target.files[0];

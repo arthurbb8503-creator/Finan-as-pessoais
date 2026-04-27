@@ -659,20 +659,6 @@ button { cursor: pointer; user-select: none; }
   border-radius: var(--radius-md);
   margin-bottom: 7px;
 }
-.tx.scheduled {
-  opacity: 0.58;
-  border-style: dashed;
-}
-.tx.scheduled .tx-desc::after {
-  content: ' · programado';
-  color: var(--warn);
-  font-size: 11px;
-  font-family: var(--font-ui);
-  font-weight: 700;
-}
-.tx.scheduled .tx-amount {
-  color: var(--warn);
-}
 .tx-icon {
   width: 38px;
   height: 38px;
@@ -1600,30 +1586,6 @@ function parseDateLocal(s){
   var p = s.split('-');
   return new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10));
 }
-function monthStart(d){
-  return new Date(d.getFullYear(), d.getMonth(), 1);
-}
-function currentMonthStart(){
-  var n = new Date();
-  return new Date(n.getFullYear(), n.getMonth(), 1);
-}
-function addMonthsSafe(d, months){
-  // Seguro porque fixos/parcelados mensais só podem ser dia 1 a 28.
-  return new Date(d.getFullYear(), d.getMonth() + months, d.getDate());
-}
-function isScheduledTx(t){
-  return !!(t && (t.status === 'scheduled' || t.isPlanned === true));
-}
-function isRealizedTx(t){
-  if (!t || t.deletedAt) return false;
-  if (!isScheduledTx(t)) return true;
-  var d = parseDateLocal(t.date);
-  return monthStart(d).getTime() <= currentMonthStart().getTime();
-}
-function isFutureScheduledTx(t){
-  if (!t || t.deletedAt) return false;
-  return isScheduledTx(t) && !isRealizedTx(t);
-}
 function fmtBRL(n){
   if (n === null || n === undefined || isNaN(n)) n = 0;
   var sign = n < 0 ? '-' : '';
@@ -2268,8 +2230,6 @@ function makeTx(o){
     recurrenceGroupId: o.recurrenceGroupId || null,
     installmentIndex: o.installmentIndex || null,
     installmentTotal: o.installmentTotal || null,
-    status: o.status || 'realized',
-    isPlanned: o.status === 'scheduled',
     deletedAt: null
   };
 }
@@ -2332,7 +2292,9 @@ function saveDraftConfirmed(){
       return;
     }
 
-    // Lança o mês escolhido como realizado.
+    // Versão estável provisória:
+    // não materializa 12 meses para não bagunçar o resumo anual.
+    // A engine definitiva de regras fixas/programadas fica para a próxima versão.
     toAdd.push(makeTx({
       type: STATE.draft.type,
       amount: amount,
@@ -2341,53 +2303,17 @@ function saveDraftConfirmed(){
       userId: responsibleUserId,
       date: ymd(baseDate),
       recurrenceType: 'fixed',
-      recurrenceGroupId: groupId,
-      status: monthStart(baseDate).getTime() > currentMonthStart().getTime() ? 'scheduled' : 'realized'
-    }));
-
-    // Também deixa o próximo mês pré-lançado/programado, sem impactar ano/realizado ainda.
-    var nextFixedDate = addMonthsSafe(baseDate, 1);
-    toAdd.push(makeTx({
-      type: STATE.draft.type,
-      amount: amount,
-      description: description,
-      categoryId: categoryId,
-      userId: responsibleUserId,
-      date: ymd(nextFixedDate),
-      recurrenceType: 'fixed',
-      recurrenceGroupId: groupId,
-      status: 'scheduled'
+      recurrenceGroupId: groupId
     }));
   } else if (adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly'){
     var n = parseInt(adv.installments || 1, 10);
     if (n < 2) n = 2;
     if (n > 60) n = 60;
-
-    if (adv.recurrenceType === 'installment-monthly' && baseDate.getDate() > 28){
-      toast('Parcelado mensal só pode ser do dia 1 ao 28', 'error');
-      document.getElementById('btn-save').disabled = false;
-      return;
-    }
-
     for (var i=0;i<n;i++){
       var dt;
-      if (adv.recurrenceType === 'installment-monthly') dt = addMonthsSafe(baseDate, i);
+      if (adv.recurrenceType === 'installment-monthly') dt = new Date(baseDate.getFullYear(), baseDate.getMonth()+i, baseDate.getDate());
       else { dt = new Date(baseDate.getTime()); dt.setDate(dt.getDate()+i*7); }
-
-      var txStatus = monthStart(dt).getTime() > currentMonthStart().getTime() ? 'scheduled' : 'realized';
-      toAdd.push(makeTx({
-        type: STATE.draft.type,
-        amount: amount,
-        description: description + ' ' + (i+1) + '/' + n,
-        categoryId: categoryId,
-        userId: responsibleUserId,
-        date: ymd(dt),
-        recurrenceType: adv.recurrenceType,
-        recurrenceGroupId: groupId,
-        installmentIndex: i+1,
-        installmentTotal: n,
-        status: txStatus
-      }));
+      toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description + ' ' + (i+1) + '/' + n, categoryId: categoryId, userId: responsibleUserId, date: ymd(dt), recurrenceType: adv.recurrenceType, recurrenceGroupId: groupId, installmentIndex: i+1, installmentTotal: n }));
     }
   } else if (adv.recurrenceType === 'recurring-weekly'){
     for (var w=0;w<12;w++){
@@ -2553,7 +2479,6 @@ function totalsForMonth(date, userFilter){
   var list = txInMonth(date, userFilter);
   var income=0, expense=0;
   for (var i=0;i<list.length;i++){
-    if (!isRealizedTx(list[i])) continue;
     if (list[i].type === 'income') income += Number(list[i].amount) || 0;
     else if (!isNeutralCategory(list[i].categoryId)) expense += Number(list[i].amount) || 0;
   }
@@ -2589,31 +2514,20 @@ function renderMonth(){
   renderMonthUserFilter();
 
   var list = txInMonth(d, userFilter);
-  var income=0, expense=0, plannedExpense=0, incomeCount=0, expenseCount=0, plannedCount=0, byCat={};
+  var income=0, expense=0, incomeCount=0, expenseCount=0, byCat={};
 
   for (var i=0;i<list.length;i++){
     var t = list[i];
-    var amountNum = Number(t.amount)||0;
-    var realized = isRealizedTx(t);
-
-    if (t.type === 'income'){
-      if (realized){ income += amountNum; incomeCount++; }
-    }
+    if (t.type === 'income'){ income += Number(t.amount)||0; incomeCount++; }
     else if (!isNeutralCategory(t.categoryId)){
-      if (realized){
-        expense += amountNum;
-        expenseCount++;
-        byCat[t.categoryId] = (byCat[t.categoryId] || 0) + amountNum;
-      } else if (isFutureScheduledTx(t)){
-        plannedExpense += amountNum;
-        plannedCount++;
-      }
+      expense += Number(t.amount)||0; expenseCount++;
+      byCat[t.categoryId] = (byCat[t.categoryId] || 0) + (Number(t.amount)||0);
     }
   }
 
   var balance = income - expense;
   var limit = getMonthlyExpenseLimit();
-  var availableLimit = limit - expense - plannedExpense;
+  var availableLimit = limit - expense;
   var limitLabel = document.querySelector('#screen-month .balance-card .b-label');
   if (limitLabel) limitLabel.textContent = 'Disponível do limite mensal';
   var balEl = document.getElementById('m-balance');
@@ -2624,12 +2538,12 @@ function renderMonth(){
   var prev = totalsForMonth(previousMonthDate(d), userFilter);
   var prevLabel = monthShort(previousMonthDate(d).getMonth());
   var balCompare = document.getElementById('m-balance-compare');
-  balCompare.innerHTML = 'Limite ' + fmtBRL(limit) + ' − realizadas ' + fmtBRL(expense) + ' − programadas ' + fmtBRL(plannedExpense) + '<br><span style="color:var(--text-3);">Saldo real do mês: ' + fmtBRL(balance) + '</span>';
+  balCompare.innerHTML = 'Limite ' + fmtBRL(limit) + ' − despesas ' + fmtBRL(expense) + '<br><span style="color:var(--text-3);">Saldo real do mês: ' + fmtBRL(balance) + '</span>';
 
   document.getElementById('m-income').textContent = fmtBRLShort(income);
   document.getElementById('m-expense').textContent = fmtBRLShort(expense);
   document.getElementById('m-income-sub').textContent = incomeCount + (incomeCount === 1 ? ' lançamento' : ' lançamentos');
-  document.getElementById('m-expense-sub').textContent = expenseCount + (expenseCount === 1 ? ' realizada' : ' realizadas') + (plannedCount ? ' · ' + plannedCount + ' programada(s)' : '');
+  document.getElementById('m-expense-sub').textContent = expenseCount + (expenseCount === 1 ? ' lançamento' : ' lançamentos');
 
   var prevIn = deltaPercent(income, prev.income);
   document.getElementById('m-income-compare').innerHTML = prev.income ? '<span class="' + (prevIn.dir === 'up' ? 'delta-up' : 'delta-down') + '">' + Math.abs(prevIn.pct).toFixed(0) + '%</span> vs ' + prevLabel : '';
@@ -2644,24 +2558,13 @@ function renderMonth(){
   if (isCurrent){
     var dayNum = today.getDate();
     var totalDays = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
-    var variableExpense = 0;
-    for (var pe=0; pe<list.length; pe++){
-      var tt = list[pe];
-      if (!isRealizedTx(tt)) continue;
-      if (tt.type !== 'expense') continue;
-      if (isNeutralCategory(tt.categoryId)) continue;
-      if (tt.recurrenceType === 'fixed') continue;
-      variableExpense += Number(tt.amount)||0;
-    }
-    var variableDays = Math.max(1, dayNum);
-    var dailyAvg = variableExpense / variableDays;
-    var projectedVariable = dailyAvg * totalDays;
-    var projectedExpense = expense - variableExpense + projectedVariable + plannedExpense;
+    var dailyAvg = dayNum > 0 ? expense / dayNum : 0;
+    var projectedExpense = dailyAvg * totalDays;
     var projectedBalance = income - projectedExpense;
     projEl.textContent = fmtBRL(projectedBalance);
     projEl.style.color = projectedBalance >= 0 ? 'var(--accent)' : 'var(--danger)';
     projSub.textContent = '· dia ' + dayNum + '/' + totalDays;
-    projDetail.textContent = 'Despesa projetada: ' + fmtBRL(projectedExpense) + ' · média variável ' + fmtBRL(dailyAvg) + '/dia';
+    projDetail.textContent = 'Despesa projetada: ' + fmtBRL(projectedExpense) + ' · média ' + fmtBRL(dailyAvg) + '/dia';
   } else {
     projEl.textContent = fmtBRL(balance);
     projEl.style.color = balance >= 0 ? 'var(--accent)' : 'var(--danger)';
@@ -2721,7 +2624,7 @@ function renderYear(){
 
   for (var i=0;i<STATE.transactions.length;i++){
     var t = STATE.transactions[i];
-    if (t.deletedAt || !isRealizedTx(t)) continue;
+    if (t.deletedAt) continue;
     var d = parseDateLocal(t.date);
     if (d.getFullYear() !== year) continue;
     var bm = byMonth[d.getMonth()];
@@ -2814,9 +2717,8 @@ function buildTxRow(t, withDate){
   var icon = cat && cat.icon ? cat.icon : (t.type === 'income' ? '↗' : '↘');
   var sign = t.type === 'income' ? '+' : '';
   var div = document.createElement('div');
-  div.className = 'tx' + (isFutureScheduledTx(t) ? ' scheduled' : '');
-  var plannedLabel = isFutureScheduledTx(t) ? ' · programado' : '';
-  div.innerHTML = '<div class="tx-icon ' + t.type + '">' + icon + '</div><div class="tx-body"><div class="tx-desc">' + escapeHtml(t.description) + '</div><div class="tx-meta">' + (cat ? escapeHtml(cat.name) : '—') + ' · ' + (withDate ? dateStr + ' · ' : '') + '<span class="who-mini' + userDotClass(t.userId) + '"></span>' + escapeHtml(u.name) + (t.recurrenceType && t.recurrenceType !== 'single' ? ' · ' + recurrenceLabel(t) : '') + plannedLabel + '</div></div><div class="tx-amount ' + t.type + ' num">' + sign + fmtBRL(Number(t.amount)||0) + '</div>';
+  div.className = 'tx';
+  div.innerHTML = '<div class="tx-icon ' + t.type + '">' + icon + '</div><div class="tx-body"><div class="tx-desc">' + escapeHtml(t.description) + '</div><div class="tx-meta">' + (cat ? escapeHtml(cat.name) : '—') + ' · ' + (withDate ? dateStr + ' · ' : '') + '<span class="who-mini' + userDotClass(t.userId) + '"></span>' + escapeHtml(u.name) + (t.recurrenceType && t.recurrenceType !== 'single' ? ' · ' + recurrenceLabel(t) : '') + '</div></div><div class="tx-amount ' + t.type + ' num">' + sign + fmtBRL(Number(t.amount)||0) + '</div>';
   div.onclick = function(){ openEditTx(t); };
   return div;
 }

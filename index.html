@@ -2285,10 +2285,26 @@ function saveDraftConfirmed(){
   if (adv.recurrenceType === 'single'){
     toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description, categoryId: categoryId, userId: responsibleUserId, date: ymd(baseDate), recurrenceType: 'single' }));
   } else if (adv.recurrenceType === 'fixed'){
-    for (var m=0;m<12;m++){
-      var d = new Date(baseDate.getFullYear(), baseDate.getMonth()+m, baseDate.getDate());
-      toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description, categoryId: categoryId, userId: responsibleUserId, date: ymd(d), recurrenceType: 'fixed', recurrenceGroupId: groupId }));
+    var day = baseDate.getDate();
+    if (day > 28){
+      toast('Fixo mensal só pode ser do dia 1 ao 28', 'error');
+      document.getElementById('btn-save').disabled = false;
+      return;
     }
+
+    // Versão estável provisória:
+    // não materializa 12 meses para não bagunçar o resumo anual.
+    // A engine definitiva de regras fixas/programadas fica para a próxima versão.
+    toAdd.push(makeTx({
+      type: STATE.draft.type,
+      amount: amount,
+      description: description,
+      categoryId: categoryId,
+      userId: responsibleUserId,
+      date: ymd(baseDate),
+      recurrenceType: 'fixed',
+      recurrenceGroupId: groupId
+    }));
   } else if (adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly'){
     var n = parseInt(adv.installments || 1, 10);
     if (n < 2) n = 2;
@@ -2316,7 +2332,11 @@ function saveDraftConfirmed(){
 
   batch.commit()
     .then(function(){
-      return recordLearning(description, categoryId, STATE.draft.type);
+      // Aprendizado/autocomplete é secundário.
+      // Se a regra do Firestore negar learnedDescriptions, o lançamento já salvo não deve parecer erro.
+      return recordLearning(description, categoryId, STATE.draft.type).catch(function(err){
+        console.warn('Aprendizado não salvo:', err && err.code ? err.code : err);
+      });
     })
     .then(function(){
       STATE.lastTxSnapshot = {

@@ -1323,7 +1323,7 @@ button { cursor: pointer; user-select: none; }
   <div class="form-row" id="adv-installments-wrap" style="display:none;">
     <label>Número de parcelas</label>
     <input type="number" id="adv-installments" min="2" max="60" value="3">
-    <div style="font-size:11px;color:var(--text-3);margin-top:6px;">O valor digitado é o valor de cada parcela.</div>
+    <div style="font-size:11px;color:var(--text-3);margin-top:6px;">O valor digitado é o <strong>valor total da compra</strong>. O app divide automaticamente pelo número de parcelas.</div>
   </div>
 
   <div style="font-size:12px;color:var(--text-3);margin-top:12px;padding:12px;background:var(--bg-elev-2);border-radius:12px;" id="adv-explanation">
@@ -2062,10 +2062,21 @@ function renderAdvancedSummary(){
     return;
   }
   box.style.display = 'grid';
+
+  var n = adv.installments || 0;
+  var installmentLabel = '';
+  if ((adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly') && n > 1){
+    if (STATE.draft.amount > 0){
+      installmentLabel = n + 'x de ' + fmtBRL((STATE.draft.amount / 100) / n);
+    } else {
+      installmentLabel = n + 'x';
+    }
+  }
+
   var labels = {
     'fixed': 'Fixo mensal',
-    'installment-monthly': 'Parcelado ' + (adv.installments || 0) + 'x mensal',
-    'installment-weekly': 'Parcelado ' + (adv.installments || 0) + 'x semanal',
+    'installment-monthly': installmentLabel ? ('Parcelado mensal · ' + installmentLabel) : ('Parcelado ' + n + 'x mensal'),
+    'installment-weekly': installmentLabel ? ('Parcelado semanal · ' + installmentLabel) : ('Parcelado ' + n + 'x semanal'),
     'recurring-weekly': 'Recorrente semanal'
   };
   document.getElementById('adv-summary-text').textContent = labels[adv.recurrenceType] || '—';
@@ -2309,11 +2320,40 @@ function saveDraftConfirmed(){
     var n = parseInt(adv.installments || 1, 10);
     if (n < 2) n = 2;
     if (n > 60) n = 60;
+
+    if (adv.recurrenceType === 'installment-monthly' && baseDate.getDate() > 28){
+      toast('Parcelado mensal só pode ser do dia 1 ao 28', 'error');
+      document.getElementById('btn-save').disabled = false;
+      return;
+    }
+
+    // A partir da v1.6.0, o valor digitado é o VALOR TOTAL da compra.
+    // Ex.: R$ 1.200 em 12x cria 12 parcelas de R$ 100.
+    // Distribui centavos para que a soma das parcelas bata exatamente com o total.
+    var totalCents = STATE.draft.amount;
+    var baseInstallmentCents = Math.floor(totalCents / n);
+    var centsRemainder = totalCents - (baseInstallmentCents * n);
+
     for (var i=0;i<n;i++){
       var dt;
       if (adv.recurrenceType === 'installment-monthly') dt = new Date(baseDate.getFullYear(), baseDate.getMonth()+i, baseDate.getDate());
       else { dt = new Date(baseDate.getTime()); dt.setDate(dt.getDate()+i*7); }
-      toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description + ' ' + (i+1) + '/' + n, categoryId: categoryId, userId: responsibleUserId, date: ymd(dt), recurrenceType: adv.recurrenceType, recurrenceGroupId: groupId, installmentIndex: i+1, installmentTotal: n }));
+
+      var installmentCents = baseInstallmentCents + (i < centsRemainder ? 1 : 0);
+      var installmentAmount = installmentCents / 100;
+
+      toAdd.push(makeTx({
+        type: STATE.draft.type,
+        amount: installmentAmount,
+        description: description + ' ' + (i+1) + '/' + n,
+        categoryId: categoryId,
+        userId: responsibleUserId,
+        date: ymd(dt),
+        recurrenceType: adv.recurrenceType,
+        recurrenceGroupId: groupId,
+        installmentIndex: i+1,
+        installmentTotal: n
+      }));
     }
   } else if (adv.recurrenceType === 'recurring-weekly'){
     for (var w=0;w<12;w++){
@@ -2348,7 +2388,13 @@ function saveDraftConfirmed(){
       };
       resetDraft();
       refreshDuplicateButton();
-      toast(toAdd.length === 1 ? 'Salvo · ' + fmtBRL(amount) : toAdd.length + ' lançamentos criados', 'success');
+      var successMsg;
+      if ((adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly') && toAdd.length > 1){
+        successMsg = 'Compra parcelada · ' + toAdd.length + 'x de ' + fmtBRL(toAdd[0].amount);
+      } else {
+        successMsg = toAdd.length === 1 ? 'Salvo · ' + fmtBRL(amount) : toAdd.length + ' lançamentos criados';
+      }
+      toast(successMsg, 'success');
     })
     .catch(function(error){
       console.error(error);
@@ -2456,9 +2502,9 @@ function buildAdvancedSheet(){
 function updateAdvExplanation(r){
   var txt = {
     'single': 'Lançamento único, registrado apenas na data escolhida.',
-    'fixed': 'Gera 12 lançamentos mensais a partir da data escolhida.',
-    'installment-monthly': 'Cada parcela vira um lançamento separado. O valor digitado é o valor de UMA parcela.',
-    'installment-weekly': 'Cada parcela vira um lançamento separado, com 7 dias entre cada uma.',
+    'fixed': 'Fixo mensal seguro: só pode ser lançado entre os dias 1 e 28. Nesta versão, cria apenas o lançamento do mês escolhido.',
+    'installment-monthly': 'Parcelado mensal: o valor digitado é o TOTAL da compra. O app divide pelo número de parcelas. Permitido apenas entre os dias 1 e 28.',
+    'installment-weekly': 'Parcelado semanal: o valor digitado é o TOTAL da compra. O app divide pelo número de parcelas, com 7 dias entre elas.',
     'recurring-weekly': 'Gera 12 ocorrências semanais a partir da data.'
   }[r] || '';
   document.getElementById('adv-explanation').textContent = txt;

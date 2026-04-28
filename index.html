@@ -79,6 +79,7 @@ button { cursor: pointer; user-select: none; }
 .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
 
 #boot-screen {
+  pointer-events: none;
   min-height: 100vh;
   max-width: 520px;
   margin: 0 auto;
@@ -88,7 +89,7 @@ button { cursor: pointer; user-select: none; }
   justify-content: center;
   text-align: center;
 }
-#boot-screen.active { display: flex; }
+#boot-screen.active { display: flex; pointer-events: auto; }
 .boot-logo {
   font-family: var(--font-display);
   font-size: 44px;
@@ -110,6 +111,7 @@ button { cursor: pointer; user-select: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 #auth-screen {
+  pointer-events: none;
   min-height: 100vh;
   max-width: 520px;
   margin: 0 auto;
@@ -117,7 +119,7 @@ button { cursor: pointer; user-select: none; }
   display: none;
 }
 
-#auth-screen.active { display: block; }
+#auth-screen.active { display: block; pointer-events: auto; }
 
 .auth-card {
   margin-top: 42px;
@@ -1720,6 +1722,8 @@ var STATE = {
   currentAppUser: null,
   unsubscribers: [],
   syncReady: false,
+  syncStartingUid: null,
+  syncStartedUid: null,
   catEditMode: false,
   saveConfirmOpen: false,
   monthlyLimitDefault: 14000,
@@ -1865,6 +1869,12 @@ function clearSync(){
 }
 
 function startFirestoreSync(user){
+  if (!user || !user.uid) return;
+  var appNode = document.getElementById('app');
+  if (STATE.syncStartedUid === user.uid && appNode && appNode.classList.contains('active')) {
+    return;
+  }
+  STATE.syncStartingUid = user.uid;
   clearSync();
 
   var appUser = UID_TO_USER[user.uid];
@@ -1881,9 +1891,21 @@ function startFirestoreSync(user){
 
   window.__FAD_BOOT_DONE = true;
   if (window.__FAD_BOOT_FAILSAFE) clearTimeout(window.__FAD_BOOT_FAILSAFE);
-  document.getElementById('boot-screen').classList.remove('active');
-  document.getElementById('auth-screen').classList.remove('active');
-  document.getElementById('app').classList.add('active');
+  var bootNode = document.getElementById('boot-screen');
+  var authNode = document.getElementById('auth-screen');
+  var appNode2 = document.getElementById('app');
+  if (bootNode) bootNode.classList.remove('active');
+  if (authNode) authNode.classList.remove('active');
+  if (appNode2) appNode2.classList.add('active');
+  document.body.style.overflow = ';
+  var bd = document.getElementById('backdrop');
+  if (bd) bd.classList.remove('show');
+  var cf = document.getElementById('confirm');
+  if (cf) cf.classList.remove('show');
+  var sheets = document.querySelectorAll('.sheet.show');
+  for (var shi=0; shi<sheets.length; shi++) sheets[shi].classList.remove('show');
+  STATE.syncStartedUid = user.uid;
+  STATE.syncStartingUid = null;
   setLoginLoading(false);
   document.getElementById('header-sub-launch').textContent = 'Lançando como ' + appUser.name;
   document.getElementById('settings-user').textContent = appUser.name + ' · ' + user.email;
@@ -3347,9 +3369,11 @@ function wire(){
     }, 7000);
     auth.signInWithEmailAndPassword(email, pass).then(function(cred){
       clearTimeout(loginTimeout);
-      if (cred && cred.user) {
-        startFirestoreSync(cred.user);
-      }
+      setTimeout(function(){
+        var appEl = document.getElementById('app');
+        if (appEl && appEl.classList.contains('active')) return;
+        if (cred && cred.user) startFirestoreSync(cred.user);
+      }, 600);
     }).catch(function(error){
       clearTimeout(loginTimeout);
       console.error(error);

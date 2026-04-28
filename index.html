@@ -1047,6 +1047,22 @@ button { cursor: pointer; user-select: none; }
 .fig-potential { color: var(--text-3); font-size: 10px; }
 @media (max-width: 380px) { .fig-day-summary { grid-template-columns: 1fr; } }
 
+
+
+/* ============ COMPROMISSOS PROGRAMADOS ============ */
+.scheduled-list { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+.scheduled-row { background:var(--bg-elev-2); border:1px solid var(--border); border-radius:14px; padding:12px; display:flex; gap:10px; align-items:flex-start; justify-content:space-between; }
+.scheduled-row.paused { opacity:.55; }
+.scheduled-main { min-width:0; flex:1; }
+.scheduled-title { font-size:14px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.scheduled-meta { font-size:11px; color:var(--text-3); margin-top:4px; line-height:1.35; }
+.scheduled-actions { display:flex; gap:6px; flex-shrink:0; }
+.scheduled-actions button { padding:7px 9px; border-radius:9px; background:var(--bg-elev-3); color:var(--text-2); font-size:11px; font-weight:800; }
+.scheduled-actions button.danger { color:var(--danger); background:var(--danger-dim); }
+.scheduled-hint { font-size:12px; color:var(--text-3); line-height:1.45; background:var(--bg-elev-2); border:1px solid var(--border); border-radius:14px; padding:12px; margin-bottom:14px; }
+.scheduled-two { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media (max-width:360px){ .scheduled-two{grid-template-columns:1fr;} .scheduled-row{flex-direction:column;} .scheduled-actions{width:100%;} .scheduled-actions button{flex:1;} }
+
 </style>
 </head>
 
@@ -1288,6 +1304,11 @@ button { cursor: pointer; user-select: none; }
           <div class="si-body"><div class="si-title">Limite mensal de gastos</div><div class="si-sub" id="settings-monthly-limit">R$ 14.000,00 por mês</div></div>
           <div>›</div>
         </div>
+        <div class="settings-item" data-action="scheduled-commitments">
+          <div class="si-icon">📌</div>
+          <div class="si-body"><div class="si-title">Compromissos programados</div><div class="si-sub">Despesas fixas cadastradas</div></div>
+          <div>›</div>
+        </div>
         <div class="settings-item" data-action="figurinhas-copa">
           <div class="si-icon">🏆</div>
           <div class="si-body"><div class="si-title">Figurinhas Copa</div><div class="si-sub">Estoque, projeção e lucro da operação</div></div>
@@ -1467,6 +1488,55 @@ button { cursor: pointer; user-select: none; }
   <button class="save-btn" id="monthly-limit-save" style="margin:18px 0 0;width:100%;padding:14px;">Salvar limite</button>
 </div>
 
+
+<div class="sheet" id="sheet-scheduled-commitments">
+  <div class="sheet-handle"></div>
+  <h3>Compromissos programados</h3>
+  <p class="sub">Base inicial para fixos e parcelas. Nesta etapa, isso ainda não altera saldo mensal nem anual.</p>
+
+  <div class="scheduled-hint">
+    Primeiro passo seguro: cadastrar regras de despesas fixas. Depois vamos usar essas regras para mostrar programados no mês, sem bagunçar o realizado.
+  </div>
+
+  <input type="hidden" id="fixed-rule-id">
+
+  <div class="form-row">
+    <label>Descrição</label>
+    <input type="text" id="fixed-rule-desc" placeholder="Ex: Aluguel, escola, doação">
+  </div>
+
+  <div class="scheduled-two">
+    <div class="form-row">
+      <label>Valor mensal</label>
+      <input type="number" id="fixed-rule-amount" step="0.01" inputmode="decimal" placeholder="0,00">
+    </div>
+    <div class="form-row">
+      <label>Dia do mês</label>
+      <input type="number" id="fixed-rule-day" min="1" max="28" step="1" inputmode="numeric" placeholder="1 a 28">
+    </div>
+  </div>
+
+  <div class="scheduled-two">
+    <div class="form-row">
+      <label>Categoria</label>
+      <select id="fixed-rule-category"></select>
+    </div>
+    <div class="form-row">
+      <label>Quem</label>
+      <select id="fixed-rule-user">
+        <option value="arthur">Arthur</option>
+        <option value="jordana">Jordana</option>
+        <option value="ambos">Ambos</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="save-btn" id="fixed-rule-save" style="margin:8px 0 0;width:100%;padding:14px;">Salvar despesa fixa</button>
+  <button class="more-options-btn" id="fixed-rule-new" style="margin:10px 0 0;width:100%;">Limpar formulário</button>
+
+  <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-3);margin:20px 0 8px;font-weight:800;">Fixos cadastrados</div>
+  <div id="fixed-rules-list" class="scheduled-list"></div>
+</div>
 
 <div class="sheet" id="sheet-figurinhas-copa">
   <div class="sheet-handle"></div>
@@ -1669,6 +1739,7 @@ var STATE = {
   learned: [],
   historical: [],
   budgets: [],
+  fixedRules: [],
   figurinhas: [],
   currentFirebaseUser: null,
   currentAppUser: null,
@@ -1903,6 +1974,20 @@ function startFirestoreSync(user){
       renderSettingsMeta();
       reRenderCurrentScreen();
     }, handleSnapshotError('budgets'))
+  );
+
+  // Base dos compromissos programados. Não bloqueia o login se a regra ainda não foi publicada.
+  STATE.unsubscribers.push(
+    householdQuery('fixedRules').onSnapshot(function(snapshot){
+      STATE.fixedRules = snapshot.docs.map(mapDoc);
+      if (document.getElementById('sheet-scheduled-commitments') && document.getElementById('sheet-scheduled-commitments').classList.contains('show')) {
+        renderScheduledCommitmentsSheet();
+      }
+    }, function(error){
+      console.error('Erro Firestore em fixedRules', error);
+      var host = document.getElementById('fixed-rules-list');
+      if (host) host.innerHTML = '<div style="color:var(--danger);font-size:13px;">Sem permissão para ler fixedRules. Atualize as regras do Firebase.</div>';
+    })
   );
 
   // Módulo extra. Não bloqueia o login caso a regra do Firestore ainda não tenha sido atualizada.
@@ -3209,6 +3294,147 @@ function addHistoricalEntry(){
 /* =========================================================
    FIGURINHAS COPA 2026 — V2.5 PROJEÇÃO INTELIGENTE
    ========================================================= */
+
+/* =========================================================
+   COMPROMISSOS PROGRAMADOS — PASSO 1
+   Nesta etapa: cadastra regras fixas, sem alterar saldos.
+   ========================================================= */
+function fixedRuleById(id){
+  for (var i=0;i<STATE.fixedRules.length;i++) if (STATE.fixedRules[i].id === id) return STATE.fixedRules[i];
+  return null;
+}
+function resetFixedRuleForm(){
+  var id = document.getElementById('fixed-rule-id');
+  var desc = document.getElementById('fixed-rule-desc');
+  var amount = document.getElementById('fixed-rule-amount');
+  var day = document.getElementById('fixed-rule-day');
+  var user = document.getElementById('fixed-rule-user');
+  if (id) id.value = '';
+  if (desc) desc.value = '';
+  if (amount) amount.value = '';
+  if (day) day.value = '1';
+  if (user) user.value = STATE.currentAppUser ? STATE.currentAppUser.id : 'arthur';
+  var saveBtn = document.getElementById('fixed-rule-save');
+  if (saveBtn) saveBtn.textContent = 'Salvar despesa fixa';
+}
+function populateFixedRuleCategories(selectedId){
+  var sel = document.getElementById('fixed-rule-category');
+  if (!sel) return;
+  sel.innerHTML = '';
+  var cats = categoriesByType('expense');
+  for (var i=0;i<cats.length;i++){
+    if (isNeutralCategory(cats[i].id)) continue;
+    var opt = document.createElement('option');
+    opt.value = cats[i].id;
+    opt.textContent = (cats[i].icon ? cats[i].icon + ' ' : '') + cats[i].name;
+    if (selectedId && selectedId === cats[i].id) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+function editFixedRule(id){
+  var r = fixedRuleById(id);
+  if (!r) return;
+  document.getElementById('fixed-rule-id').value = r.id || '';
+  document.getElementById('fixed-rule-desc').value = r.description || '';
+  document.getElementById('fixed-rule-amount').value = r.amount || '';
+  document.getElementById('fixed-rule-day').value = r.dayOfMonth || 1;
+  populateFixedRuleCategories(r.categoryId);
+  document.getElementById('fixed-rule-user').value = r.userId || 'ambos';
+  var saveBtn = document.getElementById('fixed-rule-save');
+  if (saveBtn) saveBtn.textContent = 'Salvar alteração';
+  toast('Regra carregada para edição', 'success');
+}
+function renderScheduledCommitmentsSheet(){
+  populateFixedRuleCategories(document.getElementById('fixed-rule-category') ? document.getElementById('fixed-rule-category').value : null);
+  var host = document.getElementById('fixed-rules-list');
+  if (!host) return;
+  var list = STATE.fixedRules.slice().sort(function(a,b){
+    if (!!a.active !== !!b.active) return a.active ? -1 : 1;
+    return (a.dayOfMonth || 99) - (b.dayOfMonth || 99) || String(a.description||'').localeCompare(String(b.description||''));
+  });
+  if (!list.length){
+    host.innerHTML = '<div style="color:var(--text-3);font-size:13px;padding:8px 0;">Nenhuma despesa fixa cadastrada ainda.</div>';
+    return;
+  }
+  host.innerHTML = '';
+  for (var i=0;i<list.length;i++){
+    (function(r){
+      var cat = categoryById(r.categoryId);
+      var row = document.createElement('div');
+      row.className = 'scheduled-row' + (r.active === false ? ' paused' : '');
+      row.innerHTML =
+        '<div class="scheduled-main">' +
+          '<div class="scheduled-title">' + escapeHtml(r.description || 'Despesa fixa') + '</div>' +
+          '<div class="scheduled-meta">' + fmtBRL(r.amount || 0) + ' · dia ' + (r.dayOfMonth || '—') + ' · ' + escapeHtml(cat ? cat.name : 'Sem categoria') + '<br>Responsável: ' + escapeHtml(responsibleName(r.userId || 'ambos')) + ' · ' + (r.active === false ? 'pausada' : 'ativa') + '</div>' +
+        '</div>' +
+        '<div class="scheduled-actions">' +
+          '<button type="button" data-edit="'+escapeHtml(r.id)+'">Editar</button>' +
+          '<button type="button" data-toggle="'+escapeHtml(r.id)+'">' + (r.active === false ? 'Ativar' : 'Pausar') + '</button>' +
+          '<button type="button" class="danger" data-delete="'+escapeHtml(r.id)+'">Excluir</button>' +
+        '</div>';
+      host.appendChild(row);
+    })(list[i]);
+  }
+}
+function openScheduledCommitmentsSheet(){
+  resetFixedRuleForm();
+  renderScheduledCommitmentsSheet();
+  openSheet('sheet-scheduled-commitments');
+}
+function saveFixedRule(){
+  var desc = (document.getElementById('fixed-rule-desc').value || '').trim();
+  var amount = parseFloat(document.getElementById('fixed-rule-amount').value);
+  var day = parseInt(document.getElementById('fixed-rule-day').value, 10);
+  var categoryId = document.getElementById('fixed-rule-category').value;
+  var userId = document.getElementById('fixed-rule-user').value || 'ambos';
+  var id = document.getElementById('fixed-rule-id').value || uid('fix');
+  var existing = fixedRuleById(id);
+
+  if (!desc){ toast('Digite a descrição da despesa fixa', 'error'); return; }
+  if (isNaN(amount) || amount <= 0){ toast('Digite um valor válido', 'error'); return; }
+  if (isNaN(day) || day < 1 || day > 28){ toast('O dia precisa estar entre 1 e 28', 'error'); return; }
+  if (!categoryId){ toast('Escolha uma categoria', 'error'); return; }
+
+  var payload = {
+    householdId: HOUSEHOLD_ID,
+    type: 'expense',
+    ruleType: 'fixed-monthly',
+    description: desc,
+    amount: amount,
+    categoryId: categoryId,
+    dayOfMonth: day,
+    userId: userId,
+    active: existing && existing.active === false ? false : true,
+    createdAt: existing && existing.createdAt ? existing.createdAt : Date.now(),
+    updatedAt: Date.now()
+  };
+
+  var btn = document.getElementById('fixed-rule-save');
+  if (btn) btn.disabled = true;
+  collectionRef('fixedRules').doc(id).set(payload, { merge:true }).then(function(){
+    toast('Despesa fixa salva', 'success');
+    resetFixedRuleForm();
+    renderScheduledCommitmentsSheet();
+  }).catch(function(error){
+    toast('Erro ao salvar fixo: ' + error.code, 'error');
+  }).finally(function(){ if (btn) btn.disabled = false; });
+}
+function toggleFixedRule(id){
+  var r = fixedRuleById(id);
+  if (!r) return;
+  collectionRef('fixedRules').doc(id).set({ active: !(r.active !== false), updatedAt: Date.now(), householdId: HOUSEHOLD_ID }, { merge:true })
+    .then(function(){ toast((r.active === false ? 'Regra ativada' : 'Regra pausada'), 'success'); })
+    .catch(function(error){ toast('Erro ao alterar fixo: ' + error.code, 'error'); });
+}
+function deleteFixedRule(id){
+  confirmDialog('Excluir despesa fixa?', 'Isso remove apenas a regra cadastrada. Não altera lançamentos já existentes.').then(function(ok){
+    if (!ok) return;
+    collectionRef('fixedRules').doc(id).delete()
+      .then(function(){ toast('Despesa fixa excluída', 'success'); resetFixedRuleForm(); })
+      .catch(function(error){ toast('Erro ao excluir fixo: ' + error.code, 'error'); });
+  });
+}
+
 var FIG_COPA = {
   initialStock: 4000,
   unitCost: 5.25,
@@ -3352,6 +3578,7 @@ function exportData(){
     learned: STATE.learned,
     historical: STATE.historical,
     budgets: STATE.budgets,
+    fixedRules: STATE.fixedRules,
     figurinhasCopa: STATE.figurinhas
   };
   var blob = new Blob([JSON.stringify(dump, null, 2)], { type:'application/json' });
@@ -3389,6 +3616,7 @@ function importData(file){
         addMany('learnedDescriptions', data.learned);
         addMany('historicalSummaries', data.historical);
         addMany('budgets', data.budgets);
+        addMany('fixedRules', data.fixedRules);
         addMany('figurinhasCopa', data.figurinhasCopa);
         batch.commit().then(function(){ toast('Backup importado', 'success'); }).catch(function(error){ toast('Erro ao importar: ' + error.code, 'error'); });
       });
@@ -3548,6 +3776,7 @@ function wire(){
         if (act === 'manage-cats'){ STATE.catEditMode = false; renderCategoriesSheet(); openSheet('sheet-cats'); }
         else if (act === 'historical'){ renderHistoricalSheet(); openSheet('sheet-historical'); }
         else if (act === 'monthly-limit'){ openMonthlyLimitSheet(); }
+        else if (act === 'scheduled-commitments'){ openScheduledCommitmentsSheet(); }
         else if (act === 'figurinhas-copa'){ openFigurinhasCopaSheet(); }
         else if (act === 'export'){ exportData(); }
         else if (act === 'import'){ document.getElementById('import-file').click(); }
@@ -3555,6 +3784,22 @@ function wire(){
         else if (act === 'reset-local'){ localStorage.clear(); toast('Cache local limpo', 'success'); }
       };
     })(items[s]);
+  }
+
+  var fixedSave = document.getElementById('fixed-rule-save');
+  if (fixedSave) fixedSave.onclick = saveFixedRule;
+  var fixedNew = document.getElementById('fixed-rule-new');
+  if (fixedNew) fixedNew.onclick = resetFixedRuleForm;
+  var fixedList = document.getElementById('fixed-rules-list');
+  if (fixedList) {
+    fixedList.onclick = function(e){
+      var edit = e.target.getAttribute('data-edit');
+      var toggle = e.target.getAttribute('data-toggle');
+      var del = e.target.getAttribute('data-delete');
+      if (edit) editFixedRule(edit);
+      else if (toggle) toggleFixedRule(toggle);
+      else if (del) deleteFixedRule(del);
+    };
   }
 
   document.getElementById('new-cat-add').onclick = addCategory;

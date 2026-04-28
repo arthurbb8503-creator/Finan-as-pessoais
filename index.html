@@ -659,6 +659,52 @@ button { cursor: pointer; user-select: none; }
   border-radius: var(--radius-md);
   margin-bottom: 7px;
 }
+
+.tx.programmed {
+  opacity: 0.62;
+  border-style: dashed;
+}
+.programmed-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255,210,122,0.10);
+  border: 1px solid rgba(255,210,122,0.26);
+  color: var(--warn);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.programmed-panel {
+  margin: 0 20px 16px;
+  background: rgba(255,210,122,0.07);
+  border: 1px solid rgba(255,210,122,0.22);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+.programmed-panel .pp-title {
+  color: var(--warn);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  margin-bottom: 6px;
+}
+.programmed-panel .pp-main {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+.programmed-panel .pp-sub {
+  color: var(--text-3);
+  font-size: 12px;
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
 .tx-icon {
   width: 38px;
   height: 38px;
@@ -1047,22 +1093,6 @@ button { cursor: pointer; user-select: none; }
 .fig-potential { color: var(--text-3); font-size: 10px; }
 @media (max-width: 380px) { .fig-day-summary { grid-template-columns: 1fr; } }
 
-
-
-/* ============ COMPROMISSOS PROGRAMADOS ============ */
-.scheduled-list { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
-.scheduled-row { background:var(--bg-elev-2); border:1px solid var(--border); border-radius:14px; padding:12px; display:flex; gap:10px; align-items:flex-start; justify-content:space-between; }
-.scheduled-row.paused { opacity:.55; }
-.scheduled-main { min-width:0; flex:1; }
-.scheduled-title { font-size:14px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.scheduled-meta { font-size:11px; color:var(--text-3); margin-top:4px; line-height:1.35; }
-.scheduled-actions { display:flex; gap:6px; flex-shrink:0; }
-.scheduled-actions button { padding:7px 9px; border-radius:9px; background:var(--bg-elev-3); color:var(--text-2); font-size:11px; font-weight:800; }
-.scheduled-actions button.danger { color:var(--danger); background:var(--danger-dim); }
-.scheduled-hint { font-size:12px; color:var(--text-3); line-height:1.45; background:var(--bg-elev-2); border:1px solid var(--border); border-radius:14px; padding:12px; margin-bottom:14px; }
-.scheduled-two { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-@media (max-width:360px){ .scheduled-two{grid-template-columns:1fr;} .scheduled-row{flex-direction:column;} .scheduled-actions{width:100%;} .scheduled-actions button{flex:1;} }
-
 </style>
 </head>
 
@@ -1304,11 +1334,6 @@ button { cursor: pointer; user-select: none; }
           <div class="si-body"><div class="si-title">Limite mensal de gastos</div><div class="si-sub" id="settings-monthly-limit">R$ 14.000,00 por mês</div></div>
           <div>›</div>
         </div>
-        <div class="settings-item" data-action="scheduled-commitments">
-          <div class="si-icon">📌</div>
-          <div class="si-body"><div class="si-title">Compromissos programados</div><div class="si-sub">Despesas fixas cadastradas</div></div>
-          <div>›</div>
-        </div>
         <div class="settings-item" data-action="figurinhas-copa">
           <div class="si-icon">🏆</div>
           <div class="si-body"><div class="si-title">Figurinhas Copa</div><div class="si-sub">Estoque, projeção e lucro da operação</div></div>
@@ -1488,55 +1513,6 @@ button { cursor: pointer; user-select: none; }
   <button class="save-btn" id="monthly-limit-save" style="margin:18px 0 0;width:100%;padding:14px;">Salvar limite</button>
 </div>
 
-
-<div class="sheet" id="sheet-scheduled-commitments">
-  <div class="sheet-handle"></div>
-  <h3>Compromissos programados</h3>
-  <p class="sub">Base inicial para fixos e parcelas. Nesta etapa, isso ainda não altera saldo mensal nem anual.</p>
-
-  <div class="scheduled-hint">
-    Primeiro passo seguro: cadastrar regras de despesas fixas. Depois vamos usar essas regras para mostrar programados no mês, sem bagunçar o realizado.
-  </div>
-
-  <input type="hidden" id="fixed-rule-id">
-
-  <div class="form-row">
-    <label>Descrição</label>
-    <input type="text" id="fixed-rule-desc" placeholder="Ex: Aluguel, escola, doação">
-  </div>
-
-  <div class="scheduled-two">
-    <div class="form-row">
-      <label>Valor mensal</label>
-      <input type="number" id="fixed-rule-amount" step="0.01" inputmode="decimal" placeholder="0,00">
-    </div>
-    <div class="form-row">
-      <label>Dia do mês</label>
-      <input type="number" id="fixed-rule-day" min="1" max="28" step="1" inputmode="numeric" placeholder="1 a 28">
-    </div>
-  </div>
-
-  <div class="scheduled-two">
-    <div class="form-row">
-      <label>Categoria</label>
-      <select id="fixed-rule-category"></select>
-    </div>
-    <div class="form-row">
-      <label>Quem</label>
-      <select id="fixed-rule-user">
-        <option value="arthur">Arthur</option>
-        <option value="jordana">Jordana</option>
-        <option value="ambos">Ambos</option>
-      </select>
-    </div>
-  </div>
-
-  <button class="save-btn" id="fixed-rule-save" style="margin:8px 0 0;width:100%;padding:14px;">Salvar despesa fixa</button>
-  <button class="more-options-btn" id="fixed-rule-new" style="margin:10px 0 0;width:100%;">Limpar formulário</button>
-
-  <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-3);margin:20px 0 8px;font-weight:800;">Fixos cadastrados</div>
-  <div id="fixed-rules-list" class="scheduled-list"></div>
-</div>
 
 <div class="sheet" id="sheet-figurinhas-copa">
   <div class="sheet-handle"></div>
@@ -1739,7 +1715,6 @@ var STATE = {
   learned: [],
   historical: [],
   budgets: [],
-  fixedRules: [],
   figurinhas: [],
   currentFirebaseUser: null,
   currentAppUser: null,
@@ -1974,20 +1949,6 @@ function startFirestoreSync(user){
       renderSettingsMeta();
       reRenderCurrentScreen();
     }, handleSnapshotError('budgets'))
-  );
-
-  // Base dos compromissos programados. Não bloqueia o login se a regra ainda não foi publicada.
-  STATE.unsubscribers.push(
-    householdQuery('fixedRules').onSnapshot(function(snapshot){
-      STATE.fixedRules = snapshot.docs.map(mapDoc);
-      if (document.getElementById('sheet-scheduled-commitments') && document.getElementById('sheet-scheduled-commitments').classList.contains('show')) {
-        renderScheduledCommitmentsSheet();
-      }
-    }, function(error){
-      console.error('Erro Firestore em fixedRules', error);
-      var host = document.getElementById('fixed-rules-list');
-      if (host) host.innerHTML = '<div style="color:var(--danger);font-size:13px;">Sem permissão para ler fixedRules. Atualize as regras do Firebase.</div>';
-    })
   );
 
   // Módulo extra. Não bloqueia o login caso a regra do Firestore ainda não tenha sido atualizada.
@@ -2281,243 +2242,7 @@ function renderAdvancedSummary(){
   var adv = STATE.draft.advanced;
   var box = document.getElementById('advanced-summary');
   if (adv.recurrenceType === 'single'){
-    box.style.display = 'none';
-    return;
-  }
-  box.style.display = 'grid';
-
-  var n = adv.installments || 0;
-  var installmentLabel = '';
-  if ((adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly') && n > 1){
-    if (STATE.draft.amount > 0){
-      installmentLabel = n + 'x de ' + fmtBRL((STATE.draft.amount / 100) / n);
-    } else {
-      installmentLabel = n + 'x';
-    }
-  }
-
-  var labels = {
-    'fixed': 'Fixo mensal',
-    'installment-monthly': installmentLabel ? ('Parcelado mensal · ' + installmentLabel) : ('Parcelado ' + n + 'x mensal'),
-    'installment-weekly': installmentLabel ? ('Parcelado semanal · ' + installmentLabel) : ('Parcelado ' + n + 'x semanal'),
-    'recurring-weekly': 'Recorrente semanal'
-  };
-  document.getElementById('adv-summary-text').textContent = labels[adv.recurrenceType] || '—';
-}
-
-function renderLastValues(desc){
-  var host = document.getElementById('last-values');
-  host.innerHTML = '';
-  var vals = lastValuesFor(desc);
-  for (var i=0;i<vals.length;i++){
-    (function(v){
-      var c = document.createElement('button');
-      c.className = 'chip-mini';
-      c.textContent = fmtBRL(v);
-      c.onclick = function(){
-        STATE.draft.amount = Math.round(v * 100);
-        renderAmount();
-      };
-      host.appendChild(c);
-    })(vals[i]);
-  }
-}
-
-function renderSuggestions(query){
-  var host = document.getElementById('suggestions');
-  var s = searchSuggestions(query, 5);
-  if (!s.length){
-    host.classList.remove('show');
-    host.innerHTML = '';
-    return;
-  }
-  host.innerHTML = '';
-  for (var i=0;i<s.length;i++){
-    (function(item){
-      var cat = categoryById(item.topCategoryId);
-      var el = document.createElement('div');
-      el.className = 'suggestion';
-      el.innerHTML = '<div class="s-desc">' + escapeHtml(item.description) + '</div><div class="s-meta">' + (cat ? escapeHtml(cat.name) : '—') + ' · ' + (item.count || 1) + 'x</div>';
-      el.onclick = function(){
-        document.getElementById('desc-input').value = item.description;
-        STATE.draft.description = item.description;
-        if (item.lastType && item.lastType !== STATE.draft.type){
-          STATE.draft.type = item.lastType;
-          renderLaunchType();
-        }
-        if (item.topCategoryId){
-          var c = categoryById(item.topCategoryId);
-          if (c && c.type === STATE.draft.type){
-            STATE.draft.categoryId = item.topCategoryId;
-            STATE.draft.categoryAutoSuggested = true;
-          }
-        }
-        host.classList.remove('show');
-        renderCategoryChips();
-        renderLastValues(item.description);
-      };
-      host.appendChild(el);
-    })(s[i]);
-  }
-  host.classList.add('show');
-}
-
-function getQuickShortcuts(){
-  var userId = STATE.draft.userId || (STATE.currentAppUser && STATE.currentAppUser.id);
-  var counts = {};
-  for (var i=0;i<STATE.transactions.length;i++){
-    var t = STATE.transactions[i];
-    if (!t || t.deletedAt) continue;
-    if (userId && userId !== 'ambos' && t.userId !== userId) continue;
-    if (!t.description) continue;
-    var key = normalize(t.description).replace(/\s+\d+\/\d+$/,'');
-    if (!key) continue;
-    if (!counts[key]) counts[key] = { description: t.description.replace(/\s+\d+\/\d+$/,''), categoryId: t.categoryId, type: t.type, count: 0, last: 0 };
-    counts[key].count++;
-    counts[key].last = Math.max(counts[key].last, Number(t.createdAt) || 0);
-  }
-  var arr = [];
-  for (var k in counts) arr.push(counts[k]);
-  arr.sort(function(a,b){ return (b.count - a.count) || (b.last - a.last); });
-
-  if (arr.length < 4){
-    var learned = STATE.learned.slice().sort(function(a,b){ return (b.count||0) - (a.count||0); });
-    for (var j=0;j<learned.length && arr.length<4;j++){
-      var L = learned[j];
-      var exists = false;
-      for (var e=0;e<arr.length;e++) if (normalize(arr[e].description) === normalize(L.description)) exists = true;
-      if (!exists && L.description){
-        arr.push({ description: L.description, categoryId: L.topCategoryId, type: L.lastType || STATE.draft.type, count: L.count || 1, last: L.lastUsedAt || 0 });
-      }
-    }
-  }
-  return arr.slice(0,4);
-}
-
-function renderQuickShortcuts(){
-  var host = document.getElementById('quick-row');
-  if (!host) return;
-  host.innerHTML = '';
-  var items = getQuickShortcuts();
-  if (!items.length){ host.style.display = 'none'; return; }
-  host.style.display = 'flex';
-  for (var i=0;i<items.length;i++){
-    (function(item){
-      var b = document.createElement('button');
-      b.className = 'quick-chip';
-      b.textContent = item.description;
-      b.title = item.description;
-      b.onclick = function(){
-        STATE.draft.description = item.description;
-        if (item.type) STATE.draft.type = item.type;
-        if (item.categoryId){
-          var c = categoryById(item.categoryId);
-          if (c && c.type === STATE.draft.type){
-            STATE.draft.categoryId = item.categoryId;
-            STATE.draft.categoryAutoSuggested = true;
-          }
-        }
-        document.getElementById('desc-input').value = STATE.draft.description;
-        renderLaunchType();
-        renderCategoryChips();
-        renderLastValues(STATE.draft.description);
-      };
-      host.appendChild(b);
-    })(items[i]);
-  }
-}
-
-function renderLaunch(){
-  renderQuickShortcuts();
-  renderLaunchType();
-  renderAmount();
-  renderCategoryChips();
-  renderMeta();
-  renderAdvancedSummary();
-  document.getElementById('desc-input').value = STATE.draft.description || '';
-}
-
-function keypadHandler(key){
-  if (key === 'clear') STATE.draft.amount = 0;
-  else if (key === 'del') STATE.draft.amount = Math.floor(STATE.draft.amount / 10);
-  else {
-    var d = parseInt(key, 10);
-    if (isNaN(d)) return;
-    if (STATE.draft.amount >= 99999999) return;
-    STATE.draft.amount = STATE.draft.amount * 10 + d;
-  }
-  renderAmount();
-}
-
-function makeTx(o){
-  return {
-    householdId: HOUSEHOLD_ID,
-    type: o.type,
-    amount: Number(o.amount),
-    description: o.description,
-    categoryId: o.categoryId,
-    userId: o.userId,
-    date: o.date,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    recurrenceType: o.recurrenceType || 'single',
-    recurrenceGroupId: o.recurrenceGroupId || null,
-    installmentIndex: o.installmentIndex || null,
-    installmentTotal: o.installmentTotal || null,
-    deletedAt: null
-  };
-}
-
-function saveDraft(){
-  if (!STATE.currentAppUser){ toast('Faça login novamente', 'error'); return; }
-  if (STATE.draft.amount === 0){ toast('Digite o valor', 'error'); return; }
-  if (STATE.saveConfirmOpen) return;
-
-  var amount = STATE.draft.amount / 100;
-  var description = (STATE.draft.description || '').trim();
-  if (!description) description = STATE.draft.type === 'expense' ? 'Despesa' : 'Receita';
-
-  var dup = findRecentPossibleDuplicate(amount, description);
-  if (dup){
-    STATE.saveConfirmOpen = true;
-    confirmDialog(
-      'Salvar valor repetido?',
-      'O último lançamento também foi de ' + fmtBRL(amount) + '. Confirme para evitar duplicidade.',
-      { okText:'Salvar mesmo assim', safe:true }
-    ).then(function(ok){
-      STATE.saveConfirmOpen = false;
-      if (ok) saveDraftConfirmed();
-    });
-    return;
-  }
-
-  saveDraftConfirmed();
-}
-
-function saveDraftConfirmed(){
-  if (!STATE.currentAppUser){ toast('Faça login novamente', 'error'); return; }
-  if (STATE.draft.amount === 0){ toast('Digite o valor', 'error'); return; }
-
-  var amount = STATE.draft.amount / 100;
-  var description = (STATE.draft.description || '').trim();
-  if (!description) description = STATE.draft.type === 'expense' ? 'Despesa' : 'Receita';
-
-  var cat = categoryById(STATE.draft.categoryId);
-  if (!cat || cat.type !== STATE.draft.type){
-    var suggestId = suggestCategoryFromDesc(description, STATE.draft.type);
-    if (suggestId) cat = categoryById(suggestId);
-    if (!cat || cat.type !== STATE.draft.type) cat = defaultCategoryFor(STATE.draft.type);
-  }
-  var categoryId = cat ? cat.id : null;
-
-  var baseDate = parseDateLocal(STATE.draft.date);
-  var adv = STATE.draft.advanced;
-  var groupId = adv.recurrenceType !== 'single' ? uid('grp') : null;
-  var toAdd = [];
-  var responsibleUserId = STATE.draft.userId || STATE.currentAppUser.id;
-
-  if (adv.recurrenceType === 'single'){
-    toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description, categoryId: categoryId, userId: responsibleUserId, date: ymd(baseDate), recurrenceType: 'single' }));
+    toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description, categoryId: categoryId, userId: responsibleUserId, date: ymd(baseDate), recurrenceType: 'single', paymentStatus: 'realized' }));
   } else if (adv.recurrenceType === 'fixed'){
     var day = baseDate.getDate();
     if (day > 28){
@@ -2526,18 +2251,35 @@ function saveDraftConfirmed(){
       return;
     }
 
-    // Versão estável provisória:
-    // não materializa 12 meses para não bagunçar o resumo anual.
-    // A engine definitiva de regras fixas/programadas fica para a próxima versão.
+    var baseYmd = ymd(baseDate);
     toAdd.push(makeTx({
       type: STATE.draft.type,
       amount: amount,
       description: description,
       categoryId: categoryId,
       userId: responsibleUserId,
-      date: ymd(baseDate),
+      date: baseYmd,
       recurrenceType: 'fixed',
-      recurrenceGroupId: groupId
+      recurrenceGroupId: groupId,
+      paymentStatus: isCurrentOrPastMonth(baseYmd) ? 'realized' : 'programmed',
+      programmed: !isCurrentOrPastMonth(baseYmd)
+    }));
+
+    // Próximo mês entra como pré-lançado/programado para visualização futura,
+    // sem virar despesa realizada antes do mês começar.
+    var nextFixed = new Date(baseDate.getFullYear(), baseDate.getMonth()+1, baseDate.getDate());
+    var nextYmd = ymd(nextFixed);
+    toAdd.push(makeTx({
+      type: STATE.draft.type,
+      amount: amount,
+      description: description,
+      categoryId: categoryId,
+      userId: responsibleUserId,
+      date: nextYmd,
+      recurrenceType: 'fixed',
+      recurrenceGroupId: groupId,
+      paymentStatus: 'programmed',
+      programmed: true
     }));
   } else if (adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly'){
     var n = parseInt(adv.installments || 1, 10);
@@ -2550,9 +2292,8 @@ function saveDraftConfirmed(){
       return;
     }
 
-    // A partir da v1.6.0, o valor digitado é o VALOR TOTAL da compra.
+    // O valor digitado é o VALOR TOTAL da compra.
     // Ex.: R$ 1.200 em 12x cria 12 parcelas de R$ 100.
-    // Distribui centavos para que a soma das parcelas bata exatamente com o total.
     var totalCents = STATE.draft.amount;
     var baseInstallmentCents = Math.floor(totalCents / n);
     var centsRemainder = totalCents - (baseInstallmentCents * n);
@@ -2564,6 +2305,8 @@ function saveDraftConfirmed(){
 
       var installmentCents = baseInstallmentCents + (i < centsRemainder ? 1 : 0);
       var installmentAmount = installmentCents / 100;
+      var instYmd = ymd(dt);
+      var instProgrammed = !isCurrentOrPastMonth(instYmd);
 
       toAdd.push(makeTx({
         type: STATE.draft.type,
@@ -2571,17 +2314,21 @@ function saveDraftConfirmed(){
         description: description + ' ' + (i+1) + '/' + n,
         categoryId: categoryId,
         userId: responsibleUserId,
-        date: ymd(dt),
+        date: instYmd,
         recurrenceType: adv.recurrenceType,
         recurrenceGroupId: groupId,
         installmentIndex: i+1,
-        installmentTotal: n
+        installmentTotal: n,
+        paymentStatus: instProgrammed ? 'programmed' : 'realized',
+        programmed: instProgrammed
       }));
     }
   } else if (adv.recurrenceType === 'recurring-weekly'){
     for (var w=0;w<12;w++){
       var d2 = new Date(baseDate.getTime()); d2.setDate(d2.getDate()+w*7);
-      toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description, categoryId: categoryId, userId: responsibleUserId, date: ymd(d2), recurrenceType: 'recurring-weekly', recurrenceGroupId: groupId }));
+      var recYmd = ymd(d2);
+      var recProgrammed = !isCurrentOrPastMonth(recYmd);
+      toAdd.push(makeTx({ type: STATE.draft.type, amount: amount, description: description, categoryId: categoryId, userId: responsibleUserId, date: recYmd, recurrenceType: 'recurring-weekly', recurrenceGroupId: groupId, paymentStatus: recProgrammed ? 'programmed' : 'realized', programmed: recProgrammed }));
     }
   }
 
@@ -2612,7 +2359,9 @@ function saveDraftConfirmed(){
       resetDraft();
       refreshDuplicateButton();
       var successMsg;
-      if ((adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly') && toAdd.length > 1){
+      if (adv.recurrenceType === 'fixed'){
+        successMsg = 'Fixo salvo · mês atual + próximo programado';
+      } else if ((adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly') && toAdd.length > 1){
         successMsg = 'Compra parcelada · ' + toAdd.length + 'x de ' + fmtBRL(toAdd[0].amount);
       } else {
         successMsg = toAdd.length === 1 ? 'Salvo · ' + fmtBRL(amount) : toAdd.length + ' lançamentos criados';
@@ -2725,12 +2474,41 @@ function buildAdvancedSheet(){
 function updateAdvExplanation(r){
   var txt = {
     'single': 'Lançamento único, registrado apenas na data escolhida.',
-    'fixed': 'Fixo mensal seguro: só pode ser lançado entre os dias 1 e 28. Nesta versão, cria apenas o lançamento do mês escolhido.',
-    'installment-monthly': 'Parcelado mensal: o valor digitado é o TOTAL da compra. O app divide pelo número de parcelas. Permitido apenas entre os dias 1 e 28.',
+    'fixed': 'Fixo mensal: só pode ser lançado entre os dias 1 e 28. Cria o lançamento do mês escolhido e uma prévia programada para o mês seguinte.',
+    'installment-monthly': 'Parcelado mensal: o valor digitado é o TOTAL da compra. O app divide pelo número de parcelas e marca parcelas futuras como programadas.',
     'installment-weekly': 'Parcelado semanal: o valor digitado é o TOTAL da compra. O app divide pelo número de parcelas, com 7 dias entre elas.',
     'recurring-weekly': 'Gera 12 ocorrências semanais a partir da data.'
   }[r] || '';
   document.getElementById('adv-explanation').textContent = txt;
+}
+
+
+function monthKeyFromDateObj(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1); }
+function monthKeyFromYmd(dateStr){ var d = parseDateLocal(dateStr); return monthKeyFromDateObj(d); }
+function currentMonthKey(){ return monthKeyFromDateObj(new Date()); }
+function isCurrentOrPastMonth(dateStr){ return monthKeyFromYmd(dateStr) <= currentMonthKey(); }
+function isTxProgrammed(t){ return !!(t && (t.paymentStatus === 'programmed' || t.programmed)); }
+function isTxFinanciallyRealized(t){
+  if (!isTxProgrammed(t)) return true;
+  // Programados passam a sensibilizar quando o mês do lançamento começa.
+  return isCurrentOrPastMonth(t.date);
+}
+function isTxStillProgrammed(t){ return isTxProgrammed(t) && !isTxFinanciallyRealized(t); }
+function txExpenseValue(t){
+  if (!t || t.type !== 'expense') return 0;
+  if (isNeutralCategory(t.categoryId)) return 0;
+  return Number(t.amount) || 0;
+}
+function programmedSummaryForMonth(list){
+  var amount = 0, count = 0;
+  for (var i=0;i<list.length;i++){
+    if (isTxStillProgrammed(list[i])){
+      var v = txExpenseValue(list[i]);
+      amount += v;
+      if (v > 0) count++;
+    }
+  }
+  return { amount: amount, count: count };
 }
 
 function txInMonth(date, userFilter){
@@ -2746,12 +2524,16 @@ function txInMonth(date, userFilter){
 
 function totalsForMonth(date, userFilter){
   var list = txInMonth(date, userFilter);
-  var income=0, expense=0;
+  var income=0, expense=0, programmedExpense=0;
   for (var i=0;i<list.length;i++){
+    if (isTxStillProgrammed(list[i])){
+      programmedExpense += txExpenseValue(list[i]);
+      continue;
+    }
     if (list[i].type === 'income') income += Number(list[i].amount) || 0;
     else if (!isNeutralCategory(list[i].categoryId)) expense += Number(list[i].amount) || 0;
   }
-  return { income: income, expense: expense, balance: income - expense };
+  return { income: income, expense: expense, programmedExpense: programmedExpense, balance: income - expense };
 }
 function previousMonthDate(date){ return new Date(date.getFullYear(), date.getMonth()-1, 1); }
 function deltaPercent(current, previous){
@@ -2784,9 +2566,11 @@ function renderMonth(){
 
   var list = txInMonth(d, userFilter);
   var income=0, expense=0, incomeCount=0, expenseCount=0, byCat={};
+  var programmed = programmedSummaryForMonth(list);
 
   for (var i=0;i<list.length;i++){
     var t = list[i];
+    if (isTxStillProgrammed(t)) continue;
     if (t.type === 'income'){ income += Number(t.amount)||0; incomeCount++; }
     else if (!isNeutralCategory(t.categoryId)){
       expense += Number(t.amount)||0; expenseCount++;
@@ -2796,7 +2580,8 @@ function renderMonth(){
 
   var balance = income - expense;
   var limit = getMonthlyExpenseLimit();
-  var availableLimit = limit - expense;
+  var committedExpense = expense + programmed.amount;
+  var availableLimit = limit - committedExpense;
   var limitLabel = document.querySelector('#screen-month .balance-card .b-label');
   if (limitLabel) limitLabel.textContent = 'Disponível do limite mensal';
   var balEl = document.getElementById('m-balance');
@@ -2807,17 +2592,26 @@ function renderMonth(){
   var prev = totalsForMonth(previousMonthDate(d), userFilter);
   var prevLabel = monthShort(previousMonthDate(d).getMonth());
   var balCompare = document.getElementById('m-balance-compare');
-  balCompare.innerHTML = 'Limite ' + fmtBRL(limit) + ' − despesas ' + fmtBRL(expense) + '<br><span style="color:var(--text-3);">Saldo real do mês: ' + fmtBRL(balance) + '</span>';
+  balCompare.innerHTML = 'Limite ' + fmtBRL(limit) + ' − realizadas ' + fmtBRL(expense) + ' − programadas ' + fmtBRL(programmed.amount) + '<br><span style="color:var(--text-3);">Saldo real do mês: ' + fmtBRL(balance) + '</span>';
 
   document.getElementById('m-income').textContent = fmtBRLShort(income);
   document.getElementById('m-expense').textContent = fmtBRLShort(expense);
   document.getElementById('m-income-sub').textContent = incomeCount + (incomeCount === 1 ? ' lançamento' : ' lançamentos');
-  document.getElementById('m-expense-sub').textContent = expenseCount + (expenseCount === 1 ? ' lançamento' : ' lançamentos');
+  document.getElementById('m-expense-sub').textContent = expenseCount + (expenseCount === 1 ? ' realizado' : ' realizados') + (programmed.count ? ' · ' + programmed.count + ' programado(s)' : '');
 
   var prevIn = deltaPercent(income, prev.income);
   document.getElementById('m-income-compare').innerHTML = prev.income ? '<span class="' + (prevIn.dir === 'up' ? 'delta-up' : 'delta-down') + '">' + Math.abs(prevIn.pct).toFixed(0) + '%</span> vs ' + prevLabel : '';
   var prevEx = deltaPercent(expense, prev.expense);
   document.getElementById('m-expense-compare').innerHTML = prev.expense ? '<span class="' + (prevEx.dir === 'up' ? 'delta-down' : 'delta-up') + '">' + Math.abs(prevEx.pct).toFixed(0) + '%</span> vs ' + prevLabel : '';
+
+  var alertHost = document.getElementById('m-alert-host');
+  if (alertHost){
+    if (programmed.amount > 0){
+      alertHost.innerHTML = '<div class="programmed-panel"><div class="pp-title">Compromissos programados</div><div class="pp-main">' + fmtBRL(programmed.amount) + ' previstos neste mês</div><div class="pp-sub">Entram no limite mensal, mas ficam separados do que já foi realizado. Quando o mês iniciar, passam a sensibilizar como realizados automaticamente.</div></div>';
+    } else {
+      alertHost.innerHTML = '';
+    }
+  }
 
   var today = new Date();
   var isCurrent = today.getFullYear() === d.getFullYear() && today.getMonth() === d.getMonth();
@@ -2827,18 +2621,30 @@ function renderMonth(){
   if (isCurrent){
     var dayNum = today.getDate();
     var totalDays = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
-    var dailyAvg = dayNum > 0 ? expense / dayNum : 0;
-    var projectedExpense = dailyAvg * totalDays;
+    var variableExpense = 0;
+    var variableDays = Math.max(1, dayNum - 1);
+    for (var ve=0; ve<list.length; ve++){
+      var vt = list[ve];
+      if (isTxStillProgrammed(vt)) continue;
+      if (vt.type !== 'expense' || isNeutralCategory(vt.categoryId)) continue;
+      if (vt.recurrenceType === 'fixed' || (vt.recurrenceType || '').indexOf('installment') === 0) continue;
+      var vtd = parseDateLocal(vt.date);
+      if (vtd.getDate() >= 2) variableExpense += Number(vt.amount) || 0;
+    }
+    var dailyAvg = variableExpense / variableDays;
+    var projectedVariableRest = dailyAvg * Math.max(0, totalDays - dayNum);
+    var projectedExpense = expense + programmed.amount + projectedVariableRest;
     var projectedBalance = income - projectedExpense;
     projEl.textContent = fmtBRL(projectedBalance);
     projEl.style.color = projectedBalance >= 0 ? 'var(--accent)' : 'var(--danger)';
     projSub.textContent = '· dia ' + dayNum + '/' + totalDays;
-    projDetail.textContent = 'Despesa projetada: ' + fmtBRL(projectedExpense) + ' · média ' + fmtBRL(dailyAvg) + '/dia';
+    projDetail.textContent = 'Despesa projetada: ' + fmtBRL(projectedExpense) + ' · média variável ' + fmtBRL(dailyAvg) + '/dia';
   } else {
-    projEl.textContent = fmtBRL(balance);
-    projEl.style.color = balance >= 0 ? 'var(--accent)' : 'var(--danger)';
-    projSub.textContent = '· fechado';
-    projDetail.textContent = 'Mês finalizado · ' + list.length + ' lançamentos';
+    var projectedClosed = income - expense - programmed.amount;
+    projEl.textContent = fmtBRL(projectedClosed);
+    projEl.style.color = projectedClosed >= 0 ? 'var(--accent)' : 'var(--danger)';
+    projSub.textContent = programmed.amount > 0 ? '· com programados' : '· fechado';
+    projDetail.textContent = 'Realizado: ' + fmtBRL(expense) + (programmed.amount ? ' · programado: ' + fmtBRL(programmed.amount) : '');
   }
 
   renderCategoryPanel(byCat, expense);
@@ -2871,7 +2677,7 @@ function renderCategoryPanel(byCat, expense){
 }
 
 function renderTopAndRecent(list){
-  var top = list.filter(function(t){ return t.type === 'expense'; }).slice().sort(function(a,b){ return Number(b.amount)-Number(a.amount); }).slice(0,5);
+  var top = list.filter(function(t){ return t.type === 'expense' && !isTxStillProgrammed(t); }).slice().sort(function(a,b){ return Number(b.amount)-Number(a.amount); }).slice(0,5);
   var topHost = document.getElementById('m-top');
   topHost.innerHTML = top.length ? '' : '<div style="color:var(--text-3);font-size:13px;padding:8px 0;">—</div>';
   for (var i=0;i<top.length;i++) topHost.appendChild(buildTxRow(top[i], false));
@@ -2897,6 +2703,7 @@ function renderYear(){
     var d = parseDateLocal(t.date);
     if (d.getFullYear() !== year) continue;
     var bm = byMonth[d.getMonth()];
+    if (!isTxFinanciallyRealized(t)) continue;
     if (t.type === 'income') bm.income += Number(t.amount)||0;
     else if (!isNeutralCategory(t.categoryId)) bm.expense += Number(t.amount)||0;
     bm.count++;
@@ -2985,12 +2792,17 @@ function buildTxRow(t, withDate){
   var dateStr = pad(dt.getDate()) + '/' + pad(dt.getMonth()+1);
   var icon = cat && cat.icon ? cat.icon : (t.type === 'income' ? '↗' : '↘');
   var sign = t.type === 'income' ? '+' : '';
+  var isProgrammed = isTxStillProgrammed(t);
   var div = document.createElement('div');
-  div.className = 'tx';
-  div.innerHTML = '<div class="tx-icon ' + t.type + '">' + icon + '</div><div class="tx-body"><div class="tx-desc">' + escapeHtml(t.description) + '</div><div class="tx-meta">' + (cat ? escapeHtml(cat.name) : '—') + ' · ' + (withDate ? dateStr + ' · ' : '') + '<span class="who-mini' + userDotClass(t.userId) + '"></span>' + escapeHtml(u.name) + (t.recurrenceType && t.recurrenceType !== 'single' ? ' · ' + recurrenceLabel(t) : '') + '</div></div><div class="tx-amount ' + t.type + ' num">' + sign + fmtBRL(Number(t.amount)||0) + '</div>';
+  div.className = 'tx' + (isProgrammed ? ' programmed' : '');
+  var meta = (cat ? escapeHtml(cat.name) : '—') + ' · ' + (withDate ? dateStr + ' · ' : '') + '<span class="who-mini' + userDotClass(t.userId) + '"></span>' + escapeHtml(u.name);
+  if (t.recurrenceType && t.recurrenceType !== 'single') meta += ' · ' + recurrenceLabel(t);
+  if (isProgrammed) meta += ' · <span class="programmed-pill">programado</span>';
+  div.innerHTML = '<div class="tx-icon ' + t.type + '">' + icon + '</div><div class="tx-body"><div class="tx-desc">' + escapeHtml(t.description) + '</div><div class="tx-meta">' + meta + '</div></div><div class="tx-amount ' + t.type + ' num">' + sign + fmtBRL(Number(t.amount)||0) + '</div>';
   div.onclick = function(){ openEditTx(t); };
   return div;
 }
+
 function recurrenceLabel(t){
   if (t.recurrenceType === 'fixed') return 'fixa';
   if (t.recurrenceType === 'installment-monthly' || t.recurrenceType === 'installment-weekly') return (t.installmentIndex || '?') + '/' + (t.installmentTotal || '?');
@@ -3076,7 +2888,7 @@ function renderList(){
 var editingTxId = null;
 function openEditTx(t){
   editingTxId = t.id;
-  document.getElementById('edit-tx-sub').textContent = (t.type === 'expense' ? 'Despesa' : 'Receita') + (t.recurrenceType && t.recurrenceType !== 'single' ? ' · ' + recurrenceLabel(t) : '');
+  document.getElementById('edit-tx-sub').textContent = (t.type === 'expense' ? 'Despesa' : 'Receita') + (t.recurrenceType && t.recurrenceType !== 'single' ? ' · ' + recurrenceLabel(t) : '') + (isTxStillProgrammed(t) ? ' · programado' : '');
   document.getElementById('edit-desc').value = t.description;
   document.getElementById('edit-amount').value = Number(t.amount).toFixed(2);
   document.getElementById('edit-date').value = t.date;
@@ -3294,147 +3106,6 @@ function addHistoricalEntry(){
 /* =========================================================
    FIGURINHAS COPA 2026 — V2.5 PROJEÇÃO INTELIGENTE
    ========================================================= */
-
-/* =========================================================
-   COMPROMISSOS PROGRAMADOS — PASSO 1
-   Nesta etapa: cadastra regras fixas, sem alterar saldos.
-   ========================================================= */
-function fixedRuleById(id){
-  for (var i=0;i<STATE.fixedRules.length;i++) if (STATE.fixedRules[i].id === id) return STATE.fixedRules[i];
-  return null;
-}
-function resetFixedRuleForm(){
-  var id = document.getElementById('fixed-rule-id');
-  var desc = document.getElementById('fixed-rule-desc');
-  var amount = document.getElementById('fixed-rule-amount');
-  var day = document.getElementById('fixed-rule-day');
-  var user = document.getElementById('fixed-rule-user');
-  if (id) id.value = '';
-  if (desc) desc.value = '';
-  if (amount) amount.value = '';
-  if (day) day.value = '1';
-  if (user) user.value = STATE.currentAppUser ? STATE.currentAppUser.id : 'arthur';
-  var saveBtn = document.getElementById('fixed-rule-save');
-  if (saveBtn) saveBtn.textContent = 'Salvar despesa fixa';
-}
-function populateFixedRuleCategories(selectedId){
-  var sel = document.getElementById('fixed-rule-category');
-  if (!sel) return;
-  sel.innerHTML = '';
-  var cats = categoriesByType('expense');
-  for (var i=0;i<cats.length;i++){
-    if (isNeutralCategory(cats[i].id)) continue;
-    var opt = document.createElement('option');
-    opt.value = cats[i].id;
-    opt.textContent = (cats[i].icon ? cats[i].icon + ' ' : '') + cats[i].name;
-    if (selectedId && selectedId === cats[i].id) opt.selected = true;
-    sel.appendChild(opt);
-  }
-}
-function editFixedRule(id){
-  var r = fixedRuleById(id);
-  if (!r) return;
-  document.getElementById('fixed-rule-id').value = r.id || '';
-  document.getElementById('fixed-rule-desc').value = r.description || '';
-  document.getElementById('fixed-rule-amount').value = r.amount || '';
-  document.getElementById('fixed-rule-day').value = r.dayOfMonth || 1;
-  populateFixedRuleCategories(r.categoryId);
-  document.getElementById('fixed-rule-user').value = r.userId || 'ambos';
-  var saveBtn = document.getElementById('fixed-rule-save');
-  if (saveBtn) saveBtn.textContent = 'Salvar alteração';
-  toast('Regra carregada para edição', 'success');
-}
-function renderScheduledCommitmentsSheet(){
-  populateFixedRuleCategories(document.getElementById('fixed-rule-category') ? document.getElementById('fixed-rule-category').value : null);
-  var host = document.getElementById('fixed-rules-list');
-  if (!host) return;
-  var list = STATE.fixedRules.slice().sort(function(a,b){
-    if (!!a.active !== !!b.active) return a.active ? -1 : 1;
-    return (a.dayOfMonth || 99) - (b.dayOfMonth || 99) || String(a.description||'').localeCompare(String(b.description||''));
-  });
-  if (!list.length){
-    host.innerHTML = '<div style="color:var(--text-3);font-size:13px;padding:8px 0;">Nenhuma despesa fixa cadastrada ainda.</div>';
-    return;
-  }
-  host.innerHTML = '';
-  for (var i=0;i<list.length;i++){
-    (function(r){
-      var cat = categoryById(r.categoryId);
-      var row = document.createElement('div');
-      row.className = 'scheduled-row' + (r.active === false ? ' paused' : '');
-      row.innerHTML =
-        '<div class="scheduled-main">' +
-          '<div class="scheduled-title">' + escapeHtml(r.description || 'Despesa fixa') + '</div>' +
-          '<div class="scheduled-meta">' + fmtBRL(r.amount || 0) + ' · dia ' + (r.dayOfMonth || '—') + ' · ' + escapeHtml(cat ? cat.name : 'Sem categoria') + '<br>Responsável: ' + escapeHtml(responsibleName(r.userId || 'ambos')) + ' · ' + (r.active === false ? 'pausada' : 'ativa') + '</div>' +
-        '</div>' +
-        '<div class="scheduled-actions">' +
-          '<button type="button" data-edit="'+escapeHtml(r.id)+'">Editar</button>' +
-          '<button type="button" data-toggle="'+escapeHtml(r.id)+'">' + (r.active === false ? 'Ativar' : 'Pausar') + '</button>' +
-          '<button type="button" class="danger" data-delete="'+escapeHtml(r.id)+'">Excluir</button>' +
-        '</div>';
-      host.appendChild(row);
-    })(list[i]);
-  }
-}
-function openScheduledCommitmentsSheet(){
-  resetFixedRuleForm();
-  renderScheduledCommitmentsSheet();
-  openSheet('sheet-scheduled-commitments');
-}
-function saveFixedRule(){
-  var desc = (document.getElementById('fixed-rule-desc').value || '').trim();
-  var amount = parseFloat(document.getElementById('fixed-rule-amount').value);
-  var day = parseInt(document.getElementById('fixed-rule-day').value, 10);
-  var categoryId = document.getElementById('fixed-rule-category').value;
-  var userId = document.getElementById('fixed-rule-user').value || 'ambos';
-  var id = document.getElementById('fixed-rule-id').value || uid('fix');
-  var existing = fixedRuleById(id);
-
-  if (!desc){ toast('Digite a descrição da despesa fixa', 'error'); return; }
-  if (isNaN(amount) || amount <= 0){ toast('Digite um valor válido', 'error'); return; }
-  if (isNaN(day) || day < 1 || day > 28){ toast('O dia precisa estar entre 1 e 28', 'error'); return; }
-  if (!categoryId){ toast('Escolha uma categoria', 'error'); return; }
-
-  var payload = {
-    householdId: HOUSEHOLD_ID,
-    type: 'expense',
-    ruleType: 'fixed-monthly',
-    description: desc,
-    amount: amount,
-    categoryId: categoryId,
-    dayOfMonth: day,
-    userId: userId,
-    active: existing && existing.active === false ? false : true,
-    createdAt: existing && existing.createdAt ? existing.createdAt : Date.now(),
-    updatedAt: Date.now()
-  };
-
-  var btn = document.getElementById('fixed-rule-save');
-  if (btn) btn.disabled = true;
-  collectionRef('fixedRules').doc(id).set(payload, { merge:true }).then(function(){
-    toast('Despesa fixa salva', 'success');
-    resetFixedRuleForm();
-    renderScheduledCommitmentsSheet();
-  }).catch(function(error){
-    toast('Erro ao salvar fixo: ' + error.code, 'error');
-  }).finally(function(){ if (btn) btn.disabled = false; });
-}
-function toggleFixedRule(id){
-  var r = fixedRuleById(id);
-  if (!r) return;
-  collectionRef('fixedRules').doc(id).set({ active: !(r.active !== false), updatedAt: Date.now(), householdId: HOUSEHOLD_ID }, { merge:true })
-    .then(function(){ toast((r.active === false ? 'Regra ativada' : 'Regra pausada'), 'success'); })
-    .catch(function(error){ toast('Erro ao alterar fixo: ' + error.code, 'error'); });
-}
-function deleteFixedRule(id){
-  confirmDialog('Excluir despesa fixa?', 'Isso remove apenas a regra cadastrada. Não altera lançamentos já existentes.').then(function(ok){
-    if (!ok) return;
-    collectionRef('fixedRules').doc(id).delete()
-      .then(function(){ toast('Despesa fixa excluída', 'success'); resetFixedRuleForm(); })
-      .catch(function(error){ toast('Erro ao excluir fixo: ' + error.code, 'error'); });
-  });
-}
-
 var FIG_COPA = {
   initialStock: 4000,
   unitCost: 5.25,
@@ -3578,7 +3249,6 @@ function exportData(){
     learned: STATE.learned,
     historical: STATE.historical,
     budgets: STATE.budgets,
-    fixedRules: STATE.fixedRules,
     figurinhasCopa: STATE.figurinhas
   };
   var blob = new Blob([JSON.stringify(dump, null, 2)], { type:'application/json' });
@@ -3616,7 +3286,6 @@ function importData(file){
         addMany('learnedDescriptions', data.learned);
         addMany('historicalSummaries', data.historical);
         addMany('budgets', data.budgets);
-        addMany('fixedRules', data.fixedRules);
         addMany('figurinhasCopa', data.figurinhasCopa);
         batch.commit().then(function(){ toast('Backup importado', 'success'); }).catch(function(error){ toast('Erro ao importar: ' + error.code, 'error'); });
       });
@@ -3776,7 +3445,6 @@ function wire(){
         if (act === 'manage-cats'){ STATE.catEditMode = false; renderCategoriesSheet(); openSheet('sheet-cats'); }
         else if (act === 'historical'){ renderHistoricalSheet(); openSheet('sheet-historical'); }
         else if (act === 'monthly-limit'){ openMonthlyLimitSheet(); }
-        else if (act === 'scheduled-commitments'){ openScheduledCommitmentsSheet(); }
         else if (act === 'figurinhas-copa'){ openFigurinhasCopaSheet(); }
         else if (act === 'export'){ exportData(); }
         else if (act === 'import'){ document.getElementById('import-file').click(); }
@@ -3784,22 +3452,6 @@ function wire(){
         else if (act === 'reset-local'){ localStorage.clear(); toast('Cache local limpo', 'success'); }
       };
     })(items[s]);
-  }
-
-  var fixedSave = document.getElementById('fixed-rule-save');
-  if (fixedSave) fixedSave.onclick = saveFixedRule;
-  var fixedNew = document.getElementById('fixed-rule-new');
-  if (fixedNew) fixedNew.onclick = resetFixedRuleForm;
-  var fixedList = document.getElementById('fixed-rules-list');
-  if (fixedList) {
-    fixedList.onclick = function(e){
-      var edit = e.target.getAttribute('data-edit');
-      var toggle = e.target.getAttribute('data-toggle');
-      var del = e.target.getAttribute('data-delete');
-      if (edit) editFixedRule(edit);
-      else if (toggle) toggleFixedRule(toggle);
-      else if (del) deleteFixedRule(del);
-    };
   }
 
   document.getElementById('new-cat-add').onclick = addCategory;

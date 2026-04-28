@@ -984,176 +984,50 @@ button { cursor: pointer; user-select: none; }
   .launch-hero { padding-top: 10px; }
 }
 
-/* ============ FIGURINHAS COPA ============ */
+/* ============ FIGURINHAS COPA — V2 SIMPLES ============ */
 .fig-shell { padding: 0 0 12px; }
-.fig-alert {
-  background: rgba(255,210,122,0.10);
-  border: 1px solid rgba(255,210,122,0.28);
-  color: var(--warn);
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
-  font-size: 13px;
-  line-height: 1.45;
-  margin-bottom: 14px;
-}
-.fig-constants {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-.fig-constant {
-  background: var(--bg-elev-2);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 11px 12px;
-}
-.fig-constant .fc-label {
-  font-size: 9px;
-  color: var(--text-3);
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  font-weight: 800;
-}
-.fig-constant .fc-value {
-  margin-top: 3px;
-  font-size: 14px;
-  font-weight: 800;
-}
-.fig-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-.fig-card {
-  background: var(--bg-elev-2);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 14px;
-  min-height: 88px;
-}
-.fig-card.important {
-  border-color: rgba(168,255,140,.45);
-  box-shadow: 0 0 0 3px rgba(168,255,140,.08);
-  background: linear-gradient(135deg, rgba(168,255,140,.12), var(--bg-elev-2));
-}
-.fig-card .f-label {
-  font-size: 9px;
-  color: var(--text-3);
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  font-weight: 800;
-  line-height: 1.25;
-}
-.fig-card .f-value {
-  margin-top: 6px;
-  font-family: var(--font-display);
-  font-size: 25px;
-  letter-spacing: -.02em;
-  line-height: 1.05;
-}
-.fig-card .f-sub {
-  margin-top: 6px;
-  font-size: 11px;
-  color: var(--text-3);
-  line-height: 1.3;
-}
-.fig-status {
-  display: inline-flex;
-  align-items: center;
-  padding: 5px 9px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 900;
-  margin-top: 6px;
-}
+.fig-alert { background: rgba(255,210,122,0.10); border: 1px solid rgba(255,210,122,0.28); color: var(--warn); border-radius: var(--radius-md); padding: 13px 14px; font-size: 13px; line-height: 1.45; margin-bottom: 14px; }
+.fig-constants { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.fig-constant { background: var(--bg-elev-2); border: 1px solid var(--border); border-radius: 14px; padding: 11px 12px; }
+.fig-constant .fc-label { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: .08em; font-weight: 900; }
+.fig-constant .fc-value { margin-top: 3px; font-size: 14px; font-weight: 900; }
+.fig-cards, .fig-finance-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.fig-card { background: var(--bg-elev-2); border: 1px solid var(--border); border-radius: 16px; padding: 14px; min-height: 92px; overflow: hidden; }
+.fig-card.important { border-color: rgba(168,255,140,.55); box-shadow: 0 0 0 3px rgba(168,255,140,.08); background: linear-gradient(135deg, rgba(168,255,140,.14), var(--bg-elev-2)); }
+.fig-card .f-label { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: .08em; font-weight: 900; line-height: 1.25; }
+.fig-card .f-value { margin-top: 7px; font-family: var(--font-display); font-size: 28px; letter-spacing: -.03em; line-height: 1.05; }
+.fig-card .f-value.small { font-family: var(--font-ui); font-size: 19px; font-weight: 900; letter-spacing: -.02em; }
+.fig-card .f-sub { margin-top: 7px; font-size: 11px; color: var(--text-3); line-height: 1.3; }
+.fig-status { display: inline-flex; align-items: center; justify-content: center; padding: 7px 10px; border-radius: 999px; font-size: 11px; font-weight: 900; margin-top: 7px; line-height: 1.25; }
 .fig-status.safe { background: rgba(168,255,140,.15); color: var(--accent); border: 1px solid rgba(168,255,140,.35); }
-.fig-status.attention { background: rgba(255,210,122,.15); color: var(--warn); border: 1px solid rgba(255,210,122,.35); }
+.fig-status.warn { background: rgba(255,210,122,.15); color: var(--warn); border: 1px solid rgba(255,210,122,.35); }
 .fig-status.risk { background: rgba(255,140,122,.15); color: var(--danger); border: 1px solid rgba(255,140,122,.35); }
 .fig-status.excess { background: rgba(255,168,88,.15); color: #FFA858; border: 1px solid rgba(255,168,88,.35); }
-.fig-toolbar {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin: 4px 0 10px;
-}
-.fig-toolbar h4 {
-  margin:0;
-  font-size: 14px;
-  font-weight: 900;
-}
-.fig-toolbar small {
-  color: var(--text-3);
-  font-size: 11px;
-}
-.fig-table-wrap {
-  overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--bg-elev-2);
-  -webkit-overflow-scrolling: touch;
-}
-.fig-table {
-  width: 100%;
-  min-width: 1220px;
-  border-collapse: collapse;
-  font-size: 12px;
-}
-.fig-table th, .fig-table td {
-  border-bottom: 1px solid var(--border);
-  padding: 8px 8px;
-  text-align: left;
-  vertical-align: middle;
-  white-space: nowrap;
-}
-.fig-table th {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: var(--bg-elev-3);
-  color: var(--text-2);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: .07em;
-}
-.fig-table tr:last-child td { border-bottom: none; }
-.fig-table tr.is-real { background: rgba(168,255,140,.035); }
-.fig-table tr.is-future { opacity: .76; }
-.fig-table input {
-  width: 96px;
-  background: var(--bg-elev-1);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 8px 9px;
-  color: var(--text);
-  font-size: 12px;
-}
-.fig-table input.fig-note {
-  width: 190px;
-}
-.fig-table input:focus { border-color: var(--border-strong); }
-.fig-num { font-variant-numeric: tabular-nums; }
-.fig-potential {
-  display:inline-flex;
-  padding: 4px 8px;
-  border-radius:999px;
-  background: rgba(255,255,255,.06);
-  color: var(--text-2);
-  font-size: 10px;
-  font-weight:800;
-}
-.fig-save-msg {
-  min-height: 16px;
-  color: var(--text-3);
-  font-size: 11px;
-  text-align: right;
-}
-@media (max-width: 380px) {
-  .fig-cards { grid-template-columns: 1fr; }
-  .fig-constants { grid-template-columns: 1fr; }
-}
+.fig-day-box, .fig-next-box, .fig-finance-box { background: var(--bg-elev-2); border: 1px solid var(--border); border-radius: 18px; padding: 14px; margin-bottom: 14px; }
+.fig-block-title { font-family: var(--font-display); font-size: 24px; line-height: 1; margin-bottom: 3px; }
+.fig-block-sub { color: var(--text-3); font-size: 12px; line-height: 1.35; margin-bottom: 12px; }
+.fig-date-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+.fig-date-row input { flex: 1; background: var(--bg-elev-1); border: 1px solid var(--border); border-radius: 13px; padding: 12px 13px; color: var(--text); color-scheme: dark; }
+.fig-date-row button { background: var(--bg-elev-3); border: 1px solid var(--border); color: var(--text-2); border-radius: 13px; padding: 12px 13px; font-weight: 900; }
+.fig-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fig-field.full { grid-column: 1 / -1; }
+.fig-field label { display:block; font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: .09em; font-weight: 900; margin-bottom: 6px; }
+.fig-field input, .fig-field textarea { width: 100%; background: var(--bg-elev-1); border: 1px solid var(--border); border-radius: 13px; padding: 12px 13px; color: var(--text); font-size: 15px; }
+.fig-field textarea { min-height: 66px; resize: vertical; }
+.fig-save-day-btn { width: 100%; margin-top: 12px; padding: 15px; border-radius: 15px; background: var(--accent); color: #0C1A08; font-weight: 900; font-size: 15px; box-shadow: 0 8px 22px var(--accent-glow); }
+.fig-save-day-btn:disabled { opacity: .55; box-shadow: none; }
+.fig-save-msg { min-height: 16px; color: var(--text-3); font-size: 11px; text-align: right; margin-top: 7px; }
+.fig-mini-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-elev-1); -webkit-overflow-scrolling: touch; }
+.fig-mini-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.fig-mini-table th, .fig-mini-table td { border-bottom: 1px solid var(--border); padding: 9px 8px; text-align: left; vertical-align: top; white-space: nowrap; }
+.fig-mini-table th { color: var(--text-3); font-size: 9px; text-transform: uppercase; letter-spacing: .08em; font-weight: 900; }
+.fig-mini-table tr:last-child td { border-bottom: none; }
+.fig-mini-table .strong { color: var(--text); font-weight: 900; }
+.fig-detail-toggle { width: 100%; margin-top: 12px; padding: 13px; border-radius: 14px; background: var(--bg-elev-3); border: 1px solid var(--border); color: var(--text-2); font-weight: 900; }
+.fig-detail-panel { display: none; margin-top: 12px; }
+.fig-detail-panel.show { display: block; }
+.fig-detail-panel .fig-mini-table { min-width: 1040px; }
+@media (max-width: 380px) { .fig-cards, .fig-finance-cards, .fig-constants { grid-template-columns: 1fr; } .fig-form-grid { grid-template-columns: 1fr; } }
 
 </style>
 </head>
@@ -1579,11 +1453,9 @@ button { cursor: pointer; user-select: none; }
 <div class="sheet" id="sheet-figurinhas-copa">
   <div class="sheet-handle"></div>
   <h3>Figurinhas Copa</h3>
-  <p class="sub">Controle simples de vendas, estoque e projeção até 19/07/2026.</p>
-
+  <p class="sub">Diário simples para venda, reposição, despesas e projeção da operação.</p>
   <div class="fig-shell">
     <div class="fig-alert">Até 27/06, o foco é não faltar. A partir de 28/06, o foco muda para não sobrar.</div>
-
     <div class="fig-constants">
       <div class="fig-constant"><div class="fc-label">Estoque inicial</div><div class="fc-value">4.000 pacotes</div></div>
       <div class="fig-constant"><div class="fc-label">Aporte inicial</div><div class="fc-value">R$ 21.000,00</div></div>
@@ -1592,39 +1464,27 @@ button { cursor: pointer; user-select: none; }
       <div class="fig-constant"><div class="fc-label">Início das vendas</div><div class="fc-value">30/04/2026</div></div>
       <div class="fig-constant"><div class="fc-label">Fim do ciclo principal</div><div class="fc-value">19/07/2026</div></div>
     </div>
-
     <div class="fig-cards" id="fig-cards"></div>
-
-    <div class="fig-toolbar">
-      <div>
-        <h4>Tabela diária</h4>
-        <small>Preencha apenas os campos editáveis. O restante é calculado.</small>
+    <div class="fig-day-box">
+      <div class="fig-block-title">Lançar o dia</div>
+      <div class="fig-block-sub">Preencha só o que aconteceu de verdade. A projeção não altera o estoque real.</div>
+      <div class="fig-date-row"><input type="date" id="fig-date-input" style="color-scheme:dark;"><button type="button" id="fig-today-btn">Hoje</button></div>
+      <div class="fig-form-grid">
+        <div class="fig-field"><label>Venda real do dia</label><input id="fig-real-sales" type="number" inputmode="numeric" min="0" step="1" placeholder="Pacotes"></div>
+        <div class="fig-field"><label>Compra/reposição</label><input id="fig-purchase-qty" type="number" inputmode="numeric" min="0" step="1000" placeholder="Pacotes"></div>
+        <div class="fig-field"><label>Receitas extras</label><input id="fig-extra-revenue" type="number" inputmode="decimal" min="0" step="0.01" placeholder="R$"></div>
+        <div class="fig-field"><label>Despesas extras</label><input id="fig-extra-expense" type="number" inputmode="decimal" min="0" step="0.01" placeholder="R$"></div>
+        <div class="fig-field full"><label>Observação</label><textarea id="fig-note" placeholder="Ex: venda no banco, reposição, brinde, perda..."></textarea></div>
       </div>
+      <button class="fig-save-day-btn" id="fig-save-day" type="button">Salvar dia</button>
       <div class="fig-save-msg" id="fig-save-msg"></div>
     </div>
-
-    <div class="fig-table-wrap">
-      <table class="fig-table">
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Dia</th>
-            <th>Fase</th>
-            <th>Potencial</th>
-            <th>Venda projetada</th>
-            <th>Venda real</th>
-            <th>Compra/reposição</th>
-            <th>Estoque inicial</th>
-            <th>Estoque final</th>
-            <th>Estoque recomendado</th>
-            <th>Compra recomendada</th>
-            <th>Receitas extras</th>
-            <th>Despesas extras</th>
-            <th>Observação</th>
-          </tr>
-        </thead>
-        <tbody id="fig-table-body"></tbody>
-      </table>
+    <div class="fig-finance-box"><div class="fig-block-title">Financeiro</div><div class="fig-block-sub">Valores integrais da operação, sem divisão.</div><div class="fig-finance-cards" id="fig-finance-cards"></div></div>
+    <div class="fig-next-box">
+      <div class="fig-block-title">Próximos dias</div><div class="fig-block-sub">Resumo para decidir se precisa comprar mais.</div>
+      <div id="fig-next-days"></div>
+      <button class="fig-detail-toggle" id="fig-detail-toggle" type="button">Ver projeção detalhada</button>
+      <div class="fig-detail-panel" id="fig-detail-panel"><div id="fig-detail-table"></div></div>
     </div>
   </div>
 </div>
@@ -3315,352 +3175,43 @@ function addHistoricalEntry(){
 
 
 /* =========================================================
-   FIGURINHAS COPA 2026
+   FIGURINHAS COPA 2026 — V2 SIMPLES
    ========================================================= */
-var FIG_COPA = {
-  initialStock: 4000,
-  unitCost: 5.25,
-  unitPrice: 7.00,
-  start: '2026-04-30',
-  end: '2026-07-19',
-  initialInvestment: 21000
-};
-
-function figDateRange(){
-  var out = [];
-  var d = parseDateLocal(FIG_COPA.start);
-  var end = parseDateLocal(FIG_COPA.end);
-  while (d <= end){
-    out.push(ymd(d));
-    d.setDate(d.getDate() + 1);
-  }
-  return out;
-}
-
-function figAddDays(dateStr, days){
-  var d = parseDateLocal(dateStr);
-  d.setDate(d.getDate() + days);
-  return ymd(d);
-}
-
-function figWeekdayName(dateStr){
-  var d = parseDateLocal(dateStr);
-  return ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][d.getDay()];
-}
-
-function figWeekdayMultiplier(dateStr){
-  var d = parseDateLocal(dateStr);
-  var map = {
-    1: 0.85, // segunda
-    2: 0.90,
-    3: 0.95,
-    4: 1.00,
-    5: 1.15,
-    6: 1.35,
-    0: 1.20
-  };
-  return map[d.getDay()];
-}
-
-function figPhase(dateStr){
-  if (dateStr >= '2026-04-30' && dateStr <= '2026-05-10') return { name:'Início das vendas / teste real', potential:'Moderado', weight:0.70, coverage:2 };
-  if (dateStr >= '2026-05-11' && dateStr <= '2026-05-24') return { name:'Aquecimento inicial', potential:'Moderado para alto', weight:0.90, coverage:2 };
-  if (dateStr >= '2026-05-25' && dateStr <= '2026-06-10') return { name:'Pré-Copa forte', potential:'Alto', weight:1.10, coverage:3 };
-  if (dateStr >= '2026-06-11' && dateStr <= '2026-06-27') return { name:'Fase de grupos', potential:'Muito alto', weight:1.50, coverage:4 };
-  if (dateStr >= '2026-06-28' && dateStr <= '2026-07-07') return { name:'Mata-mata inicial', potential:'Alto', weight:1.10, coverage:3 };
-  if (dateStr >= '2026-07-08' && dateStr <= '2026-07-13') return { name:'Reta final / semifinais', potential:'Moderado', weight:0.70, coverage:2 };
-  if (dateStr >= '2026-07-14' && dateStr <= '2026-07-19') return { name:'Semana final', potential:'Baixo para moderado', weight:0.50, coverage:1 };
-  return { name:'Pós-Copa', potential:'Muito baixo', weight:0.25, coverage:0 };
-}
-
-function figNumber(v, fallback){
-  if (v === null || v === undefined || v === '') return fallback;
-  var n = parseFloat(v);
-  return isNaN(n) ? fallback : n;
-}
-
-function figInteger(v, fallback){
-  var n = figNumber(v, fallback);
-  return Math.max(0, Math.round(n));
-}
-
-function figDataMap(){
-  var map = {};
-  for (var i=0;i<STATE.figurinhas.length;i++){
-    var item = STATE.figurinhas[i];
-    if (item.date) map[item.date] = item;
-  }
-  return map;
-}
-
-function figDocForDate(map, dateStr){
-  var doc = map[dateStr] || {};
-  return {
-    id: doc.id || dateStr,
-    date: dateStr,
-    realSales: (doc.realSales === null || doc.realSales === undefined || doc.realSales === '') ? null : figInteger(doc.realSales, null),
-    purchaseQty: figInteger(doc.purchaseQty, 0),
-    extraExpense: Math.max(0, figNumber(doc.extraExpense, 0)),
-    extraRevenue: Math.max(0, figNumber(doc.extraRevenue, 0)),
-    note: doc.note || ''
-  };
-}
-
-function figAdaptiveBase(actualSalesSoFar){
-  if (actualSalesSoFar.length < 3) return 600;
-  var last3 = actualSalesSoFar.slice(Math.max(0, actualSalesSoFar.length - 3));
-  var sum3 = 0;
-  for (var i=0;i<last3.length;i++) sum3 += last3[i];
-  var avg3 = sum3 / last3.length;
-  if (actualSalesSoFar.length < 7) return avg3;
-  var last7 = actualSalesSoFar.slice(Math.max(0, actualSalesSoFar.length - 7));
-  var sum7 = 0;
-  for (var j=0;j<last7.length;j++) sum7 += last7[j];
-  var avg7 = sum7 / last7.length;
-  return (avg3 * 0.60) + (avg7 * 0.40);
-}
-
-function figRoundToHundred(qty){
-  qty = Math.max(0, Math.ceil(qty));
-  if (qty <= 0) return 0;
-  return Math.ceil(qty / 100) * 100;
-}
-
-function figStatus(stock, recommended, dateStr){
-  if (recommended <= 0){
-    if (stock > 0) return { label:'Excesso / escoar', key:'excess' };
-    return { label:'Sem necessidade', key:'safe' };
-  }
-  var ratio = stock / recommended;
-  if (dateStr >= '2026-06-28' && ratio > 1.20) return { label:'Excesso / começar a escoar', key:'excess' };
-  if (ratio < 0.70) return { label:'Risco de faltar', key:'risk' };
-  if (ratio < 1.00) return { label:'Atenção', key:'attention' };
-  if (ratio <= 1.40) return { label:'Seguro', key:'safe' };
-  return { label:'Excesso', key:'excess' };
-}
-
-function buildFigurinhasModel(){
-  var dates = figDateRange();
-  var map = figDataMap();
-  var docs = {};
-  var projectedByDate = {};
-  var actualSalesSoFar = [];
-  var i;
-
-  for (i=0;i<dates.length;i++){
-    var dateStr = dates[i];
-    var doc = figDocForDate(map, dateStr);
-    docs[dateStr] = doc;
-    var phase = figPhase(dateStr);
-    var base = figAdaptiveBase(actualSalesSoFar);
-    var projected = Math.max(0, Math.round(base * phase.weight * figWeekdayMultiplier(dateStr)));
-    projectedByDate[dateStr] = projected;
-    if (doc.realSales !== null) actualSalesSoFar.push(doc.realSales);
-  }
-
-  var rows = [];
-  var previousFinalStock = FIG_COPA.initialStock;
-  for (i=0;i<dates.length;i++){
-    var d = dates[i];
-    var data = docs[d];
-    var ph = figPhase(d);
-    var opening = previousFinalStock;
-    var projectedSale = projectedByDate[d];
-    var saleUsed = data.realSales !== null ? data.realSales : projectedSale;
-
-    var recommended = 0;
-    for (var c=0;c<ph.coverage;c++){
-      var nextDate = dates[i+c];
-      if (nextDate) recommended += projectedByDate[nextDate] || 0;
-    }
-    var buyRecommended = figRoundToHundred(recommended - opening);
-    var finalStock = opening + data.purchaseQty - saleUsed;
-    if (finalStock < 0) finalStock = 0;
-
-    var st = figStatus(opening, recommended, d);
-    rows.push({
-      date: d,
-      day: figWeekdayName(d),
-      phase: ph.name,
-      potential: ph.potential,
-      projectedSale: projectedSale,
-      realSales: data.realSales,
-      purchaseQty: data.purchaseQty,
-      openingStock: opening,
-      finalStock: finalStock,
-      recommendedStock: recommended,
-      recommendedPurchase: buyRecommended,
-      extraRevenue: data.extraRevenue,
-      extraExpense: data.extraExpense,
-      note: data.note,
-      saleUsed: saleUsed,
-      status: st,
-      coverageDays: ph.coverage
-    });
-    previousFinalStock = finalStock;
-  }
-
-  return rows;
-}
-
-function figReferenceDate(){
-  var today = ymd(new Date());
-  if (today < FIG_COPA.start) return FIG_COPA.start;
-  if (today > FIG_COPA.end) return FIG_COPA.end;
-  return today;
-}
-
-function figFmtInt(n){
-  n = Math.round(n || 0);
-  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-
-function figInputValue(v){
-  if (v === null || v === undefined) return '';
-  if (typeof v === 'number' && Math.abs(v) < 0.0001) return '';
-  return String(v).replace('.', ',');
-}
-
-function figEscapeAttr(s){
-  return escapeHtml(s).replace(/"/g, '&quot;');
-}
-
-function renderFigurinhasCopa(){
-  var cards = document.getElementById('fig-cards');
-  var body = document.getElementById('fig-table-body');
-  if (!cards || !body) return;
-
-  var rows = buildFigurinhasModel();
-  var ref = figReferenceDate();
-  var refIndex = 0;
-  for (var r=0;r<rows.length;r++){
-    if (rows[r].date === ref){ refIndex = r; break; }
-  }
-  var refRow = rows[refIndex] || rows[0];
-  var stockNow = refRow ? refRow.finalStock : FIG_COPA.initialStock;
-
-  var realSalesAccum = 0, extraRevenue = 0, extraExpense = 0, purchaseAccum = 0, projectedTotalSales = 0;
-  for (var i=0;i<rows.length;i++){
-    if (rows[i].realSales !== null) realSalesAccum += rows[i].realSales;
-    purchaseAccum += rows[i].purchaseQty;
-    extraRevenue += rows[i].extraRevenue;
-    extraExpense += rows[i].extraExpense;
-    projectedTotalSales += rows[i].saleUsed;
-  }
-
-  var revenueAccum = (realSalesAccum * FIG_COPA.unitPrice) + extraRevenue;
-  var purchaseCostAccum = ((FIG_COPA.initialStock + purchaseAccum) * FIG_COPA.unitCost) + extraExpense;
-  var projectedRevenueTotal = (projectedTotalSales * FIG_COPA.unitPrice) + extraRevenue;
-  var projectedCostTotal = ((FIG_COPA.initialStock + purchaseAccum) * FIG_COPA.unitCost) + extraExpense;
-  var projectedGrossProfit = projectedRevenueTotal - projectedCostTotal;
-
-  var recovered = Math.min(FIG_COPA.initialInvestment, revenueAccum);
-  var missing = Math.max(0, FIG_COPA.initialInvestment - revenueAccum);
-
-  var avgNext = refRow && refRow.recommendedStock > 0 && refRow.coverageDays > 0 ? refRow.recommendedStock / refRow.coverageDays : (refRow ? refRow.projectedSale : 0);
-  var currentCoverage = avgNext > 0 ? stockNow / avgNext : 0;
-
-  var status = refRow ? refRow.status : { label:'—', key:'safe' };
-
-  function card(label, value, sub, important, statusHtml){
-    return '<div class="fig-card' + (important ? ' important' : '') + '">' +
-      '<div class="f-label">' + label + '</div>' +
-      '<div class="f-value">' + value + '</div>' +
-      (sub ? '<div class="f-sub">' + sub + '</div>' : '') +
-      (statusHtml || '') +
-    '</div>';
-  }
-
-  cards.innerHTML =
-    card('Estoque atual', figFmtInt(stockNow), 'Data de referência: ' + formatDateBR(ref), false) +
-    card('Venda acumulada', figFmtInt(realSalesAccum), 'Somente vendas reais preenchidas', false) +
-    card('Projeção até 19/07', figFmtInt(projectedTotalSales), 'Real onde existe; projeção onde falta', false) +
-    card('Compra recomendada hoje', figFmtInt(refRow ? refRow.recommendedPurchase : 0), 'Arredondada em múltiplos de 100 pacotes', true) +
-    card('Dias de cobertura atual', currentCoverage.toFixed(1).replace('.', ','), 'Máximo recomendado: 4 dias', false) +
-    card('Faturamento acumulado', fmtBRL(revenueAccum), 'Vendas reais × R$ 7,00 + receitas extras', false) +
-    card('Custo acumulado de compras', fmtBRL(purchaseCostAccum), 'Estoque inicial + reposições + despesas extras', false) +
-    card('Lucro bruto integral projetado', fmtBRL(projectedGrossProfit), 'Sem divisão por partes', false) +
-    card('Aporte inicial recuperado?', revenueAccum >= FIG_COPA.initialInvestment ? 'Sim' : 'Não', 'Aporte: R$ 21.000,00<br>Recuperado: ' + fmtBRL(recovered) + '<br>Falta: ' + fmtBRL(missing), false) +
-    card('Status do estoque', status.label, 'Recomendado hoje: ' + figFmtInt(refRow ? refRow.recommendedStock : 0) + ' pacotes', false, '<div class="fig-status ' + status.key + '">' + status.label + '</div>');
-
-  var html = '';
-  var today = ymd(new Date());
-  for (i=0;i<rows.length;i++){
-    var row = rows[i];
-    var isFuture = row.date > today;
-    var isReal = row.realSales !== null;
-    html += '<tr class="' + (isReal ? 'is-real ' : '') + (isFuture ? 'is-future' : '') + '">' +
-      '<td>' + formatDateBR(row.date) + '</td>' +
-      '<td>' + row.day + '</td>' +
-      '<td>' + escapeHtml(row.phase) + '</td>' +
-      '<td><span class="fig-potential">' + escapeHtml(row.potential) + '</span></td>' +
-      '<td class="fig-num">' + figFmtInt(row.projectedSale) + '</td>' +
-      '<td><input type="number" inputmode="numeric" min="0" data-date="' + row.date + '" data-field="realSales" value="' + (row.realSales === null ? '' : row.realSales) + '" placeholder="—"></td>' +
-      '<td><input type="number" inputmode="numeric" min="0" data-date="' + row.date + '" data-field="purchaseQty" value="' + (row.purchaseQty || '') + '" placeholder="0"></td>' +
-      '<td class="fig-num">' + figFmtInt(row.openingStock) + '</td>' +
-      '<td class="fig-num">' + figFmtInt(row.finalStock) + '</td>' +
-      '<td class="fig-num">' + figFmtInt(row.recommendedStock) + '</td>' +
-      '<td class="fig-num">' + figFmtInt(row.recommendedPurchase) + '</td>' +
-      '<td><input type="number" inputmode="decimal" min="0" step="0.01" data-date="' + row.date + '" data-field="extraRevenue" value="' + (row.extraRevenue || '') + '" placeholder="0"></td>' +
-      '<td><input type="number" inputmode="decimal" min="0" step="0.01" data-date="' + row.date + '" data-field="extraExpense" value="' + (row.extraExpense || '') + '" placeholder="0"></td>' +
-      '<td><input class="fig-note" type="text" data-date="' + row.date + '" data-field="note" value="' + figEscapeAttr(row.note) + '" placeholder="observação"></td>' +
-    '</tr>';
-  }
-  body.innerHTML = html;
-}
-
-function openFigurinhasCopaSheet(){
-  renderFigurinhasCopa();
-  openSheet('sheet-figurinhas-copa');
-}
-
-function handleFigInputChange(e){
-  var el = e.target;
-  if (!el || !el.getAttribute) return;
-  var dateStr = el.getAttribute('data-date');
-  var field = el.getAttribute('data-field');
-  if (!dateStr || !field) return;
-
-  var value;
-  if (field === 'note') {
-    value = el.value || '';
-  } else if (field === 'realSales') {
-    value = el.value === '' ? null : figInteger(el.value.replace(',', '.'), 0);
-  } else if (field === 'purchaseQty') {
-    value = figInteger(el.value.replace(',', '.'), 0);
-  } else {
-    value = Math.max(0, figNumber(el.value.replace(',', '.'), 0));
-  }
-
-  saveFigurinhasField(dateStr, field, value);
-}
-
-function saveFigurinhasField(dateStr, field, value){
-  var msg = document.getElementById('fig-save-msg');
-  if (msg) msg.textContent = 'salvando…';
-
-  var payload = {
-    householdId: HOUSEHOLD_ID,
-    date: dateStr,
-    updatedAt: Date.now(),
-    deletedAt: null
-  };
-  payload[field] = value;
-
-  collectionRef('figurinhasCopa').doc(dateStr).set(payload, { merge:true }).then(function(){
-    if (msg) msg.textContent = 'salvo';
-    setTimeout(function(){ if (msg && msg.textContent === 'salvo') msg.textContent = ''; }, 1200);
-    renderFigurinhasCopa();
-  }).catch(function(error){
-    if (msg) msg.textContent = 'erro ao salvar';
-    toast('Erro ao salvar Figurinhas: ' + error.code, 'error');
-  });
-}
-
-function formatDateBR(dateStr){
-  var d = parseDateLocal(dateStr);
-  return pad(d.getDate()) + '/' + pad(d.getMonth()+1) + '/' + d.getFullYear();
-}
+var FIG_COPA = { initialStock: 4000, unitCost: 5.25, unitPrice: 7.00, start: '2026-04-30', end: '2026-07-19', initialInvestment: 21000 };
+function figDateRange(){ var out=[]; var d=parseDateLocal(FIG_COPA.start); var end=parseDateLocal(FIG_COPA.end); while(d<=end){ out.push(ymd(d)); d.setDate(d.getDate()+1); } return out; }
+function figAddDays(dateStr, days){ var d=parseDateLocal(dateStr); d.setDate(d.getDate()+days); return ymd(d); }
+function figWeekdayName(dateStr){ return ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][parseDateLocal(dateStr).getDay()]; }
+function figWeekdayMultiplier(dateStr){ var d=parseDateLocal(dateStr).getDay(); var map={1:.85,2:.90,3:.95,4:1,5:1.15,6:1.35,0:1.20}; return map[d]||1; }
+function figPhase(dateStr){ if(dateStr>='2026-04-30'&&dateStr<='2026-05-10') return {name:'Início / teste real',potential:'Moderado',weight:.70,coverage:2}; if(dateStr>='2026-05-11'&&dateStr<='2026-05-24') return {name:'Aquecimento inicial',potential:'Moderado para alto',weight:.90,coverage:2}; if(dateStr>='2026-05-25'&&dateStr<='2026-06-10') return {name:'Pré-Copa forte',potential:'Alto',weight:1.10,coverage:3}; if(dateStr>='2026-06-11'&&dateStr<='2026-06-27') return {name:'Fase de grupos',potential:'Muito alto',weight:1.50,coverage:4}; if(dateStr>='2026-06-28'&&dateStr<='2026-07-07') return {name:'Mata-mata inicial',potential:'Alto',weight:1.10,coverage:3}; if(dateStr>='2026-07-08'&&dateStr<='2026-07-13') return {name:'Reta final / semifinais',potential:'Moderado',weight:.70,coverage:2}; if(dateStr>='2026-07-14'&&dateStr<='2026-07-19') return {name:'Semana final',potential:'Baixo para moderado',weight:.50,coverage:1}; return {name:'Pós-Copa',potential:'Muito baixo',weight:.25,coverage:0}; }
+function figNumber(v,fallback){ if(v===null||v===undefined||v==='') return fallback; var n=parseFloat(String(v).replace(',','.')); return isNaN(n)?fallback:n; }
+function figInteger(v,fallback){ var n=figNumber(v,fallback); if(n===null||n===undefined||isNaN(n)) return fallback; return Math.max(0,Math.round(n)); }
+function figDataMap(){ var map={}; for(var i=0;i<STATE.figurinhas.length;i++){ var item=STATE.figurinhas[i]; if(item&&item.date) map[item.date]=item; } return map; }
+function figDocForDate(map,dateStr){ var doc=map[dateStr]||{}; return { id:doc.id||dateStr, date:dateStr, realSales:(doc.realSales===null||doc.realSales===undefined||doc.realSales==='')?null:figInteger(doc.realSales,null), purchaseQty:figInteger(doc.purchaseQty,0), extraExpense:Math.max(0,figNumber(doc.extraExpense,0)), extraRevenue:Math.max(0,figNumber(doc.extraRevenue,0)), note:doc.note||'' }; }
+function figHasRealSale(doc){ return doc&&doc.realSales!==null&&doc.realSales!==undefined&&doc.realSales!==''&&!isNaN(Number(doc.realSales)); }
+function figAdaptiveBase(actualSalesSoFar){ if(!actualSalesSoFar||actualSalesSoFar.length<3) return 600; var last3=actualSalesSoFar.slice(Math.max(0,actualSalesSoFar.length-3)); var sum3=0; for(var i=0;i<last3.length;i++) sum3+=last3[i]; var avg3=sum3/last3.length; if(actualSalesSoFar.length<7) return avg3; var last7=actualSalesSoFar.slice(Math.max(0,actualSalesSoFar.length-7)); var sum7=0; for(var j=0;j<last7.length;j++) sum7+=last7[j]; var avg7=sum7/last7.length; return avg3*.60+avg7*.40; }
+function figRoundToThousand(qty){ qty=Math.max(0,Math.ceil(qty||0)); if(qty<=0) return 0; return Math.ceil(qty/1000)*1000; }
+function figStatus(stock,recommended,dateStr){ if(recommended<=0){ if(stock>0) return {label:'Excesso / escoar',key:'excess'}; return {label:'Sem necessidade',key:'safe'}; } var ratio=stock/recommended; if(dateStr>='2026-06-28'&&ratio>1.20) return {label:'Excesso / começar a escoar',key:'excess'}; if(ratio<.70) return {label:'Risco de faltar',key:'risk'}; if(ratio<1) return {label:'Atenção',key:'warn'}; if(ratio<=1.40) return {label:'Seguro',key:'safe'}; return {label:'Excesso',key:'excess'}; }
+function figReferenceDate(){ var today=ymd(new Date()); if(today<FIG_COPA.start) return FIG_COPA.start; if(today>FIG_COPA.end) return FIG_COPA.end; return today; }
+function figFmtInt(n){ n=Math.round(n||0); return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+function figBuildProjection(){ var dates=figDateRange(); var map=figDataMap(); var docs={}; var projectedByDate={}; var actualSalesSoFar=[]; for(var i=0;i<dates.length;i++){ var dateStr=dates[i]; var doc=figDocForDate(map,dateStr); docs[dateStr]=doc; var ph=figPhase(dateStr); var base=figAdaptiveBase(actualSalesSoFar); projectedByDate[dateStr]=Math.max(0,Math.round(base*ph.weight*figWeekdayMultiplier(dateStr))); if(figHasRealSale(doc)) actualSalesSoFar.push(doc.realSales); } return {dates:dates,docs:docs,projectedByDate:projectedByDate}; }
+function figRealStockUntil(dateStr){ var model=figBuildProjection(); var stock=FIG_COPA.initialStock; for(var i=0;i<model.dates.length;i++){ var d=model.dates[i]; if(d>dateStr) break; var doc=model.docs[d]; stock+=doc.purchaseQty||0; if(figHasRealSale(doc)) stock-=doc.realSales||0; } return Math.max(0,stock); }
+function figRecommendedStockFor(dateStr,model){ model=model||figBuildProjection(); var dates=model.dates; var idx=dates.indexOf(dateStr); if(idx<0) idx=0; var ph=figPhase(dateStr); var coverage=Math.min(4,Math.max(0,ph.coverage||0)); var total=0; for(var i=0;i<coverage;i++){ var d=dates[idx+i]; if(!d) break; total+=model.projectedByDate[d]||0; } return Math.round(total); }
+function figTotals(model){ model=model||figBuildProjection(); var realSales=0,purchases=0,extraRevenue=0,extraExpense=0,projectedTotalSales=0; for(var i=0;i<model.dates.length;i++){ var d=model.dates[i]; var doc=model.docs[d]; if(figHasRealSale(doc)) realSales+=doc.realSales||0; purchases+=doc.purchaseQty||0; extraRevenue+=doc.extraRevenue||0; extraExpense+=doc.extraExpense||0; projectedTotalSales+=figHasRealSale(doc)?(doc.realSales||0):(model.projectedByDate[d]||0); } return {realSales:realSales,purchases:purchases,extraRevenue:extraRevenue,extraExpense:extraExpense,projectedTotalSales:projectedTotalSales}; }
+function figCoverageDays(dateStr,stockReal,recommendedStock){ var ph=figPhase(dateStr); var days=Math.max(1,Math.min(4,ph.coverage||1)); var avg=recommendedStock>0?recommendedStock/days:figBuildProjection().projectedByDate[dateStr]; if(!avg||avg<=0) return 0; return stockReal/avg; }
+function figSimulationRows(fromDate){ var model=figBuildProjection(); var dates=model.dates; var startIndex=dates.indexOf(fromDate); if(startIndex<0) startIndex=0; var previousDate=startIndex>0?dates[startIndex-1]:figAddDays(fromDate,-1); var stock=figRealStockUntil(previousDate); var rows=[]; for(var i=startIndex;i<dates.length;i++){ var d=dates[i]; var doc=model.docs[d]; var projected=model.projectedByDate[d]||0; var used=figHasRealSale(doc)?doc.realSales:projected; var opening=stock; stock=Math.max(0,opening+(doc.purchaseQty||0)-used); var recommended=figRecommendedStockFor(d,model); var realStockAtDay=figRealStockUntil(d); rows.push({date:d,day:figWeekdayName(d),phase:figPhase(d).name,potential:figPhase(d).potential,projectedSale:projected,realSales:figHasRealSale(doc)?doc.realSales:null,saleUsed:used,purchaseQty:doc.purchaseQty||0,openingStock:opening,finalStock:stock,recommendedStock:recommended,recommendedPurchase:figRoundToThousand(recommended-realStockAtDay),extraRevenue:doc.extraRevenue||0,extraExpense:doc.extraExpense||0,note:doc.note||''}); } return rows; }
+function figLoadFormForDate(dateStr){ var doc=figDocForDate(figDataMap(),dateStr); var el; el=document.getElementById('fig-real-sales'); if(el) el.value=figHasRealSale(doc)?doc.realSales:''; el=document.getElementById('fig-purchase-qty'); if(el) el.value=doc.purchaseQty||''; el=document.getElementById('fig-extra-revenue'); if(el) el.value=doc.extraRevenue||''; el=document.getElementById('fig-extra-expense'); if(el) el.value=doc.extraExpense||''; el=document.getElementById('fig-note'); if(el) el.value=doc.note||''; }
+function figReadFormEntry(){ var dateEl=document.getElementById('fig-date-input'); var dateStr=dateEl&&dateEl.value?dateEl.value:figReferenceDate(); var saleRaw=document.getElementById('fig-real-sales').value; var purchaseRaw=document.getElementById('fig-purchase-qty').value; return {householdId:HOUSEHOLD_ID,date:dateStr,realSales:saleRaw===''?null:figInteger(saleRaw,0),purchaseQty:purchaseRaw===''?0:figInteger(purchaseRaw,0),extraRevenue:Math.max(0,figNumber(document.getElementById('fig-extra-revenue').value,0)),extraExpense:Math.max(0,figNumber(document.getElementById('fig-extra-expense').value,0)),note:document.getElementById('fig-note').value||'',updatedAt:Date.now(),deletedAt:null}; }
+function figSetToday(){ var el=document.getElementById('fig-date-input'); if(!el) return; el.value=figReferenceDate(); figLoadFormForDate(el.value); renderFigurinhasCopa(); }
+function saveFigurinhasDay(){ var payload=figReadFormEntry(); if(payload.purchaseQty&&payload.purchaseQty%1000!==0){ toast('Compra/reposição precisa ser múltiplo de 1.000 pacotes','error'); return; } var msg=document.getElementById('fig-save-msg'); var btn=document.getElementById('fig-save-day'); if(msg) msg.textContent='salvando…'; if(btn) btn.disabled=true; collectionRef('figurinhasCopa').doc(payload.date).set(payload,{merge:true}).then(function(){ if(msg) msg.textContent='salvo'; setTimeout(function(){ if(msg&&msg.textContent==='salvo') msg.textContent=''; },1200); toast('Dia salvo','success'); renderFigurinhasCopa(); }).catch(function(error){ if(msg) msg.textContent='erro ao salvar'; toast('Erro ao salvar Figurinhas: '+error.code,'error'); }).finally(function(){ if(btn) btn.disabled=false; }); }
+function figCard(label,value,sub,important,statusHtml){ return '<div class="fig-card'+(important?' important':'')+'"><div class="f-label">'+label+'</div><div class="f-value">'+value+'</div>'+(sub?'<div class="f-sub">'+sub+'</div>':'')+(statusHtml||'')+'</div>'; }
+function figCardSmall(label,value,sub,important){ return '<div class="fig-card'+(important?' important':'')+'"><div class="f-label">'+label+'</div><div class="f-value small">'+value+'</div>'+(sub?'<div class="f-sub">'+sub+'</div>':'')+'</div>'; }
+function renderFigurinhasCopa(){ var cards=document.getElementById('fig-cards'); if(!cards) return; var dateEl=document.getElementById('fig-date-input'); if(dateEl&&!dateEl.value) dateEl.value=figReferenceDate(); var ref=dateEl&&dateEl.value?dateEl.value:figReferenceDate(); var model=figBuildProjection(); var totals=figTotals(model); var stockReal=figRealStockUntil(ref); var recommendedStock=figRecommendedStockFor(ref,model); var recommendedPurchase=figRoundToThousand(recommendedStock-stockReal); var status=figStatus(stockReal,recommendedStock,ref); var coverageDays=figCoverageDays(ref,stockReal,recommendedStock); var revenueAccum=totals.realSales*FIG_COPA.unitPrice+totals.extraRevenue; var costAccum=(FIG_COPA.initialStock+totals.purchases)*FIG_COPA.unitCost+totals.extraExpense; var projectedRevenueTotal=totals.projectedTotalSales*FIG_COPA.unitPrice+totals.extraRevenue; var projectedCostTotal=(FIG_COPA.initialStock+totals.purchases)*FIG_COPA.unitCost+totals.extraExpense; var projectedGrossProfit=projectedRevenueTotal-projectedCostTotal; var recovered=Math.min(FIG_COPA.initialInvestment,revenueAccum); var missing=Math.max(0,FIG_COPA.initialInvestment-revenueAccum); cards.innerHTML=figCard('Estoque atual',figFmtInt(stockReal),'Somente compras reais - vendas reais',false)+figCard('Venda acumulada',figFmtInt(totals.realSales),'Somente vendas reais preenchidas',false)+figCard('Compra recomendada hoje',figFmtInt(recommendedPurchase),'Arredondada em múltiplos de 1.000 pacotes',true)+figCard('Status do estoque',status.label,'Recomendado hoje: '+figFmtInt(recommendedStock)+' pacotes',false,'<div class="fig-status '+status.key+'">'+status.label+'</div>')+figCard('Projeção até 19/07',figFmtInt(totals.projectedTotalSales),'Real onde existe; projeção onde falta',false)+figCard('Dias de cobertura atual',coverageDays.toFixed(1).replace('.',','),'Máximo recomendado: 4 dias',false); var finance=document.getElementById('fig-finance-cards'); if(finance){ finance.innerHTML=figCardSmall('Faturamento acumulado',fmtBRL(revenueAccum),'Vendas reais × R$ 7,00 + receitas extras')+figCardSmall('Custo acumulado de compras',fmtBRL(costAccum),'Estoque inicial + reposições + despesas extras')+figCardSmall('Lucro bruto integral projetado',fmtBRL(projectedGrossProfit),'Sem divisão por partes')+figCardSmall('Aporte inicial recuperado?',revenueAccum>=FIG_COPA.initialInvestment?'Sim':'Não','Aporte: R$ 21.000,00<br>Recuperado: '+fmtBRL(recovered)+'<br>Falta: '+fmtBRL(missing)); } renderFigNextDays(ref); renderFigDetailTable(); }
+function renderFigNextDays(ref){ var host=document.getElementById('fig-next-days'); if(!host) return; var rows=figSimulationRows(ref).slice(0,7); var html='<div class="fig-mini-table-wrap"><table class="fig-mini-table"><thead><tr><th>Data</th><th>Venda usada</th><th>Estoque sim.</th><th>Comprar</th></tr></thead><tbody>'; for(var i=0;i<rows.length;i++){ var r=rows[i]; html+='<tr><td><span class="strong">'+formatDateBR(r.date).slice(0,5)+'</span><br>'+r.day+'</td><td><span class="strong">'+figFmtInt(r.saleUsed)+'</span><br>'+(r.realSales!==null?'real':'projetada')+'</td><td><span class="strong">'+figFmtInt(r.finalStock)+'</span><br>recom. '+figFmtInt(r.recommendedStock)+'</td><td><span class="strong">'+figFmtInt(r.recommendedPurchase)+'</span></td></tr>'; } html+='</tbody></table></div>'; host.innerHTML=html; }
+function renderFigDetailTable(){ var host=document.getElementById('fig-detail-table'); if(!host) return; var rows=figSimulationRows(FIG_COPA.start); var html='<div class="fig-mini-table-wrap"><table class="fig-mini-table"><thead><tr><th>Data</th><th>Dia</th><th>Fase</th><th>Proj.</th><th>Real</th><th>Compra</th><th>Est. inicial</th><th>Est. final</th><th>Recom.</th><th>Comp. recom.</th><th>Extras</th><th>Obs.</th></tr></thead><tbody>'; for(var i=0;i<rows.length;i++){ var r=rows[i]; html+='<tr><td class="strong">'+formatDateBR(r.date).slice(0,5)+'</td><td>'+r.day.slice(0,3)+'</td><td>'+escapeHtml(r.phase)+'<br><span class="fig-potential">'+escapeHtml(r.potential)+'</span></td><td>'+figFmtInt(r.projectedSale)+'</td><td class="strong">'+(r.realSales===null?'—':figFmtInt(r.realSales))+'</td><td>'+figFmtInt(r.purchaseQty)+'</td><td>'+figFmtInt(r.openingStock)+'</td><td class="strong">'+figFmtInt(r.finalStock)+'</td><td>'+figFmtInt(r.recommendedStock)+'</td><td>'+figFmtInt(r.recommendedPurchase)+'</td><td>+'+fmtBRL(r.extraRevenue)+'<br>-'+fmtBRL(r.extraExpense)+'</td><td>'+escapeHtml(r.note||'—')+'</td></tr>'; } html+='</tbody></table></div>'; host.innerHTML=html; }
+function toggleFigDetailTable(){ var el=document.getElementById('fig-detail-panel'); var btn=document.getElementById('fig-detail-toggle'); if(!el) return; el.classList.toggle('show'); if(btn) btn.textContent=el.classList.contains('show')?'Ocultar projeção detalhada':'Ver projeção detalhada'; }
+function openFigurinhasCopaSheet(){ var dateEl=document.getElementById('fig-date-input'); if(dateEl&&!dateEl.value) dateEl.value=figReferenceDate(); if(dateEl) figLoadFormForDate(dateEl.value); renderFigurinhasCopa(); openSheet('sheet-figurinhas-copa'); }
+function handleFigInputChange(e){ return; }
+function formatDateBR(dateStr){ var d=parseDateLocal(dateStr); return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear(); }
 
 
 function exportData(){
@@ -3889,6 +3440,19 @@ function wire(){
   if (figBody) {
     figBody.addEventListener('change', handleFigInputChange);
   }
+  var figDateInput = document.getElementById('fig-date-input');
+  if (figDateInput) {
+    figDateInput.addEventListener('change', function(){
+      figLoadFormForDate(this.value || figReferenceDate());
+      renderFigurinhasCopa();
+    });
+  }
+  var figTodayBtn = document.getElementById('fig-today-btn');
+  if (figTodayBtn) figTodayBtn.onclick = figSetToday;
+  var figSaveDay = document.getElementById('fig-save-day');
+  if (figSaveDay) figSaveDay.onclick = saveFigurinhasDay;
+  var figDetailToggle = document.getElementById('fig-detail-toggle');
+  if (figDetailToggle) figDetailToggle.onclick = toggleFigDetailTable;
 
   var catsToggle = document.getElementById('cats-edit-toggle');
   if (catsToggle){

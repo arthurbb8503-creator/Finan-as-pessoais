@@ -1884,6 +1884,7 @@ function startFirestoreSync(user){
   document.getElementById('boot-screen').classList.remove('active');
   document.getElementById('auth-screen').classList.remove('active');
   document.getElementById('app').classList.add('active');
+  setLoginLoading(false);
   document.getElementById('header-sub-launch').textContent = 'Lançando como ' + appUser.name;
   document.getElementById('settings-user').textContent = appUser.name + ' · ' + user.email;
   document.getElementById('sync-status').textContent = 'conectando…';
@@ -3338,7 +3339,19 @@ function wire(){
     var pass = document.getElementById('auth-pass').value;
     if (!email || !pass){ showAuthError('Preencha e-mail e senha.'); return; }
     setLoginLoading(true);
-    auth.signInWithEmailAndPassword(email, pass).catch(function(error){
+    var loginTimeout = setTimeout(function(){
+      var appEl = document.getElementById("app");
+      if (appEl && appEl.classList.contains("active")) return;
+      setLoginLoading(false);
+      showAuthError("Login autenticou, mas demorou para abrir o app. Atualize e tente novamente.");
+    }, 7000);
+    auth.signInWithEmailAndPassword(email, pass).then(function(cred){
+      clearTimeout(loginTimeout);
+      if (cred && cred.user) {
+        startFirestoreSync(cred.user);
+      }
+    }).catch(function(error){
+      clearTimeout(loginTimeout);
       console.error(error);
       setLoginLoading(false);
       if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') showAuthError('Senha incorreta ou conta inválida.');

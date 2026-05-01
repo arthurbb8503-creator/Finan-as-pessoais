@@ -2606,9 +2606,10 @@ function saveDraftConfirmed(){
     var baseInstallmentCents = Math.floor(totalCents / n);
     var centsRemainder = totalCents - (baseInstallmentCents * n);
 
-    for (var i=0;i<n;i++){
+    var parcelCountToCreate = adv.recurrenceType === 'installment-monthly' ? 1 : n;
+    for (var i=0;i<parcelCountToCreate;i++){
       var dt;
-      if (adv.recurrenceType === 'installment-monthly') dt = new Date(baseDate.getFullYear(), baseDate.getMonth()+i, baseDate.getDate());
+      if (adv.recurrenceType === 'installment-monthly') dt = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
       else { dt = new Date(baseDate.getTime()); dt.setDate(dt.getDate()+i*7); }
 
       var installmentCents = baseInstallmentCents + (i < centsRemainder ? 1 : 0);
@@ -2624,7 +2625,9 @@ function saveDraftConfirmed(){
         recurrenceType: adv.recurrenceType,
         recurrenceGroupId: groupId,
         installmentIndex: i+1,
-        installmentTotal: n
+        installmentTotal: n,
+        installmentOriginalTotal: amount,
+        installmentMode: adv.recurrenceType === 'installment-monthly' ? 'manual-next-months' : 'generated-weekly'
       }));
     }
   } else if (adv.recurrenceType === 'recurring-weekly'){
@@ -2663,8 +2666,10 @@ function saveDraftConfirmed(){
       var successMsg;
       if (adv.recurrenceType === 'fixed'){
         successMsg = 'Fixo mensal salvo · prévia do próximo mês criada';
-      } else if ((adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly') && toAdd.length > 1){
-        successMsg = 'Compra parcelada · ' + toAdd.length + 'x de ' + fmtBRL(toAdd[0].amount);
+      } else if (adv.recurrenceType === 'installment-monthly'){
+        successMsg = 'Parcela mensal salva · 1/' + (adv.installments || 1) + ' de ' + fmtBRL(toAdd[0].amount);
+      } else if (adv.recurrenceType === 'installment-weekly' && toAdd.length > 1){
+        successMsg = 'Compra parcelada semanal · ' + toAdd.length + 'x de ' + fmtBRL(toAdd[0].amount);
       } else {
         successMsg = toAdd.length === 1 ? 'Salvo · ' + fmtBRL(amount) : toAdd.length + ' lançamentos criados';
       }

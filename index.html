@@ -682,6 +682,37 @@ button { cursor: pointer; user-select: none; }
 .tx-amount { font-weight: 800; font-size: 14px; text-align: right; flex-shrink: 0; }
 .tx-amount.income { color: var(--accent); }
 .tx-amount.expense { color: var(--text); }
+.tx.scheduled {
+  opacity: .66;
+  border-style: dashed;
+  background: rgba(255,255,255,0.035);
+}
+.tx.scheduled .tx-desc::after {
+  content: ' · programado';
+  color: var(--warn);
+  font-weight: 700;
+}
+.scheduled-panel {
+  display: none;
+}
+.scheduled-panel.show {
+  display: block;
+}
+.scheduled-summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.scheduled-summary strong {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--warn);
+}
 
 .empty { padding: 32px 12px; text-align: center; color: var(--text-3); }
 .empty .ei { font-family: var(--font-display); font-size: 28px; color: var(--text-2); font-style: italic; margin-bottom: 8px; }
@@ -1223,6 +1254,11 @@ button { cursor: pointer; user-select: none; }
         <div class="s-sub" id="m-expense-sub">0 lançamentos</div>
         <div class="s-compare" id="m-expense-compare"></div>
       </div>
+    </div>
+
+    <div class="panel scheduled-panel" id="m-scheduled-panel">
+      <h3>Programadas do mês</h3>
+      <div id="m-scheduled"></div>
     </div>
 
     <div class="panel">
@@ -2442,13 +2478,16 @@ function makeTx(o){
     recurrenceGroupId: o.recurrenceGroupId || null,
     installmentIndex: o.installmentIndex || null,
     installmentTotal: o.installmentTotal || null,
-    // Metadados seguros para fixos mensais: nesta versão NÃO cria meses futuros.
-    // Serve para identificar visualmente e preparar a repetição nos próximos passos.
+    // Metadados para fixos mensais e lançamentos programados.
+    // Programados aparecem no mês futuro, mas só viram realizados quando o mês começa.
     isFixedMonthly: !!o.isFixedMonthly,
     fixedDayOfMonth: o.fixedDayOfMonth || null,
     fixedMonthKey: o.fixedMonthKey || null,
     fixedStatus: o.fixedStatus || null,
     fixedMode: o.fixedMode || null,
+    scheduledStatus: o.scheduledStatus || null,
+    scheduledForMonth: o.scheduledForMonth || null,
+    sourceTxId: o.sourceTxId || null,
     deletedAt: null
   };
 }
@@ -2511,9 +2550,9 @@ function saveDraftConfirmed(){
       return;
     }
 
-    // Etapa 1 segura: fixa mensal entra como lançamento normal do mês escolhido,
-    // mas marcada internamente como fixa. Não cria 12 meses e não mexe no ano.
-    toAdd.push(makeTx({
+    // Etapa 2 segura: salva o mês escolhido como realizado e cria apenas a prévia do mês seguinte.
+    // Não cria 12 meses e não infla o ano. A prévia só sensibiliza como realizada quando o mês começar.
+    var currentFixedTx = makeTx({
       type: STATE.draft.type,
       amount: amount,
       description: description,
@@ -2526,7 +2565,28 @@ function saveDraftConfirmed(){
       fixedDayOfMonth: day,
       fixedMonthKey: ymd(baseDate).slice(0, 7),
       fixedStatus: 'realized',
-      fixedMode: 'current-month-only'
+      fixedMode: 'current-plus-next-preview'
+    });
+    toAdd.push(currentFixedTx);
+
+    var nextDate = nextMonthSameDay(baseDate);
+    toAdd.push(makeTx({
+      type: STATE.draft.type,
+      amount: amount,
+      description: description,
+      categoryId: categoryId,
+      userId: responsibleUserId,
+      date: ymd(nextDate),
+      recurrenceType: 'fixed',
+      recurrenceGroupId: groupId,
+      isFixedMonthly: true,
+      fixedDayOfMonth: day,
+      fixedMonthKey: ymd(nextDate).slice(0, 7),
+      fixedStatus: 'scheduled',
+      fixedMode: 'next-month-preview',
+      scheduledStatus: 'scheduled',
+      scheduledForMonth: ymd(nextDate).slice(0, 7),
+      sourceTxId: currentFixedTx.id || null
     }));
   } else if (adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly'){
     var n = parseInt(adv.installments || 1, 10);
@@ -2602,7 +2662,7 @@ function saveDraftConfirmed(){
       refreshDuplicateButton();
       var successMsg;
       if (adv.recurrenceType === 'fixed'){
-        successMsg = 'Fixo mensal salvo neste mês · ' + fmtBRL(amount);
+        successMsg = 'Fixo mensal salvo · prévia do próximo mês criada';
       } else if ((adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly') && toAdd.length > 1){
         successMsg = 'Compra parcelada · ' + toAdd.length + 'x de ' + fmtBRL(toAdd[0].amount);
       } else {
@@ -2716,12 +2776,33 @@ function buildAdvancedSheet(){
 function updateAdvExplanation(r){
   var txt = {
     'single': 'Lançamento único, registrado apenas na data escolhida.',
-    'fixed': 'Fixo mensal: permitido apenas entre os dias 1 e 28. Salva somente no mês escolhido e marca como fixa mensal, sem criar meses futuros.',
+    'fixed': 'Fixo mensal: permitido apenas entre os dias 1 e 28. Salva o mês escolhido e cria apenas a prévia do próximo mês como programada.',
     'installment-monthly': 'Parcelado mensal: o valor digitado é o TOTAL da compra. O app divide pelo número de parcelas. Permitido apenas entre os dias 1 e 28.',
     'installment-weekly': 'Parcelado semanal: o valor digitado é o TOTAL da compra. O app divide pelo número de parcelas, com 7 dias entre elas.',
     'recurring-weekly': 'Gera 12 ocorrências semanais a partir da data.'
   }[r] || '';
   document.getElementById('adv-explanation').textContent = txt;
+}
+
+
+function firstDayOfMonthFromYmd(dateStr){
+  var d = parseDateLocal(dateStr);
+  return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+function isFutureProgrammedTx(t){
+  if (!t) return false;
+  if (t.scheduledStatus !== 'scheduled' && t.fixedStatus !== 'scheduled') return false;
+  var start = firstDayOfMonthFromYmd(t.date);
+  var today = new Date();
+  var todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  return todayStart < start;
+}
+function isTxRealizedForTotals(t){
+  return !isFutureProgrammedTx(t);
+}
+function nextMonthSameDay(baseDate){
+  var day = baseDate.getDate();
+  return new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, day);
 }
 
 function txInMonth(date, userFilter){
@@ -2739,6 +2820,7 @@ function totalsForMonth(date, userFilter){
   var list = txInMonth(date, userFilter);
   var income=0, expense=0;
   for (var i=0;i<list.length;i++){
+    if (!isTxRealizedForTotals(list[i])) continue;
     if (list[i].type === 'income') income += Number(list[i].amount) || 0;
     else if (!isNeutralCategory(list[i].categoryId)) expense += Number(list[i].amount) || 0;
   }
@@ -2774,20 +2856,33 @@ function renderMonth(){
   renderMonthUserFilter();
 
   var list = txInMonth(d, userFilter);
-  var income=0, expense=0, incomeCount=0, expenseCount=0, byCat={};
+  var income=0, expense=0, scheduledExpense=0, incomeCount=0, expenseCount=0, scheduledCount=0, byCat={};
+  var scheduledList = [];
 
   for (var i=0;i<list.length;i++){
     var t = list[i];
-    if (t.type === 'income'){ income += Number(t.amount)||0; incomeCount++; }
-    else if (!isNeutralCategory(t.categoryId)){
-      expense += Number(t.amount)||0; expenseCount++;
-      byCat[t.categoryId] = (byCat[t.categoryId] || 0) + (Number(t.amount)||0);
+    var amountN = Number(t.amount)||0;
+    var futureProgrammed = isFutureProgrammedTx(t);
+
+    if (t.type === 'income'){
+      if (!futureProgrammed){ income += amountN; incomeCount++; }
+    } else if (!isNeutralCategory(t.categoryId)){
+      if (futureProgrammed){
+        scheduledExpense += amountN;
+        scheduledCount++;
+        scheduledList.push(t);
+      } else {
+        expense += amountN;
+        expenseCount++;
+        byCat[t.categoryId] = (byCat[t.categoryId] || 0) + amountN;
+      }
     }
   }
 
+  var committedExpense = expense + scheduledExpense;
   var balance = income - expense;
   var limit = getMonthlyExpenseLimit();
-  var availableLimit = limit - expense;
+  var availableLimit = limit - committedExpense;
   var limitLabel = document.querySelector('#screen-month .balance-card .b-label');
   if (limitLabel) limitLabel.textContent = 'Disponível do limite mensal';
   var balEl = document.getElementById('m-balance');
@@ -2798,12 +2893,12 @@ function renderMonth(){
   var prev = totalsForMonth(previousMonthDate(d), userFilter);
   var prevLabel = monthShort(previousMonthDate(d).getMonth());
   var balCompare = document.getElementById('m-balance-compare');
-  balCompare.innerHTML = 'Limite ' + fmtBRL(limit) + ' − despesas ' + fmtBRL(expense) + '<br><span style="color:var(--text-3);">Saldo real do mês: ' + fmtBRL(balance) + '</span>';
+  balCompare.innerHTML = 'Limite ' + fmtBRL(limit) + ' − realizadas ' + fmtBRL(expense) + (scheduledExpense ? ' − programadas ' + fmtBRL(scheduledExpense) : '') + '<br><span style="color:var(--text-3);">Saldo real do mês: ' + fmtBRL(balance) + '</span>';
 
   document.getElementById('m-income').textContent = fmtBRLShort(income);
   document.getElementById('m-expense').textContent = fmtBRLShort(expense);
   document.getElementById('m-income-sub').textContent = incomeCount + (incomeCount === 1 ? ' lançamento' : ' lançamentos');
-  document.getElementById('m-expense-sub').textContent = expenseCount + (expenseCount === 1 ? ' lançamento' : ' lançamentos');
+  document.getElementById('m-expense-sub').textContent = expenseCount + (expenseCount === 1 ? ' realizado' : ' realizados') + (scheduledCount ? ' · ' + scheduledCount + ' programado(s)' : '');
 
   var prevIn = deltaPercent(income, prev.income);
   document.getElementById('m-income-compare').innerHTML = prev.income ? '<span class="' + (prevIn.dir === 'up' ? 'delta-up' : 'delta-down') + '">' + Math.abs(prevIn.pct).toFixed(0) + '%</span> vs ' + prevLabel : '';
@@ -2824,7 +2919,7 @@ function renderMonth(){
     projEl.textContent = fmtBRL(projectedBalance);
     projEl.style.color = projectedBalance >= 0 ? 'var(--accent)' : 'var(--danger)';
     projSub.textContent = '· dia ' + dayNum + '/' + totalDays;
-    projDetail.textContent = 'Despesa projetada: ' + fmtBRL(projectedExpense) + ' · média ' + fmtBRL(dailyAvg) + '/dia';
+    projDetail.textContent = 'Despesa projetada: ' + fmtBRL(projectedExpense) + ' · média ' + fmtBRL(dailyAvg) + '/dia' + (scheduledExpense ? ' · programado: ' + fmtBRL(scheduledExpense) : '');
   } else {
     projEl.textContent = fmtBRL(balance);
     projEl.style.color = balance >= 0 ? 'var(--accent)' : 'var(--danger)';
@@ -2832,8 +2927,24 @@ function renderMonth(){
     projDetail.textContent = 'Mês finalizado · ' + list.length + ' lançamentos';
   }
 
+  renderScheduledPanel(scheduledList, scheduledExpense);
   renderCategoryPanel(byCat, expense);
   renderTopAndRecent(list);
+}
+
+function renderScheduledPanel(list, total){
+  var panel = document.getElementById('m-scheduled-panel');
+  var host = document.getElementById('m-scheduled');
+  if (!panel || !host) return;
+  if (!list || !list.length){
+    panel.classList.remove('show');
+    host.innerHTML = '';
+    return;
+  }
+  panel.classList.add('show');
+  host.innerHTML = '<div class="scheduled-summary"><span>Fixas previstas antes do mês começar</span><strong>' + fmtBRL(total) + '</strong></div>';
+  list.sort(function(a,b){ return parseDateLocal(a.date) - parseDateLocal(b.date); });
+  for (var i=0;i<list.length;i++) host.appendChild(buildTxRow(list[i], true));
 }
 
 function renderCategoryPanel(byCat, expense){
@@ -2862,7 +2973,7 @@ function renderCategoryPanel(byCat, expense){
 }
 
 function renderTopAndRecent(list){
-  var top = list.filter(function(t){ return t.type === 'expense'; }).slice().sort(function(a,b){ return Number(b.amount)-Number(a.amount); }).slice(0,5);
+  var top = list.filter(function(t){ return t.type === 'expense' && isTxRealizedForTotals(t); }).slice().sort(function(a,b){ return Number(b.amount)-Number(a.amount); }).slice(0,5);
   var topHost = document.getElementById('m-top');
   topHost.innerHTML = top.length ? '' : '<div style="color:var(--text-3);font-size:13px;padding:8px 0;">—</div>';
   for (var i=0;i<top.length;i++) topHost.appendChild(buildTxRow(top[i], false));
@@ -2977,12 +3088,13 @@ function buildTxRow(t, withDate){
   var icon = cat && cat.icon ? cat.icon : (t.type === 'income' ? '↗' : '↘');
   var sign = t.type === 'income' ? '+' : '';
   var div = document.createElement('div');
-  div.className = 'tx';
+  div.className = 'tx' + (isFutureProgrammedTx(t) ? ' scheduled' : '');
   div.innerHTML = '<div class="tx-icon ' + t.type + '">' + icon + '</div><div class="tx-body"><div class="tx-desc">' + escapeHtml(t.description) + '</div><div class="tx-meta">' + (cat ? escapeHtml(cat.name) : '—') + ' · ' + (withDate ? dateStr + ' · ' : '') + '<span class="who-mini' + userDotClass(t.userId) + '"></span>' + escapeHtml(u.name) + (t.recurrenceType && t.recurrenceType !== 'single' ? ' · ' + recurrenceLabel(t) : '') + '</div></div><div class="tx-amount ' + t.type + ' num">' + sign + fmtBRL(Number(t.amount)||0) + '</div>';
   div.onclick = function(){ openEditTx(t); };
   return div;
 }
 function recurrenceLabel(t){
+  if (isFutureProgrammedTx(t)) return 'programada';
   if (t.recurrenceType === 'fixed') return 'fixa mensal';
   if (t.recurrenceType === 'installment-monthly' || t.recurrenceType === 'installment-weekly') return (t.installmentIndex || '?') + '/' + (t.installmentTotal || '?');
   if (t.recurrenceType === 'recurring-weekly') return 'semanal';

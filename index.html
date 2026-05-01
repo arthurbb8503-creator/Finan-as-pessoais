@@ -2275,7 +2275,7 @@ function renderAdvancedSummary(){
   }
 
   var labels = {
-    'fixed': 'Fixo mensal',
+    'fixed': 'Fixo mensal · só este mês',
     'installment-monthly': installmentLabel ? ('Parcelado mensal · ' + installmentLabel) : ('Parcelado ' + n + 'x mensal'),
     'installment-weekly': installmentLabel ? ('Parcelado semanal · ' + installmentLabel) : ('Parcelado ' + n + 'x semanal'),
     'recurring-weekly': 'Recorrente semanal'
@@ -2442,6 +2442,13 @@ function makeTx(o){
     recurrenceGroupId: o.recurrenceGroupId || null,
     installmentIndex: o.installmentIndex || null,
     installmentTotal: o.installmentTotal || null,
+    // Metadados seguros para fixos mensais: nesta versão NÃO cria meses futuros.
+    // Serve para identificar visualmente e preparar a repetição nos próximos passos.
+    isFixedMonthly: !!o.isFixedMonthly,
+    fixedDayOfMonth: o.fixedDayOfMonth || null,
+    fixedMonthKey: o.fixedMonthKey || null,
+    fixedStatus: o.fixedStatus || null,
+    fixedMode: o.fixedMode || null,
     deletedAt: null
   };
 }
@@ -2504,9 +2511,8 @@ function saveDraftConfirmed(){
       return;
     }
 
-    // Versão estável provisória:
-    // não materializa 12 meses para não bagunçar o resumo anual.
-    // A engine definitiva de regras fixas/programadas fica para a próxima versão.
+    // Etapa 1 segura: fixa mensal entra como lançamento normal do mês escolhido,
+    // mas marcada internamente como fixa. Não cria 12 meses e não mexe no ano.
     toAdd.push(makeTx({
       type: STATE.draft.type,
       amount: amount,
@@ -2515,7 +2521,12 @@ function saveDraftConfirmed(){
       userId: responsibleUserId,
       date: ymd(baseDate),
       recurrenceType: 'fixed',
-      recurrenceGroupId: groupId
+      recurrenceGroupId: groupId,
+      isFixedMonthly: true,
+      fixedDayOfMonth: day,
+      fixedMonthKey: ymd(baseDate).slice(0, 7),
+      fixedStatus: 'realized',
+      fixedMode: 'current-month-only'
     }));
   } else if (adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly'){
     var n = parseInt(adv.installments || 1, 10);
@@ -2590,7 +2601,9 @@ function saveDraftConfirmed(){
       resetDraft();
       refreshDuplicateButton();
       var successMsg;
-      if ((adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly') && toAdd.length > 1){
+      if (adv.recurrenceType === 'fixed'){
+        successMsg = 'Fixo mensal salvo neste mês · ' + fmtBRL(amount);
+      } else if ((adv.recurrenceType === 'installment-monthly' || adv.recurrenceType === 'installment-weekly') && toAdd.length > 1){
         successMsg = 'Compra parcelada · ' + toAdd.length + 'x de ' + fmtBRL(toAdd[0].amount);
       } else {
         successMsg = toAdd.length === 1 ? 'Salvo · ' + fmtBRL(amount) : toAdd.length + ' lançamentos criados';
@@ -2703,7 +2716,7 @@ function buildAdvancedSheet(){
 function updateAdvExplanation(r){
   var txt = {
     'single': 'Lançamento único, registrado apenas na data escolhida.',
-    'fixed': 'Fixo mensal seguro: só pode ser lançado entre os dias 1 e 28. Nesta versão, cria apenas o lançamento do mês escolhido.',
+    'fixed': 'Fixo mensal: permitido apenas entre os dias 1 e 28. Salva somente no mês escolhido e marca como fixa mensal, sem criar meses futuros.',
     'installment-monthly': 'Parcelado mensal: o valor digitado é o TOTAL da compra. O app divide pelo número de parcelas. Permitido apenas entre os dias 1 e 28.',
     'installment-weekly': 'Parcelado semanal: o valor digitado é o TOTAL da compra. O app divide pelo número de parcelas, com 7 dias entre elas.',
     'recurring-weekly': 'Gera 12 ocorrências semanais a partir da data.'
@@ -2970,7 +2983,7 @@ function buildTxRow(t, withDate){
   return div;
 }
 function recurrenceLabel(t){
-  if (t.recurrenceType === 'fixed') return 'fixa';
+  if (t.recurrenceType === 'fixed') return 'fixa mensal';
   if (t.recurrenceType === 'installment-monthly' || t.recurrenceType === 'installment-weekly') return (t.installmentIndex || '?') + '/' + (t.installmentTotal || '?');
   if (t.recurrenceType === 'recurring-weekly') return 'semanal';
   return '';

@@ -2799,6 +2799,13 @@ function firstDayOfMonthFromYmd(dateStr){
   var d = parseDateLocal(dateStr);
   return new Date(d.getFullYear(), d.getMonth(), 1);
 }
+
+function isFixedOrInstallmentTx(t){
+  if (!t) return false;
+  var rt = t.recurrenceType || '';
+  return rt === 'fixed' || rt.indexOf('installment') === 0 || !!t.isFixedMonthly;
+}
+
 function isFutureProgrammedTx(t){
   if (!t) return false;
   if (t.scheduledStatus !== 'scheduled' && t.fixedStatus !== 'scheduled') return false;
@@ -2923,13 +2930,38 @@ function renderMonth(){
   if (isCurrent){
     var dayNum = today.getDate();
     var totalDays = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
-    var dailyAvg = dayNum > 0 ? expense / dayNum : 0;
-    var projectedExpense = dailyAvg * totalDays;
+    var remainingDays = Math.max(0, totalDays - dayNum);
+
+    // Projeção v2.5.7: fixos e parcelas entram no total do mês,
+    // mas NÃO entram na média diária. A média passa a considerar apenas
+    // gastos variáveis realizados, evitando projeções absurdas no começo do mês.
+    var fixedInstallmentExpense = 0;
+    var variableExpense = 0;
+    for (var pe=0; pe<list.length; pe++){
+      var pt = list[pe];
+      if (!pt || pt.type !== 'expense') continue;
+      if (isNeutralCategory(pt.categoryId)) continue;
+      if (isFutureProgrammedTx(pt)) continue;
+      var pa = Number(pt.amount) || 0;
+      if (isFixedOrInstallmentTx(pt)) fixedInstallmentExpense += pa;
+      else variableExpense += pa;
+    }
+
+    var variableDailyAvg = dayNum > 0 ? (variableExpense / dayNum) : 0;
+    var projectedVariableRest = variableDailyAvg * remainingDays;
+    var projectedExpense = fixedInstallmentExpense + variableExpense + scheduledExpense + projectedVariableRest;
     var projectedBalance = income - projectedExpense;
+
     projEl.textContent = fmtBRL(projectedBalance);
     projEl.style.color = projectedBalance >= 0 ? 'var(--accent)' : 'var(--danger)';
     projSub.textContent = '· dia ' + dayNum + '/' + totalDays;
-    projDetail.textContent = 'Despesa projetada: ' + fmtBRL(projectedExpense) + ' · média ' + fmtBRL(dailyAvg) + '/dia' + (scheduledExpense ? ' · programado: ' + fmtBRL(scheduledExpense) : '');
+
+    var detailParts = [];
+    detailParts.push('Despesa projetada: ' + fmtBRL(projectedExpense));
+    detailParts.push('média variável ' + fmtBRL(variableDailyAvg) + '/dia');
+    if (fixedInstallmentExpense) detailParts.push('fixos/parcelas ' + fmtBRL(fixedInstallmentExpense));
+    if (scheduledExpense) detailParts.push('programadas ' + fmtBRL(scheduledExpense));
+    projDetail.textContent = detailParts.join(' · ');
   } else {
     projEl.textContent = fmtBRL(balance);
     projEl.style.color = balance >= 0 ? 'var(--accent)' : 'var(--danger)';

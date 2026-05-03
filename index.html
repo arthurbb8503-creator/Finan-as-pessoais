@@ -3006,6 +3006,10 @@ function renderYear(){
   for (var i=0;i<STATE.transactions.length;i++){
     var t = STATE.transactions[i];
     if (t.deletedAt) continue;
+    // IMPORTANTE: a visão anual deve considerar apenas lançamentos realizados.
+    // Programados de meses futuros aparecem na visão mensal/limite, mas não entram
+    // no saldo acumulado do ano nem no mês-a-mês anual antes do mês começar.
+    if (!isTxRealizedForTotals(t)) continue;
     var d = parseDateLocal(t.date);
     if (d.getFullYear() !== year) continue;
     var bm = byMonth[d.getMonth()];

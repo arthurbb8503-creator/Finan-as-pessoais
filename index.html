@@ -1123,7 +1123,7 @@ button { cursor: pointer; user-select: none; }
 <div id="boot-screen" class="active">
   <div>
     <div class="boot-logo">Finanças <em>a Dois</em></div>
-    <div class="boot-sub">Verificando sua sessão…</div>
+    <div class="boot-sub">Abrindo seu registro…</div>
     <div class="boot-spinner" aria-hidden="true"></div>
   </div>
 </div>
@@ -1707,6 +1707,12 @@ try {
     firebase.initializeApp(firebaseConfig);
     auth = firebase.auth();
     db = firebase.firestore();
+    try {
+      // Mantém a sessão salva no navegador para abrir direto nas próximas vezes.
+      auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    } catch (persistenceError) {
+      console.warn('Não foi possível configurar persistência local:', persistenceError);
+    }
     FIREBASE_READY = true;
   }
 } catch (firebaseInitError) {
@@ -1909,6 +1915,30 @@ function mapDoc(doc){
   return data;
 }
 
+var CACHE_PREFIX = 'fad:cache:' + HOUSEHOLD_ID + ':';
+function cacheKey(name){
+  return CACHE_PREFIX + name;
+}
+function saveCache(name, value){
+  try { localStorage.setItem(cacheKey(name), JSON.stringify(value || [])); } catch(e){}
+}
+function loadCache(name, fallback){
+  try {
+    var raw = localStorage.getItem(cacheKey(name));
+    if (!raw) return fallback || [];
+    var parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : (fallback || []);
+  } catch(e){ return fallback || []; }
+}
+function loadAppCache(){
+  STATE.transactions = loadCache('transactions', []);
+  STATE.categories = mergeCategories(DEFAULT_CATEGORIES, loadCache('categories', []));
+  STATE.learned = loadCache('learnedDescriptions', []);
+  STATE.historical = loadCache('historicalSummaries', []);
+  STATE.budgets = loadCache('budgets', []);
+  STATE.figurinhas = loadCache('figurinhasCopa', []);
+}
+
 function clearSync(){
   for (var i=0;i<STATE.unsubscribers.length;i++){
     try { STATE.unsubscribers[i](); } catch(e){}
@@ -1932,6 +1962,9 @@ function startFirestoreSync(user){
   STATE.currentAppUser = appUser;
   STATE.draft.userId = appUser.id;
 
+  // Mostra dados já salvos no aparelho imediatamente; o Firestore atualiza por trás.
+  loadAppCache();
+
   window.__FAD_BOOT_DONE = true;
   if (window.__FAD_BOOT_FAILSAFE) clearTimeout(window.__FAD_BOOT_FAILSAFE);
   document.getElementById('boot-screen').classList.remove('active');
@@ -1939,7 +1972,7 @@ function startFirestoreSync(user){
   document.getElementById('app').classList.add('active');
   document.getElementById('header-sub-launch').textContent = 'Lançando como ' + appUser.name;
   document.getElementById('settings-user').textContent = appUser.name + ' · ' + user.email;
-  document.getElementById('sync-status').textContent = 'conectando…';
+  document.getElementById('sync-status').textContent = 'sincronizando…';
 
   var loaded = { tx:false, cats:false, learned:false, hist:false, budgets:false };
 
@@ -1966,6 +1999,7 @@ function startFirestoreSync(user){
   STATE.unsubscribers.push(
     householdQuery('transactions').onSnapshot(function(snapshot){
       STATE.transactions = snapshot.docs.map(mapDoc);
+      saveCache('transactions', STATE.transactions);
       markLoaded('tx');
       reRenderCurrentScreen();
     }, handleSnapshotError('transactions'))
@@ -1974,6 +2008,7 @@ function startFirestoreSync(user){
   STATE.unsubscribers.push(
     householdQuery('categories').onSnapshot(function(snapshot){
       var custom = snapshot.docs.map(mapDoc);
+      saveCache('categories', custom);
       STATE.categories = mergeCategories(DEFAULT_CATEGORIES, custom);
       markLoaded('cats');
       reRenderCurrentScreen();
@@ -1983,6 +2018,7 @@ function startFirestoreSync(user){
   STATE.unsubscribers.push(
     householdQuery('learnedDescriptions').onSnapshot(function(snapshot){
       STATE.learned = snapshot.docs.map(mapDoc);
+      saveCache('learnedDescriptions', STATE.learned);
       markLoaded('learned');
     }, handleSnapshotError('learnedDescriptions'))
   );
@@ -1990,6 +2026,7 @@ function startFirestoreSync(user){
   STATE.unsubscribers.push(
     householdQuery('historicalSummaries').onSnapshot(function(snapshot){
       STATE.historical = snapshot.docs.map(mapDoc);
+      saveCache('historicalSummaries', STATE.historical);
       markLoaded('hist');
       reRenderCurrentScreen();
     }, handleSnapshotError('historicalSummaries'))
@@ -1998,6 +2035,7 @@ function startFirestoreSync(user){
   STATE.unsubscribers.push(
     householdQuery('budgets').onSnapshot(function(snapshot){
       STATE.budgets = snapshot.docs.map(mapDoc);
+      saveCache('budgets', STATE.budgets);
       markLoaded('budgets');
       renderSettingsMeta();
       reRenderCurrentScreen();
@@ -2008,6 +2046,7 @@ function startFirestoreSync(user){
   STATE.unsubscribers.push(
     householdQuery('figurinhasCopa').onSnapshot(function(snapshot){
       STATE.figurinhas = snapshot.docs.map(mapDoc);
+      saveCache('figurinhasCopa', STATE.figurinhas);
       if (document.getElementById('sheet-figurinhas-copa') && document.getElementById('sheet-figurinhas-copa').classList.contains('show')) {
         renderFigurinhasCopa();
       }
@@ -3859,7 +3898,7 @@ function init(){
   }
 
   function showLoginAfterBoot(message){
-    var wait = Math.max(0, 700 - (Date.now() - bootStartedAt));
+    var wait = Math.max(0, 1000 - (Date.now() - bootStartedAt));
     setTimeout(function(){
       if (appEl.classList.contains('active')) return;
       finishBoot();
@@ -3880,7 +3919,7 @@ function init(){
     if (!authAnswered && !appEl.classList.contains('active')) {
       showLoginAfterBoot('Demorou para verificar a sessão. Faça login novamente.');
     }
-  }, 1400);
+  }, 2200);
 
   auth.onAuthStateChanged(function(user){
     authAnswered = true;

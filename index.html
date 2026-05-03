@@ -2606,7 +2606,12 @@ function saveDraftConfirmed(){
     var baseInstallmentCents = Math.floor(totalCents / n);
     var centsRemainder = totalCents - (baseInstallmentCents * n);
 
+    // Correção segura v2.5.5:
+    // Parcelado mensal segue o mesmo racional seguro das fixas: NÃO lança todos os meses futuros.
+    // Cria apenas a parcela do mês escolhido. As próximas parcelas ficam para lançamento manual por enquanto.
+    // Parcelado semanal continua criando todas as parcelas semanais, pois é um fluxo de curto prazo.
     var parcelCountToCreate = adv.recurrenceType === 'installment-monthly' ? 1 : n;
+
     for (var i=0;i<parcelCountToCreate;i++){
       var dt;
       if (adv.recurrenceType === 'installment-monthly') dt = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());

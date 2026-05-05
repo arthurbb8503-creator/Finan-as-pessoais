@@ -1073,6 +1073,9 @@ button { cursor: pointer; user-select: none; }
 .fig-extra-title span { color: var(--text-3); font-size: 10px; font-weight: 800; letter-spacing: 0; text-transform:none; }
 .fig-inline-result { margin-top: 8px; padding: 10px 11px; border-radius: 13px; background: var(--bg-elev-1); border: 1px solid var(--border); color: var(--text-2); font-size: 12px; line-height: 1.45; }
 .fig-inline-result strong { color: var(--text); }
+.fig-cost-preview { margin-top:10px; padding:11px 12px; border-radius:14px; background:rgba(168,255,140,.07); border:1px solid rgba(168,255,140,.18); color:var(--text-2); font-size:12px; line-height:1.45; }
+.fig-cost-preview strong { color:var(--accent); }
+.fig-form-note { font-size:11px; color:var(--text-3); margin-top:6px; line-height:1.35; }
 .fig-model-box { background: rgba(140,184,255,.08); border: 1px solid rgba(140,184,255,.22); color: var(--text-2); border-radius: 16px; padding: 12px 13px; font-size: 12px; line-height: 1.45; margin-bottom: 14px; }
 .fig-model-box strong { color: var(--info); }
 .fig-potential { color: var(--text-3); font-size: 10px; }
@@ -1567,19 +1570,24 @@ button { cursor: pointer; user-select: none; }
 
       <div class="fig-subtitle">Compras / reposição</div>
       <div class="fig-form-grid">
-        <div class="fig-field"><label>Pacotes comprados</label><input id="fig-purchase-qty" type="number" inputmode="numeric" min="0" step="1000" placeholder="Múltiplos de 1.000"></div>
+        <div class="fig-field"><label>Pacotes comprados</label><input id="fig-purchase-qty" type="number" inputmode="numeric" min="0" step="1" placeholder="0"></div>
         <div class="fig-field"><label>Álbuns comprados</label><input id="fig-albums-purchased" type="number" inputmode="numeric" min="0" step="1" placeholder="0"></div>
+      </div>
+      <div class="fig-cost-preview" id="fig-replenishment-cost">Reposição: digite uma compra para calcular o custo.</div>
+
+      <div class="fig-subtitle">Despesa diária</div>
+      <div class="fig-form-grid">
+        <div class="fig-field full"><label>Taxa maquineta</label><input id="fig-machine-fee" type="number" inputmode="decimal" min="0" step="0.01" placeholder="R$ 0,00"></div>
       </div>
 
       <div class="fig-day-summary" id="fig-day-summary"></div>
 
       <details class="fig-more-details">
-        <summary>Extras e observação</summary>
+        <summary>Outros detalhes</summary>
         <div class="fig-form-grid" style="margin-top:12px;">
-          <div class="fig-field"><label>Taxa maquineta</label><input id="fig-machine-fee" type="number" inputmode="decimal" min="0" step="0.01" placeholder="R$"></div>
           <div class="fig-field"><label>Outras despesas</label><input id="fig-extra-expense" type="number" inputmode="decimal" min="0" step="0.01" placeholder="R$"></div>
           <div class="fig-field"><label>Outras receitas</label><input id="fig-extra-revenue" type="number" inputmode="decimal" min="0" step="0.01" placeholder="R$"></div>
-          <div class="fig-field"><label>Descrição do extra</label><input id="fig-extra-expense-label" type="text" placeholder="Taxa, maquininha, transporte..."></div>
+          <div class="fig-field full"><label>Descrição do extra</label><input id="fig-extra-expense-label" type="text" placeholder="Maquininha, transporte, brinde, perda..."></div>
           <div class="fig-field full"><label>Observação</label><textarea id="fig-note" placeholder="Ex: dia fraco por chuva, venda para agência, reposição..."></textarea></div>
         </div>
       </details>
@@ -3544,7 +3552,14 @@ function figEarliestOperationalDate(){
   return minDate;
 }
 function figDateRange(){ var out=[]; var start=figEarliestOperationalDate(); var d=parseDateLocal(start); var end=parseDateLocal(FIG_COPA.end); while(d<=end){ out.push(ymd(d)); d.setDate(d.getDate()+1); } return out; }
-function figReferenceDate(){ return figYesterday(); }
+function figReferenceDate(){
+  var y=figYesterday();
+  var today=ymd(new Date());
+  var doc=figDocForDate(figDataMap(), y);
+  // Uso real: por padrão abre em ontem; se ontem já foi fechado, abre em hoje automaticamente.
+  if(figHasAnyMovement(doc)) return today;
+  return y;
+}
 function figOriginalProjection(dateStr){ var ph=figPhase(dateStr); return Math.max(0, Math.round(FIG_COPA.anchorBase * (ph.weight / FIG_COPA.anchorPhaseWeight) * figWeekdayMultiplier(dateStr))); }
 function figAverage(arr){ if(!arr||!arr.length) return 1; var s=0; for(var i=0;i<arr.length;i++) s+=arr[i]; return s/arr.length; }
 function figProjectionConfidence(n){ if(n<=0) return {label:'baixa',desc:'sem dias reais',level:0}; if(n<=2) return {label:'baixa',desc:n+' dia(s) real(is)',level:1}; if(n<=6) return {label:'média',desc:n+' dias reais',level:2}; if(n<=13) return {label:'boa',desc:n+' dias reais',level:3}; return {label:'alta',desc:n+' dias reais',level:4}; }
@@ -3596,9 +3611,75 @@ function figWeeklyRows(){ var model=figBuildProjection(); var rows=[]; var bucke
 
 function figLoadFormForDate(dateStr){ var doc=figDocForDate(figDataMap(),dateStr); document.getElementById('fig-real-sales').value=figHasRealSale(doc)?doc.stickersSold:''; var albumSold=document.getElementById('fig-albums-sold'); if(albumSold) albumSold.value=doc.albumsSold||''; var albumRev=document.getElementById('fig-album-revenue'); if(albumRev) albumRev.value=doc.albumRevenue||''; document.getElementById('fig-purchase-qty').value=doc.stickersPurchased||''; var albBuy=document.getElementById('fig-albums-purchased'); if(albBuy) albBuy.value=doc.albumsPurchased||''; document.getElementById('fig-machine-fee').value=doc.machineFee||''; document.getElementById('fig-extra-expense').value=doc.otherExpense||''; document.getElementById('fig-extra-revenue').value=doc.otherIncome||''; document.getElementById('fig-extra-expense-label').value=doc.extraExpenseLabel||''; document.getElementById('fig-note').value=doc.note||''; renderFigDaySummary(); }
 function figReadFormEntry(){ var dateEl=document.getElementById('fig-date-input'); var dateStr=dateEl&&dateEl.value?dateEl.value:figReferenceDate(); var saleRaw=document.getElementById('fig-real-sales').value; var purchaseRaw=document.getElementById('fig-purchase-qty').value; var albumSoldEl=document.getElementById('fig-albums-sold'); var albumRevEl=document.getElementById('fig-album-revenue'); var albumBuyEl=document.getElementById('fig-albums-purchased'); var machineFee=figNumber(document.getElementById('fig-machine-fee').value,0); var otherExpense=figNumber(document.getElementById('fig-extra-expense').value,0); var otherIncome=figNumber(document.getElementById('fig-extra-revenue').value,0); var stickers=saleRaw===''?null:figInteger(saleRaw,0); var stickerBuy=purchaseRaw===''?0:figInteger(purchaseRaw,0); return {householdId:HOUSEHOLD_ID,date:dateStr,stickersSold:stickers,realSales:stickers,albumsSold:figInteger(albumSoldEl?albumSoldEl.value:'',0),albumRevenue:Math.max(0,figNumber(albumRevEl?albumRevEl.value:'',0)),stickersPurchased:stickerBuy,purchaseQty:stickerBuy,albumsPurchased:figInteger(albumBuyEl?albumBuyEl.value:'',0),machineFee:Math.max(0,machineFee),otherExpense:Math.max(0,otherExpense),otherIncome:Math.max(0,otherIncome),extraExpense:Math.max(0,machineFee)+Math.max(0,otherExpense),extraRevenue:Math.max(0,otherIncome),extraExpenseLabel:document.getElementById('fig-extra-expense-label').value||'',note:document.getElementById('fig-note').value||'',updatedAt:Date.now(),deletedAt:null}; }
-function renderFigDaySummary(){ var host=document.getElementById('fig-day-summary'); if(!host) return; var sales=figInteger((document.getElementById('fig-real-sales')||{}).value,0)||0; var albums=figInteger((document.getElementById('fig-albums-sold')||{}).value,0)||0; var albumRevenue=figNumber((document.getElementById('fig-album-revenue')||{}).value,0)||0; var revenue=sales*FIG_COPA.stickerPrice+albumRevenue; var cmv=sales*FIG_COPA.stickerCost+(albums*FIG_COPA.albumCost); var fee=figNumber((document.getElementById('fig-machine-fee')||{}).value,0)||0; var other=figNumber((document.getElementById('fig-extra-expense')||{}).value,0)||0; var extraRev=figNumber((document.getElementById('fig-extra-revenue')||{}).value,0)||0; var profit=revenue-cmv-fee-other+extraRev; host.innerHTML='<div class="fds-card"><div class="fds-label">Faturamento do dia</div><div class="fds-value">'+fmtBRL(revenue)+'</div></div><div class="fds-card"><div class="fds-label">Custo pacotes</div><div class="fds-value">'+fmtBRL(cmv)+'</div></div><div class="fds-card"><div class="fds-label">Lucro bruto</div><div class="fds-value '+(profit>=0?'good':'bad')+'">'+fmtBRL(profit)+'</div></div><div class="fig-inline-result" style="grid-column:1/-1;">Pacotes: <strong>'+figFmtInt(sales)+' × R$ 7,00</strong> = '+fmtBRL(sales*FIG_COPA.stickerPrice)+' · Álbuns: '+fmtBRL(albumRevenue)+' · Extras líquidos: '+fmtBRL(extraRev-fee-other)+'</div>'; }
+function renderFigDaySummary(){
+  var host=document.getElementById('fig-day-summary');
+  var replenish=document.getElementById('fig-replenishment-cost');
+  var sales=figInteger((document.getElementById('fig-real-sales')||{}).value,0)||0;
+  var albums=figInteger((document.getElementById('fig-albums-sold')||{}).value,0)||0;
+  var albumRevenue=figNumber((document.getElementById('fig-album-revenue')||{}).value,0)||0;
+  var stickerBuy=figInteger((document.getElementById('fig-purchase-qty')||{}).value,0)||0;
+  var albumBuy=figInteger((document.getElementById('fig-albums-purchased')||{}).value,0)||0;
+  var revenue=sales*FIG_COPA.stickerPrice+albumRevenue;
+  var cmv=sales*FIG_COPA.stickerCost+(albums*FIG_COPA.albumCost);
+  var restockCost=stickerBuy*FIG_COPA.stickerCost+(albumBuy*FIG_COPA.albumCost);
+  var fee=figNumber((document.getElementById('fig-machine-fee')||{}).value,0)||0;
+  var other=figNumber((document.getElementById('fig-extra-expense')||{}).value,0)||0;
+  var extraRev=figNumber((document.getElementById('fig-extra-revenue')||{}).value,0)||0;
+  var profit=revenue-cmv-fee-other+extraRev;
+
+  if(replenish){
+    if(stickerBuy||albumBuy){
+      replenish.innerHTML='Reposição calculada: <strong>'+fmtBRL(restockCost)+'</strong><br>Pacotes: '+figFmtInt(stickerBuy)+' × R$ 5,25 = '+fmtBRL(stickerBuy*FIG_COPA.stickerCost)+(albumBuy?'<br>Álbuns: '+figFmtInt(albumBuy)+' comprado(s) · custo unitário ainda não configurado':'');
+    } else {
+      replenish.innerHTML='Reposição: digite a compra de pacotes/álbuns para calcular o custo de estoque.';
+    }
+  }
+
+  if(!host) return;
+  host.innerHTML='<div class="fds-card"><div class="fds-label">Faturamento do dia</div><div class="fds-value">'+fmtBRL(revenue)+'</div></div><div class="fds-card"><div class="fds-label">Custo vendido</div><div class="fds-value">'+fmtBRL(cmv)+'</div></div><div class="fds-card"><div class="fds-label">Lucro bruto</div><div class="fds-value '+(profit>=0?'good':'bad')+'">'+fmtBRL(profit)+'</div></div><div class="fig-inline-result" style="grid-column:1/-1;">Pacotes vendidos: <strong>'+figFmtInt(sales)+' × R$ 7,00</strong> = '+fmtBRL(sales*FIG_COPA.stickerPrice)+' · Receita álbuns: '+fmtBRL(albumRevenue)+'<br>Taxa maquineta: '+fmtBRL(fee)+' · Outros líquidos: '+fmtBRL(extraRev-other)+'</div>';
+}
 function figSetToday(){ var el=document.getElementById('fig-date-input'); if(!el) return; el.value=ymd(new Date()); figLoadFormForDate(el.value); renderFigurinhasCopa(); }
-function saveFigurinhasDay(){ var payload=figReadFormEntry(); if(payload.stickersPurchased&&payload.stickersPurchased%1000!==0){ toast('Compra de pacotes precisa ser múltiplo de 1.000','error'); return; } var msg=document.getElementById('fig-save-msg'); var btn=document.getElementById('fig-save-day'); if(msg) msg.textContent='salvando…'; if(btn) btn.disabled=true; collectionRef('figurinhasCopa').doc(payload.date).set(payload,{merge:true}).then(function(){ if(msg) msg.textContent='salvo'; setTimeout(function(){ if(msg&&msg.textContent==='salvo') msg.textContent=''; },1200); toast('Dia salvo','success'); renderFigurinhasCopa(); }).catch(function(error){ if(msg) msg.textContent='erro ao salvar'; toast('Erro ao salvar Figurinhas: '+error.code,'error'); }).finally(function(){ if(btn) btn.disabled=false; }); }
+function figUpsertLocalFigurinhas(payload){
+  if(!STATE.figurinhas) STATE.figurinhas=[];
+  var found=false;
+  for(var i=0;i<STATE.figurinhas.length;i++){
+    if(STATE.figurinhas[i]&&STATE.figurinhas[i].date===payload.date){
+      STATE.figurinhas[i]=payload;
+      found=true;
+      break;
+    }
+  }
+  if(!found) STATE.figurinhas.push(payload);
+}
+function saveFigurinhasDay(){
+  var payload=figReadFormEntry();
+  var msg=document.getElementById('fig-save-msg');
+  var btn=document.getElementById('fig-save-day');
+  if(msg) msg.textContent='salvando…';
+  if(btn) btn.disabled=true;
+
+  // Atualiza localmente antes do retorno do Firebase para a projeção recalibrar na hora.
+  figUpsertLocalFigurinhas(payload);
+
+  collectionRef('figurinhasCopa').doc(payload.date).set(payload,{merge:true}).then(function(){
+    if(msg) msg.textContent='salvo';
+    setTimeout(function(){ if(msg&&msg.textContent==='salvo') msg.textContent=''; },1200);
+    toast('Dia salvo','success');
+
+    // Se ontem foi fechado, abre hoje automaticamente para compra/reposição ou ajustes do dia.
+    var dateEl=document.getElementById('fig-date-input');
+    var smart=figReferenceDate();
+    if(dateEl && payload.date===figYesterday() && smart!==payload.date){
+      dateEl.value=smart;
+      figLoadFormForDate(smart);
+    }
+    renderFigurinhasCopa();
+  }).catch(function(error){
+    if(msg) msg.textContent='erro ao salvar';
+    toast('Erro ao salvar Figurinhas: '+error.code,'error');
+    renderFigurinhasCopa();
+  }).finally(function(){ if(btn) btn.disabled=false; });
+}
 function figCard(label,value,sub,important,statusHtml,extraClass){ return '<div class="fig-card '+(important?'important ':'')+(extraClass||'')+'"><div class="f-label">'+label+'</div><div class="f-value">'+value+'</div>'+(sub?'<div class="f-sub">'+sub+'</div>':'')+(statusHtml||'')+'</div>'; }
 function figCardSmall(label,value,sub,important){ return figCard(label,value,sub,important,'',''); }
 function renderFigModelBox(model,ref){ var host=document.getElementById('fig-model-box'); if(!host) return; var cal=model.calibrationByDate[ref]||model.currentCalibration||{factor:1,confidence:figProjectionConfidence(0),rawGeneral:1}; var pct=Math.round((cal.factor-1)*100); var signal=pct>=0?'+':''; host.innerHTML='<strong>Modelo:</strong> ajuste '+signal+pct+'% · confiança '+cal.confidence.label+' · '+cal.confidence.desc+'.'; }
@@ -3609,14 +3690,14 @@ function renderFigurinhasCopa(){
   var totals=figTotals(model); var stock=figRealStockUntil(ref); var recommendedStock=figRecommendedStockFor(ref,model); var recommendedPurchase=figRoundToThousand(recommendedStock-stock.packs); var status=figStatus(stock.packs,recommendedStock,ref);
   var revenueReal=totals.stickersSold*FIG_COPA.stickerPrice+totals.albumRevenue+totals.otherIncome; var profitReal=(totals.stickersSold*(FIG_COPA.stickerPrice-FIG_COPA.stickerCost))+totals.albumRevenue+totals.otherIncome-totals.extraExpense;
   var weekRows=figWeeklyRows(); var currentWeek=weekRows.length?weekRows[0]:null;
-  cards.innerHTML=figCard('Estoque','Pacotes '+figFmtInt(stock.packs)+'<br>Álbuns '+figFmtInt(stock.albums),'Real até '+formatDateBR(ref),false,'','main')+figCard('Lucro realizado',fmtBRL(profitReal),'Faturamento real: '+fmtBRL(revenueReal),false,'','')+figCard('Comprar hoje','Pacotes '+figFmtInt(recommendedPurchase),'Status: '+status.label,true,'','buy')+figCard('Semana atual',currentWeek?(figFmtInt(currentWeek.stickers)+' pacotes<br>'+figFmtInt(currentWeek.albums)+' álbuns'):'Sem vendas','Lucro: '+fmtBRL(currentWeek?currentWeek.profit:0),false,'','');
+  cards.innerHTML=figCard('Estoque','Pacotes '+figFmtInt(stock.packs)+'<br>Álbuns '+figFmtInt(stock.albums),'Real até '+formatDateBR(ref),false,'','main')+figCard('Lucro realizado',fmtBRL(profitReal),'Faturamento real: '+fmtBRL(revenueReal),false,'','')+figCard('Comprar hoje','Pacotes '+figFmtInt(recommendedPurchase),'Custo estimado: '+fmtBRL(recommendedPurchase*FIG_COPA.stickerCost)+' · '+status.label,true,'','buy')+figCard('Semana atual',currentWeek?(figFmtInt(currentWeek.stickers)+' pacotes<br>'+figFmtInt(currentWeek.albums)+' álbuns'):'Sem vendas','Lucro: '+fmtBRL(currentWeek?currentWeek.profit:0),false,'','');
   renderFigNextDays(ref); renderFigHistoryList(); renderFigWeeklyList();
 }
 function renderFigNextDays(ref){ var host=document.getElementById('fig-next-days'); if(!host) return; var rows=figSimulationRows(ref).slice(1,4); if(rows.length<3) rows=figSimulationRows(ref).slice(0,3); var html='<div class="fig-next-3">'; for(var i=0;i<rows.length;i++){ var r=rows[i]; html+='<div class="fig-next-day-card"><div><div class="date">'+figDateBRShort(r.date)+'</div><div class="meta">'+r.day.slice(0,3)+'</div></div><div><div class="meta">'+escapeHtml(r.phase)+'</div><div class="meta">ajuste '+Math.round((r.calibration-1)*100)+'% · '+r.confidence+'</div></div><div class="qty">'+figFmtInt(r.projectedSale)+'<small>pacotes</small></div></div>'; } html+='</div>'; host.innerHTML=html; }
 function renderFigHistoryList(){ var host=document.getElementById('fig-history-list'); if(!host) return; var model=figBuildProjection(); var items=[]; for(var i=0;i<model.dates.length;i++){ var d=model.dates[i]; var doc=model.docs[d]; if(figHasAnyMovement(doc)) items.push(doc); } items.sort(function(a,b){ return b.date.localeCompare(a.date); }); items=items.slice(0,8); if(!items.length){ host.innerHTML='<div class="fig-inline-result">Nenhum lançamento salvo ainda.</div>'; return; } var html=''; for(var j=0;j<items.length;j++){ var it=items[j]; var profit=figRealizedProfitForDoc(it); html+='<div class="fig-history-row" data-date="'+it.date+'"><div class="fig-history-date">'+figDateBRShort(it.date)+'</div><div class="fig-history-main"><div class="fig-history-title">Pacotes: '+figFmtInt(figHasRealSale(it)?it.stickersSold:0)+' vend. · '+figFmtInt(it.stickersPurchased||0)+' comp.</div><div class="fig-history-sub">Álbuns: '+figFmtInt(it.albumsSold||0)+' vend. · '+figFmtInt(it.albumsPurchased||0)+' comp. · Receita '+fmtBRL(figRevenueForDoc(it))+'</div></div><div class="fig-history-profit">'+fmtBRL(profit)+'</div></div>'; } host.innerHTML=html; var rows=host.querySelectorAll('.fig-history-row'); for(var r=0;r<rows.length;r++){ rows[r].onclick=function(){ var date=this.getAttribute('data-date'); var inp=document.getElementById('fig-date-input'); if(inp) inp.value=date; figLoadFormForDate(date); renderFigurinhasCopa(); toast('Dia carregado para edição','success'); }; } }
 function renderFigWeeklyList(){ var host=document.getElementById('fig-weekly-list'); if(!host) return; var rows=figWeeklyRows().slice(0,6); if(!rows.length){ host.innerHTML='<div class="fig-inline-result">As semanas aparecem depois dos primeiros lançamentos.</div>'; return; } var html=''; for(var i=0;i<rows.length;i++){ var w=rows[i]; html+='<div class="fig-week-row"><div><div class="fig-week-name">'+w.label+'</div><div class="fig-week-sub">'+figFmtInt(w.stickers)+' pacotes · '+figFmtInt(w.albums)+' álbuns · faturamento '+fmtBRL(w.revenue)+'</div></div><div class="fig-week-profit">'+fmtBRL(w.profit)+'</div></div>'; } host.innerHTML=html; }
 function toggleFigDetailTable(){}
-function openFigurinhasCopaSheet(){ var dateEl=document.getElementById('fig-date-input'); if(dateEl&&!dateEl.value) dateEl.value=figReferenceDate(); if(dateEl) figLoadFormForDate(dateEl.value); renderFigurinhasCopa(); openSheet('sheet-figurinhas-copa'); }
+function openFigurinhasCopaSheet(){ var dateEl=document.getElementById('fig-date-input'); if(dateEl) dateEl.value=figReferenceDate(); if(dateEl) figLoadFormForDate(dateEl.value); renderFigurinhasCopa(); openSheet('sheet-figurinhas-copa'); }
 function handleFigInputChange(e){ renderFigDaySummary(); }
 function formatDateBR(dateStr){ var d=parseDateLocal(dateStr); return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear(); }
 

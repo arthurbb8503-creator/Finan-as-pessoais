@@ -2010,6 +2010,7 @@ function startFirestoreSync(user){
       saveCache('transactions', STATE.transactions);
       markLoaded('tx');
       reRenderCurrentScreen();
+      setTimeout(backfillLegacyMonthlyInstallments, 150);
     }, handleSnapshotError('transactions'))
   );
 
@@ -2653,19 +2654,22 @@ function saveDraftConfirmed(){
     var baseInstallmentCents = Math.floor(totalCents / n);
     var centsRemainder = totalCents - (baseInstallmentCents * n);
 
-    // Correção segura v2.5.5:
-    // Parcelado mensal segue o mesmo racional seguro das fixas: NÃO lança todos os meses futuros.
-    // Cria apenas a parcela do mês escolhido. As próximas parcelas ficam para lançamento manual por enquanto.
-    // Parcelado semanal continua criando todas as parcelas semanais, pois é um fluxo de curto prazo.
-    var parcelCountToCreate = adv.recurrenceType === 'installment-monthly' ? 1 : n;
-
-    for (var i=0;i<parcelCountToCreate;i++){
+    // Parcelado mensal: cria todas as parcelas para manter o calendário futuro.
+    // A parcela do mês atual/passado é realizada; parcelas de meses futuros ficam programadas.
+    // Programadas aparecem no mês e no limite comprometido, mas não entram no anual realizado.
+    for (var i=0;i<n;i++){
       var dt;
-      if (adv.recurrenceType === 'installment-monthly') dt = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
-      else { dt = new Date(baseDate.getTime()); dt.setDate(dt.getDate()+i*7); }
+      if (adv.recurrenceType === 'installment-monthly') {
+        dt = new Date(baseDate.getFullYear(), baseDate.getMonth()+i, baseDate.getDate());
+      } else {
+        dt = new Date(baseDate.getTime());
+        dt.setDate(dt.getDate()+i*7);
+      }
 
       var installmentCents = baseInstallmentCents + (i < centsRemainder ? 1 : 0);
       var installmentAmount = installmentCents / 100;
+      var futureMonthly = adv.recurrenceType === 'installment-monthly' &&
+        new Date(dt.getFullYear(), dt.getMonth(), 1) > new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 
       toAdd.push(makeTx({
         type: STATE.draft.type,
@@ -2679,7 +2683,9 @@ function saveDraftConfirmed(){
         installmentIndex: i+1,
         installmentTotal: n,
         installmentOriginalTotal: amount,
-        installmentMode: adv.recurrenceType === 'installment-monthly' ? 'manual-next-months' : 'generated-weekly'
+        installmentMode: adv.recurrenceType === 'installment-monthly' ? 'scheduled-monthly' : 'generated-weekly',
+        scheduledStatus: futureMonthly ? 'scheduled' : 'realized',
+        scheduledForMonth: futureMonthly ? ymd(dt).slice(0,7) : null
       }));
     }
   } else if (adv.recurrenceType === 'recurring-weekly'){
@@ -2719,7 +2725,7 @@ function saveDraftConfirmed(){
       if (adv.recurrenceType === 'fixed'){
         successMsg = 'Fixo mensal salvo · prévia do próximo mês criada';
       } else if (adv.recurrenceType === 'installment-monthly'){
-        successMsg = 'Parcela mensal salva · 1/' + (adv.installments || 1) + ' de ' + fmtBRL(toAdd[0].amount);
+        successMsg = 'Compra parcelada · ' + toAdd.length + 'x de ' + fmtBRL(toAdd[0].amount) + ' · futuras programadas';
       } else if (adv.recurrenceType === 'installment-weekly' && toAdd.length > 1){
         successMsg = 'Compra parcelada semanal · ' + toAdd.length + 'x de ' + fmtBRL(toAdd[0].amount);
       } else {
@@ -2841,6 +2847,97 @@ function updateAdvExplanation(r){
   document.getElementById('adv-explanation').textContent = txt;
 }
 
+
+var INSTALLMENT_BACKFILL_RUNNING = false;
+var INSTALLMENT_BACKFILL_DONE = false;
+
+function safeInstallmentDocId(groupId, index){
+  return ('inst_' + String(groupId || 'grupo') + '_' + index).replace(/[^a-zA-Z0-9_-]/g, '_');
+}
+
+function backfillLegacyMonthlyInstallments(){
+  if (INSTALLMENT_BACKFILL_RUNNING || INSTALLMENT_BACKFILL_DONE || !db || !STATE.currentAppUser) return;
+
+  var groups = {};
+  for (var i=0;i<STATE.transactions.length;i++){
+    var t = STATE.transactions[i];
+    if (!t || t.deletedAt || t.recurrenceType !== 'installment-monthly' || !t.recurrenceGroupId) continue;
+    var total = parseInt(t.installmentTotal || 0, 10);
+    if (total < 2) continue;
+    if (!groups[t.recurrenceGroupId]) groups[t.recurrenceGroupId] = [];
+    groups[t.recurrenceGroupId].push(t);
+  }
+
+  var batch = db.batch();
+  var created = 0;
+  var nowMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+
+  for (var groupId in groups){
+    if (!Object.prototype.hasOwnProperty.call(groups, groupId)) continue;
+    var items = groups[groupId];
+    var first = null;
+    var existing = {};
+    for (var j=0;j<items.length;j++){
+      var idx = parseInt(items[j].installmentIndex || 0, 10);
+      if (idx) existing[idx] = true;
+      if (!first || idx === 1) first = items[j];
+    }
+    if (!first) continue;
+
+    var n = parseInt(first.installmentTotal || 0, 10);
+    if (n < 2 || Object.keys(existing).length >= n) continue;
+
+    var baseDate = parseDateLocal(first.date);
+    var originalTotal = Number(first.installmentOriginalTotal || 0);
+    if (!originalTotal) originalTotal = (Number(first.amount) || 0) * n;
+    var totalCents = Math.round(originalTotal * 100);
+    var baseCents = Math.floor(totalCents / n);
+    var remainder = totalCents - (baseCents * n);
+    var baseDescription = String(first.description || 'Compra parcelada').replace(/\s+1\/\d+\s*$/, '');
+
+    for (var k=1;k<=n;k++){
+      if (existing[k]) continue;
+      var dt = new Date(baseDate.getFullYear(), baseDate.getMonth() + (k-1), baseDate.getDate());
+      var cents = baseCents + ((k-1) < remainder ? 1 : 0);
+      var future = new Date(dt.getFullYear(), dt.getMonth(), 1) > nowMonth;
+      var tx = makeTx({
+        type: first.type,
+        amount: cents / 100,
+        description: baseDescription + ' ' + k + '/' + n,
+        categoryId: first.categoryId,
+        userId: first.userId,
+        date: ymd(dt),
+        recurrenceType: 'installment-monthly',
+        recurrenceGroupId: groupId,
+        installmentIndex: k,
+        installmentTotal: n,
+        installmentOriginalTotal: originalTotal,
+        installmentMode: 'scheduled-monthly-backfill',
+        scheduledStatus: future ? 'scheduled' : 'realized',
+        scheduledForMonth: future ? ymd(dt).slice(0,7) : null,
+        sourceTxId: first.id || null
+      });
+      batch.set(collectionRef('transactions').doc(safeInstallmentDocId(groupId, k)), tx, { merge:true });
+      created++;
+    }
+  }
+
+  if (!created){
+    INSTALLMENT_BACKFILL_DONE = true;
+    return;
+  }
+
+  INSTALLMENT_BACKFILL_RUNNING = true;
+  batch.commit().then(function(){
+    INSTALLMENT_BACKFILL_DONE = true;
+    INSTALLMENT_BACKFILL_RUNNING = false;
+    toast(created + ' parcela(s) antiga(s) recuperada(s)', 'success');
+  }).catch(function(error){
+    INSTALLMENT_BACKFILL_RUNNING = false;
+    console.error('Erro ao recuperar parcelas antigas:', error);
+    toast('Não foi possível recuperar parcelas antigas', 'error');
+  });
+}
 
 function firstDayOfMonthFromYmd(dateStr){
   var d = parseDateLocal(dateStr);
@@ -3031,7 +3128,7 @@ function renderScheduledPanel(list, total){
     return;
   }
   panel.classList.add('show');
-  host.innerHTML = '<div class="scheduled-summary"><span>Fixas previstas antes do mês começar</span><strong>' + fmtBRL(total) + '</strong></div>';
+  host.innerHTML = '<div class="scheduled-summary"><span>Compromissos programados do mês</span><strong>' + fmtBRL(total) + '</strong></div>';
   list.sort(function(a,b){ return parseDateLocal(a.date) - parseDateLocal(b.date); });
   for (var i=0;i<list.length;i++) host.appendChild(buildTxRow(list[i], true));
 }

@@ -1006,6 +1006,13 @@ button { cursor: pointer; user-select: none; }
 
 .sparkline { width: 100%; height: 64px; margin-top: 8px; }
 
+.commit-month-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 @media (max-width: 360px) {
   .amount-display { font-size: 58px; min-height: 60px; }
   .amount-display .currency { font-size: 22px; margin-top: 10px; }
@@ -1014,110 +1021,6 @@ button { cursor: pointer; user-select: none; }
   .keypad button { padding: 13px 0; }
   .launch-hero { padding-top: 10px; }
 }
-
-/* ============ FIGURINHAS COPA — V2 SIMPLES ============ */
-.fig-shell { padding: 0 0 12px; }
-.fig-alert { background: rgba(255,210,122,0.10); border: 1px solid rgba(255,210,122,0.28); color: var(--warn); border-radius: var(--radius-md); padding: 13px 14px; font-size: 13px; line-height: 1.45; margin-bottom: 14px; }
-.fig-constants { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-.fig-constant { background: var(--bg-elev-2); border: 1px solid var(--border); border-radius: 14px; padding: 11px 12px; }
-.fig-constant .fc-label { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: .08em; font-weight: 900; }
-.fig-constant .fc-value { margin-top: 3px; font-size: 14px; font-weight: 900; }
-.fig-cards, .fig-finance-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-.fig-card { background: var(--bg-elev-2); border: 1px solid var(--border); border-radius: 16px; padding: 14px; min-height: 92px; overflow: hidden; }
-.fig-card.important { border-color: rgba(168,255,140,.55); box-shadow: 0 0 0 3px rgba(168,255,140,.08); background: linear-gradient(135deg, rgba(168,255,140,.14), var(--bg-elev-2)); }
-.fig-card .f-label { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: .08em; font-weight: 900; line-height: 1.25; }
-.fig-card .f-value { margin-top: 7px; font-family: var(--font-display); font-size: 28px; letter-spacing: -.03em; line-height: 1.05; }
-.fig-card .f-value.small { font-family: var(--font-ui); font-size: 19px; font-weight: 900; letter-spacing: -.02em; }
-.fig-card .f-sub { margin-top: 7px; font-size: 11px; color: var(--text-3); line-height: 1.3; }
-.fig-status { display: inline-flex; align-items: center; justify-content: center; padding: 7px 10px; border-radius: 999px; font-size: 11px; font-weight: 900; margin-top: 7px; line-height: 1.25; }
-.fig-status.safe { background: rgba(168,255,140,.15); color: var(--accent); border: 1px solid rgba(168,255,140,.35); }
-.fig-status.warn { background: rgba(255,210,122,.15); color: var(--warn); border: 1px solid rgba(255,210,122,.35); }
-.fig-status.risk { background: rgba(255,140,122,.15); color: var(--danger); border: 1px solid rgba(255,140,122,.35); }
-.fig-status.excess { background: rgba(255,168,88,.15); color: #FFA858; border: 1px solid rgba(255,168,88,.35); }
-.fig-day-box, .fig-next-box, .fig-finance-box { background: var(--bg-elev-2); border: 1px solid var(--border); border-radius: 18px; padding: 14px; margin-bottom: 14px; }
-.fig-block-title { font-family: var(--font-display); font-size: 24px; line-height: 1; margin-bottom: 3px; }
-.fig-block-sub { color: var(--text-3); font-size: 12px; line-height: 1.35; margin-bottom: 12px; }
-.fig-date-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
-.fig-date-row input { flex: 1; background: var(--bg-elev-1); border: 1px solid var(--border); border-radius: 13px; padding: 12px 13px; color: var(--text); color-scheme: dark; }
-.fig-date-row button { background: var(--bg-elev-3); border: 1px solid var(--border); color: var(--text-2); border-radius: 13px; padding: 12px 13px; font-weight: 900; }
-.fig-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.fig-field.full { grid-column: 1 / -1; }
-.fig-field label { display:block; font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: .09em; font-weight: 900; margin-bottom: 6px; }
-.fig-field input, .fig-field textarea { width: 100%; background: var(--bg-elev-1); border: 1px solid var(--border); border-radius: 13px; padding: 12px 13px; color: var(--text); font-size: 15px; }
-.fig-field textarea { min-height: 66px; resize: vertical; }
-.fig-save-day-btn { width: 100%; margin-top: 12px; padding: 15px; border-radius: 15px; background: var(--accent); color: #0C1A08; font-weight: 900; font-size: 15px; box-shadow: 0 8px 22px var(--accent-glow); }
-.fig-save-day-btn:disabled { opacity: .55; box-shadow: none; }
-.fig-save-msg { min-height: 16px; color: var(--text-3); font-size: 11px; text-align: right; margin-top: 7px; }
-.fig-mini-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-elev-1); -webkit-overflow-scrolling: touch; }
-.fig-mini-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.fig-mini-table th, .fig-mini-table td { border-bottom: 1px solid var(--border); padding: 9px 8px; text-align: left; vertical-align: top; white-space: nowrap; }
-.fig-mini-table th { color: var(--text-3); font-size: 9px; text-transform: uppercase; letter-spacing: .08em; font-weight: 900; }
-.fig-mini-table tr:last-child td { border-bottom: none; }
-.fig-mini-table .strong { color: var(--text); font-weight: 900; }
-.fig-detail-toggle { width: 100%; margin-top: 12px; padding: 13px; border-radius: 14px; background: var(--bg-elev-3); border: 1px solid var(--border); color: var(--text-2); font-weight: 900; }
-.fig-detail-panel { display: none; margin-top: 12px; }
-.fig-detail-panel.show { display: block; }
-.fig-detail-panel .fig-mini-table { min-width: 1040px; }
-@media (max-width: 380px) { .fig-cards, .fig-finance-cards, .fig-constants { grid-template-columns: 1fr; } .fig-form-grid { grid-template-columns: 1fr; } }
-
-
-/* ============ FIGURINHAS COPA — V2.5 PROJEÇÃO INTELIGENTE ============ */
-.fig-day-summary { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-.fig-day-summary .fds-card { background: var(--bg-elev-1); border: 1px solid var(--border); border-radius: 14px; padding: 10px 11px; }
-.fig-day-summary .fds-label { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: .08em; font-weight: 900; line-height: 1.2; }
-.fig-day-summary .fds-value { margin-top: 4px; font-size: 14px; font-weight: 900; color: var(--text); }
-.fig-day-summary .fds-value.good { color: var(--accent); }
-.fig-day-summary .fds-value.bad { color: var(--danger); }
-.fig-extra-box { margin-top: 14px; padding: 13px; border: 1px solid var(--border); border-radius: 16px; background: rgba(255,255,255,.025); }
-.fig-extra-title { font-size: 11px; color: var(--text-2); text-transform: uppercase; letter-spacing: .09em; font-weight: 900; margin-bottom: 10px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
-.fig-extra-title span { color: var(--text-3); font-size: 10px; font-weight: 800; letter-spacing: 0; text-transform:none; }
-.fig-inline-result { margin-top: 8px; padding: 10px 11px; border-radius: 13px; background: var(--bg-elev-1); border: 1px solid var(--border); color: var(--text-2); font-size: 12px; line-height: 1.45; }
-.fig-inline-result strong { color: var(--text); }
-.fig-cost-preview { margin-top:10px; padding:11px 12px; border-radius:14px; background:rgba(168,255,140,.07); border:1px solid rgba(168,255,140,.18); color:var(--text-2); font-size:12px; line-height:1.45; }
-.fig-cost-preview strong { color:var(--accent); }
-.fig-form-note { font-size:11px; color:var(--text-3); margin-top:6px; line-height:1.35; }
-.fig-model-box { background: rgba(140,184,255,.08); border: 1px solid rgba(140,184,255,.22); color: var(--text-2); border-radius: 16px; padding: 12px 13px; font-size: 12px; line-height: 1.45; margin-bottom: 14px; }
-.fig-model-box strong { color: var(--info); }
-.fig-potential { color: var(--text-3); font-size: 10px; }
-@media (max-width: 380px) { .fig-day-summary { grid-template-columns: 1fr; } }
-
-
-
-/* ===== FIGURINHAS COPA V3 — operação enxuta ===== */
-.fig-v3 .fig-top-cards { grid-template-columns: 1fr 1fr; margin-bottom: 12px; }
-.fig-v3 .fig-card { min-height: 78px; padding: 13px; }
-.fig-v3 .fig-card.main { grid-column: 1 / -1; background: linear-gradient(135deg, rgba(168,255,140,.12), var(--bg-elev-2)); border-color: rgba(168,255,140,.38); }
-.fig-v3 .fig-card.buy { border-color: rgba(255,210,122,.35); background: linear-gradient(135deg, rgba(255,210,122,.10), var(--bg-elev-2)); }
-.fig-v3 .fig-card .f-value { font-family: var(--font-ui); font-size: 24px; font-weight: 900; letter-spacing: -.03em; }
-.fig-v3 .fig-card .f-value.compact { font-size: 18px; line-height: 1.22; }
-.fig-v3 .fig-launch-card { padding: 15px; border-color: rgba(255,255,255,.10); }
-.fig-subtitle { margin: 14px 0 8px; font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: .11em; font-weight: 900; }
-.fig-more-details { margin-top: 12px; border: 1px solid var(--border); border-radius: 15px; background: rgba(255,255,255,.025); padding: 0; overflow: hidden; }
-.fig-more-details summary { list-style: none; cursor: pointer; padding: 13px 14px; color: var(--text-2); font-size: 13px; font-weight: 900; }
-.fig-more-details summary::-webkit-details-marker { display:none; }
-.fig-more-details[open] summary { border-bottom: 1px solid var(--border); }
-.fig-more-details .fig-form-grid, .fig-settings-details .fig-constants, .fig-settings-details .fig-inline-result { padding-left: 13px; padding-right: 13px; }
-.fig-settings-details { margin-bottom: 4px; }
-.fig-history-row { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; padding:12px 0; border-bottom:1px solid var(--border); cursor:pointer; }
-.fig-history-row:last-child { border-bottom:none; }
-.fig-history-date { font-weight:900; color:var(--text); min-width:54px; }
-.fig-history-main { flex:1; min-width:0; }
-.fig-history-title { font-size:13px; font-weight:900; color:var(--text); line-height:1.25; }
-.fig-history-sub { font-size:11px; color:var(--text-3); line-height:1.35; margin-top:3px; }
-.fig-history-profit { font-size:13px; font-weight:900; color:var(--accent); white-space:nowrap; }
-.fig-week-row { display:grid; grid-template-columns: 1fr auto; gap:8px; padding:10px 0; border-bottom:1px solid var(--border); }
-.fig-week-row:last-child { border-bottom:none; }
-.fig-week-name { font-weight:900; color:var(--text); }
-.fig-week-sub { color:var(--text-3); font-size:11px; margin-top:2px; line-height:1.35; }
-.fig-week-profit { font-weight:900; color:var(--accent); text-align:right; }
-.fig-next-3 { display:grid; grid-template-columns:1fr; gap:8px; }
-.fig-next-day-card { border:1px solid var(--border); border-radius:14px; background:var(--bg-elev-1); padding:12px; display:grid; grid-template-columns: 56px 1fr auto; gap:10px; align-items:center; }
-.fig-next-day-card .date { font-weight:900; color:var(--text); }
-.fig-next-day-card .meta { font-size:11px; color:var(--text-3); line-height:1.35; }
-.fig-next-day-card .qty { text-align:right; font-weight:900; color:var(--text); }
-.fig-next-day-card .qty small { display:block; color:var(--text-3); font-size:10px; font-weight:800; }
-.fig-v3 .fig-model-box { margin-top:10px; margin-bottom:0; }
-@media (max-width: 380px) { .fig-v3 .fig-top-cards { grid-template-columns:1fr; } .fig-next-day-card { grid-template-columns: 52px 1fr; } .fig-next-day-card .qty { grid-column: 1 / -1; text-align:left; } }
 </style>
 </head>
 
@@ -1364,9 +1267,14 @@ button { cursor: pointer; user-select: none; }
           <div class="si-body"><div class="si-title">Limite mensal de gastos</div><div class="si-sub" id="settings-monthly-limit">R$ 14.000,00 por mês</div></div>
           <div>›</div>
         </div>
-        <div class="settings-item" data-action="figurinhas-copa">
-          <div class="si-icon">🏆</div>
-          <div class="si-body"><div class="si-title">Figurinhas Copa</div><div class="si-sub">Estoque, projeção e lucro da operação</div></div>
+        <div class="settings-item" data-action="recurrences">
+          <div class="si-icon">↻</div>
+          <div class="si-body"><div class="si-title">Recorrências fixas</div><div class="si-sub">Contas que repetem todo mês, até encerrar</div></div>
+          <div>›</div>
+        </div>
+        <div class="settings-item" data-action="commitments">
+          <div class="si-icon">▤</div>
+          <div class="si-body"><div class="si-title">Compromissos futuros</div><div class="si-sub">Fixas e parcelas dos próximos meses</div></div>
           <div>›</div>
         </div>
       </div>
@@ -1398,7 +1306,7 @@ button { cursor: pointer; user-select: none; }
       </div>
 
       <div style="text-align:center;color:var(--text-3);font-size:11px;margin-top:24px;">
-        Finanças a Dois · Firebase v2.3 · <span id="sync-status">conectando…</span>
+        Finanças a Dois · Firebase v3.0 · <span id="sync-status">conectando…</span>
       </div>
     </div>
   </section>
@@ -1543,89 +1451,18 @@ button { cursor: pointer; user-select: none; }
   <button class="save-btn" id="monthly-limit-save" style="margin:18px 0 0;width:100%;padding:14px;">Salvar limite</button>
 </div>
 
-
-<div class="sheet" id="sheet-figurinhas-copa">
+<div class="sheet" id="sheet-recurrences">
   <div class="sheet-handle"></div>
-  <h3>Figurinhas Copa</h3>
-  <p class="sub">Lançamento diário rápido. O padrão abre em ontem, porque a venda é fechada depois.</p>
+  <h3>Recorrências fixas</h3>
+  <p class="sub">Despesas fixas são relançadas automaticamente todo mês. Encerrar remove as programadas futuras, mas mantém todo o histórico já realizado.</p>
+  <div id="recur-list"></div>
+</div>
 
-  <div class="fig-shell fig-v3">
-    <div class="fig-cards fig-top-cards" id="fig-cards"></div>
-
-    <div class="fig-day-box fig-launch-card">
-      <div class="fig-block-title">Lançar movimento</div>
-      <div class="fig-block-sub">Preencha o que fechou no dia. Pacotes calculam receita automaticamente; álbuns usam receita informada.</div>
-
-      <div class="fig-date-row">
-        <input type="date" id="fig-date-input" style="color-scheme:dark;">
-        <button type="button" id="fig-today-btn">Hoje</button>
-      </div>
-
-      <div class="fig-subtitle">Vendas</div>
-      <div class="fig-form-grid">
-        <div class="fig-field"><label>Pacotes vendidos</label><input id="fig-real-sales" type="number" inputmode="numeric" min="0" step="1" placeholder="0"></div>
-        <div class="fig-field"><label>Álbuns vendidos</label><input id="fig-albums-sold" type="number" inputmode="numeric" min="0" step="1" placeholder="0"></div>
-        <div class="fig-field full"><label>Receita de álbuns</label><input id="fig-album-revenue" type="number" inputmode="decimal" min="0" step="0.01" placeholder="R$ 0,00"></div>
-      </div>
-
-      <div class="fig-subtitle">Compras / reposição</div>
-      <div class="fig-form-grid">
-        <div class="fig-field"><label>Pacotes comprados</label><input id="fig-purchase-qty" type="number" inputmode="numeric" min="0" step="1" placeholder="0"></div>
-        <div class="fig-field"><label>Álbuns comprados</label><input id="fig-albums-purchased" type="number" inputmode="numeric" min="0" step="1" placeholder="0"></div>
-      </div>
-      <div class="fig-cost-preview" id="fig-replenishment-cost">Reposição: digite uma compra para calcular o custo.</div>
-
-      <div class="fig-subtitle">Despesa diária</div>
-      <div class="fig-form-grid">
-        <div class="fig-field full"><label>Taxa maquineta</label><input id="fig-machine-fee" type="number" inputmode="decimal" min="0" step="0.01" placeholder="R$ 0,00"></div>
-      </div>
-
-      <div class="fig-day-summary" id="fig-day-summary"></div>
-
-      <details class="fig-more-details">
-        <summary>Outros detalhes</summary>
-        <div class="fig-form-grid" style="margin-top:12px;">
-          <div class="fig-field"><label>Outras despesas</label><input id="fig-extra-expense" type="number" inputmode="decimal" min="0" step="0.01" placeholder="R$"></div>
-          <div class="fig-field"><label>Outras receitas</label><input id="fig-extra-revenue" type="number" inputmode="decimal" min="0" step="0.01" placeholder="R$"></div>
-          <div class="fig-field full"><label>Descrição do extra</label><input id="fig-extra-expense-label" type="text" placeholder="Maquininha, transporte, brinde, perda..."></div>
-          <div class="fig-field full"><label>Observação</label><textarea id="fig-note" placeholder="Ex: dia fraco por chuva, venda para agência, reposição..."></textarea></div>
-        </div>
-      </details>
-
-      <button class="fig-save-day-btn" id="fig-save-day" type="button">Salvar</button>
-      <div class="fig-save-msg" id="fig-save-msg"></div>
-    </div>
-
-    <div class="fig-next-box fig-compact-section">
-      <div class="fig-block-title">Próximos 3 dias</div>
-      <div class="fig-block-sub">Projeção recalibrada conforme as vendas reais que você já lançou.</div>
-      <div id="fig-next-days"></div>
-      <div class="fig-model-box" id="fig-model-box"></div>
-    </div>
-
-    <div class="fig-next-box fig-compact-section">
-      <div class="fig-block-title">Últimos lançamentos</div>
-      <div class="fig-block-sub">Toque em um dia para carregar e editar.</div>
-      <div id="fig-history-list"></div>
-    </div>
-
-    <div class="fig-finance-box fig-compact-section">
-      <div class="fig-block-title">Semana a semana</div>
-      <div class="fig-block-sub">Realizado por semana, sem misturar com projeção futura.</div>
-      <div id="fig-weekly-list"></div>
-    </div>
-
-    <details class="fig-more-details fig-settings-details">
-      <summary>Parâmetros da operação</summary>
-      <div class="fig-constants" style="margin-top:12px;">
-        <div class="fig-constant"><div class="fc-label">Estoque inicial pacotes</div><div class="fc-value">4.000</div></div>
-        <div class="fig-constant"><div class="fc-label">Preço pacote</div><div class="fc-value">R$ 7,00</div></div>
-        <div class="fig-constant"><div class="fc-label">Custo pacote</div><div class="fc-value">R$ 5,25</div></div>
-        <div class="fig-constant"><div class="fc-label">Compra</div><div class="fc-value">múltiplos de 1.000</div></div>
-      </div>
-      <div class="fig-inline-result">Preparado para controlar kits depois: kit = composição de pacotes + álbuns + preço próprio.</div>
-    </details>
-  </div>
+<div class="sheet" id="sheet-commitments">
+  <div class="sheet-handle"></div>
+  <h3>Compromissos futuros</h3>
+  <p class="sub">Fixas e parcelas já comprometidas, mês a mês, nos próximos 6 meses.</p>
+  <div id="commit-list"></div>
 </div>
 
 <div class="sheet" id="sheet-edit-tx">
@@ -1660,7 +1497,11 @@ button { cursor: pointer; user-select: none; }
 
 <script>
 // Failsafe: nunca deixar o app preso eternamente na tela inicial.
+// Se já existe sessão salva neste aparelho, o boot otimista abre o app na hora;
+// neste caso a tela de login só aparece como último recurso (7s), não em 1,8s.
 window.__FAD_BOOT_DONE = false;
+window.__FAD_HAS_SESSION = false;
+try { window.__FAD_HAS_SESSION = !!localStorage.getItem('fad:lastUid'); } catch(e){}
 window.__FAD_BOOT_FAILSAFE = setTimeout(function(){
   if (window.__FAD_BOOT_DONE) return;
   var app = document.getElementById('app');
@@ -1674,7 +1515,7 @@ window.__FAD_BOOT_FAILSAFE = setTimeout(function(){
     err.textContent = 'Demorou para verificar a sessão. Faça login novamente.';
     err.style.display = 'block';
   }
-}, 1800);
+}, window.__FAD_HAS_SESSION ? 7000 : 1800);
 </script>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -1782,11 +1623,11 @@ var STATE = {
   learned: [],
   historical: [],
   budgets: [],
-  figurinhas: [],
   currentFirebaseUser: null,
   currentAppUser: null,
   unsubscribers: [],
   syncReady: false,
+  optimisticBooted: false,
   catEditMode: false,
   saveConfirmOpen: false,
   monthlyLimitDefault: 14000,
@@ -1944,7 +1785,19 @@ function loadAppCache(){
   STATE.learned = loadCache('learnedDescriptions', []);
   STATE.historical = loadCache('historicalSummaries', []);
   STATE.budgets = loadCache('budgets', []);
-  STATE.figurinhas = loadCache('figurinhasCopa', []);
+}
+
+function rememberSession(user){
+  try {
+    localStorage.setItem('fad:lastUid', user.uid);
+    localStorage.setItem('fad:lastEmail', user.email || '');
+  } catch (e) {}
+}
+function forgetSession(){
+  try {
+    localStorage.removeItem('fad:lastUid');
+    localStorage.removeItem('fad:lastEmail');
+  } catch (e) {}
 }
 
 function clearSync(){
@@ -1969,6 +1822,7 @@ function startFirestoreSync(user){
   STATE.currentFirebaseUser = user;
   STATE.currentAppUser = appUser;
   STATE.draft.userId = appUser.id;
+  rememberSession(user);
 
   // Mostra dados já salvos no aparelho imediatamente; o Firestore atualiza por trás.
   loadAppCache();
@@ -1992,6 +1846,7 @@ function startFirestoreSync(user){
       setLoginLoading(false);
       document.getElementById('sync-status').textContent = 'sincronizado';
       reRenderCurrentScreen();
+      setTimeout(rolloverFixedMonthly, 400);
     }
   }
 
@@ -2011,6 +1866,7 @@ function startFirestoreSync(user){
       markLoaded('tx');
       reRenderCurrentScreen();
       setTimeout(backfillLegacyMonthlyInstallments, 150);
+      setTimeout(rolloverFixedMonthly, 250);
     }, handleSnapshotError('transactions'))
   );
 
@@ -2051,22 +1907,8 @@ function startFirestoreSync(user){
     }, handleSnapshotError('budgets'))
   );
 
-  // Módulo extra. Não bloqueia o login caso a regra do Firestore ainda não tenha sido atualizada.
-  STATE.unsubscribers.push(
-    householdQuery('figurinhasCopa').onSnapshot(function(snapshot){
-      STATE.figurinhas = snapshot.docs.map(mapDoc);
-      saveCache('figurinhasCopa', STATE.figurinhas);
-      if (document.getElementById('sheet-figurinhas-copa') && document.getElementById('sheet-figurinhas-copa').classList.contains('show')) {
-        renderFigurinhasCopa();
-      }
-    }, function(error){
-      console.error('Erro Firestore em figurinhasCopa', error);
-      var msg = document.getElementById('fig-save-msg');
-      if (msg) msg.textContent = 'sem permissão no Firestore';
-    })
-  );
-
-  navigate('launch');
+  if (!STATE.optimisticBooted) navigate('launch');
+  else reRenderCurrentScreen();
 }
 
 function mergeCategories(defaults, custom){
@@ -2359,7 +2201,7 @@ function renderAdvancedSummary(){
   }
 
   var labels = {
-    'fixed': 'Fixo mensal · só este mês',
+    'fixed': 'Fixo mensal · repete até encerrar',
     'installment-monthly': installmentLabel ? ('Parcelado mensal · ' + installmentLabel) : ('Parcelado ' + n + 'x mensal'),
     'installment-weekly': installmentLabel ? ('Parcelado semanal · ' + installmentLabel) : ('Parcelado ' + n + 'x semanal'),
     'recurring-weekly': 'Recorrente semanal'
@@ -2598,8 +2440,9 @@ function saveDraftConfirmed(){
       return;
     }
 
-    // Etapa 2 segura: salva o mês escolhido como realizado e cria apenas a prévia do mês seguinte.
-    // Não cria 12 meses e não infla o ano. A prévia só sensibiliza como realizada quando o mês começar.
+    // Fixo mensal: salva o mês escolhido como realizado e a prévia do mês seguinte como programada.
+    // A partir daí o rollover automático (rolloverFixedMonthly) cria os próximos meses sozinho,
+    // todo mês, até a recorrência ser encerrada em Ajustes → Recorrências fixas.
     var currentFixedTx = makeTx({
       type: STATE.draft.type,
       amount: amount,
@@ -2647,7 +2490,7 @@ function saveDraftConfirmed(){
       return;
     }
 
-    // A partir da v1.6.0, o valor digitado é o VALOR TOTAL da compra.
+    // O valor digitado é o VALOR TOTAL da compra.
     // Ex.: R$ 1.200 em 12x cria 12 parcelas de R$ 100.
     // Distribui centavos para que a soma das parcelas bata exatamente com o total.
     var totalCents = STATE.draft.amount;
@@ -2723,7 +2566,7 @@ function saveDraftConfirmed(){
       refreshDuplicateButton();
       var successMsg;
       if (adv.recurrenceType === 'fixed'){
-        successMsg = 'Fixo mensal salvo · prévia do próximo mês criada';
+        successMsg = 'Fixo mensal salvo · vai repetir todo mês até encerrar';
       } else if (adv.recurrenceType === 'installment-monthly'){
         successMsg = 'Compra parcelada · ' + toAdd.length + 'x de ' + fmtBRL(toAdd[0].amount) + ' · futuras programadas';
       } else if (adv.recurrenceType === 'installment-weekly' && toAdd.length > 1){
@@ -2839,7 +2682,7 @@ function buildAdvancedSheet(){
 function updateAdvExplanation(r){
   var txt = {
     'single': 'Lançamento único, registrado apenas na data escolhida.',
-    'fixed': 'Fixo mensal: permitido apenas entre os dias 1 e 28. Salva o mês escolhido e cria apenas a prévia do próximo mês como programada.',
+    'fixed': 'Fixo mensal: permitido apenas entre os dias 1 e 28. Repete automaticamente todo mês até você encerrar em Ajustes → Recorrências fixas.',
     'installment-monthly': 'Parcelado mensal: o valor digitado é o TOTAL da compra. O app divide pelo número de parcelas. Permitido apenas entre os dias 1 e 28.',
     'installment-weekly': 'Parcelado semanal: o valor digitado é o TOTAL da compra. O app divide pelo número de parcelas, com 7 dias entre elas.',
     'recurring-weekly': 'Gera 12 ocorrências semanais a partir da data.'
@@ -2966,6 +2809,293 @@ function nextMonthSameDay(baseDate){
   return new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, day);
 }
 
+/* =========================================================
+   RECORRÊNCIAS FIXAS — rollover automático mensal
+   Toda despesa/receita marcada como "Fixo mensal" repete
+   sozinha: quando o app abre em um mês novo, lança o mês
+   atual e cria a prévia programada do mês seguinte.
+   IDs determinísticos (fixed_grupo_AAAA-MM) impedem duplicar.
+   ========================================================= */
+function currentMonthKey(){
+  var d = new Date();
+  return d.getFullYear() + '-' + pad(d.getMonth()+1);
+}
+function monthKeyOf(dateStr){
+  return String(dateStr || '').slice(0, 7);
+}
+function addToMonthKey(key, n){
+  var p = String(key).split('-');
+  var d = new Date(parseInt(p[0],10), parseInt(p[1],10) - 1 + n, 1);
+  return d.getFullYear() + '-' + pad(d.getMonth()+1);
+}
+function monthKeyLabel(key){
+  var p = String(key).split('-');
+  return monthName(parseInt(p[1],10) - 1) + ' ' + p[0];
+}
+function safeFixedDocId(groupId, monthKey){
+  return ('fixed_' + String(groupId || 'grupo') + '_' + String(monthKey)).replace(/[^a-zA-Z0-9_-]/g, '_');
+}
+function isFixedGroupCancelled(groupId){
+  for (var i=0;i<STATE.budgets.length;i++){
+    var b = STATE.budgets[i];
+    if (b && !b.deletedAt && b.kind === 'fixedGroupStatus' && b.groupId === groupId && b.status === 'cancelled') return true;
+  }
+  return false;
+}
+function getFixedGroups(){
+  var groups = {};
+  for (var i=0;i<STATE.transactions.length;i++){
+    var t = STATE.transactions[i];
+    if (!t || t.recurrenceType !== 'fixed' || !t.recurrenceGroupId) continue;
+    var gid = t.recurrenceGroupId;
+    if (!groups[gid]) groups[gid] = { groupId: gid, txs: [], monthKeys: {}, latest: null };
+    var g = groups[gid];
+    // Meses já tratados (mesmo excluídos) não são recriados:
+    // excluir uma programada vale como "pular aquele mês".
+    g.monthKeys[monthKeyOf(t.date)] = true;
+    if (t.deletedAt) continue;
+    g.txs.push(t);
+    if (!g.latest || String(t.date) > String(g.latest.date)) g.latest = t;
+  }
+  return groups;
+}
+
+var FIXED_ROLLOVER_RUNNING = false;
+function rolloverFixedMonthly(){
+  if (FIXED_ROLLOVER_RUNNING || !db || !STATE.currentAppUser || !STATE.syncReady) return;
+
+  var nowKey = currentMonthKey();
+  var targetKey = addToMonthKey(nowKey, 1);
+  var groups = getFixedGroups();
+  var batch = db.batch();
+  var created = 0;
+
+  for (var gid in groups){
+    if (!Object.prototype.hasOwnProperty.call(groups, gid)) continue;
+    if (isFixedGroupCancelled(gid)) continue;
+    var g = groups[gid];
+    var latest = g.latest;
+    if (!latest) continue;
+
+    var day = parseInt(latest.fixedDayOfMonth || parseDateLocal(latest.date).getDate(), 10);
+    if (isNaN(day) || day < 1) day = 1;
+    if (day > 28) day = 28;
+
+    var lastKey = null;
+    for (var k in g.monthKeys){
+      if (Object.prototype.hasOwnProperty.call(g.monthKeys, k) && (!lastKey || k > lastKey)) lastKey = k;
+    }
+    if (!lastKey) continue;
+
+    // Começa no mês seguinte ao último existente, mas nunca recria
+    // retroativamente meses antigos pulados (não distorce relatórios passados).
+    var cursor = addToMonthKey(lastKey, 1);
+    if (cursor < nowKey) cursor = nowKey;
+
+    var guard = 0;
+    while (cursor <= targetKey && guard < 24){
+      if (!g.monthKeys[cursor]){
+        var parts = cursor.split('-');
+        var dt = new Date(parseInt(parts[0],10), parseInt(parts[1],10)-1, day);
+        var future = cursor > nowKey;
+        var tx = makeTx({
+          type: latest.type,
+          amount: Number(latest.amount) || 0,
+          description: latest.description,
+          categoryId: latest.categoryId,
+          userId: latest.userId,
+          date: ymd(dt),
+          recurrenceType: 'fixed',
+          recurrenceGroupId: gid,
+          isFixedMonthly: true,
+          fixedDayOfMonth: day,
+          fixedMonthKey: cursor,
+          fixedStatus: future ? 'scheduled' : 'realized',
+          fixedMode: 'auto-rollover',
+          scheduledStatus: future ? 'scheduled' : null,
+          scheduledForMonth: future ? cursor : null,
+          sourceTxId: latest.id || null
+        });
+        batch.set(collectionRef('transactions').doc(safeFixedDocId(gid, cursor)), tx, { merge: true });
+        g.monthKeys[cursor] = true;
+        created++;
+      }
+      cursor = addToMonthKey(cursor, 1);
+      guard++;
+    }
+  }
+
+  if (!created) return;
+  FIXED_ROLLOVER_RUNNING = true;
+  batch.commit().then(function(){
+    FIXED_ROLLOVER_RUNNING = false;
+    toast(created + ' conta(s) fixa(s) lançada(s) automaticamente', 'success');
+  }).catch(function(error){
+    FIXED_ROLLOVER_RUNNING = false;
+    console.error('Erro no rollover de fixas:', error);
+  });
+}
+
+function cancelFixedGroup(groupId, label){
+  confirmDialog(
+    'Encerrar recorrência?',
+    '"' + label + '" deixa de ser lançada nos próximos meses. O que já foi realizado continua no histórico; programadas futuras serão removidas.'
+  ).then(function(ok){
+    if (!ok) return;
+    var batch = db.batch();
+    batch.set(collectionRef('budgets').doc('fixedstatus_' + String(groupId).replace(/[^a-zA-Z0-9_-]/g,'_')), {
+      householdId: HOUSEHOLD_ID,
+      kind: 'fixedGroupStatus',
+      groupId: groupId,
+      status: 'cancelled',
+      updatedAt: Date.now(),
+      deletedAt: null
+    }, { merge: true });
+    for (var i=0;i<STATE.transactions.length;i++){
+      var t = STATE.transactions[i];
+      if (!t || t.deletedAt || t.recurrenceGroupId !== groupId) continue;
+      if (isFutureProgrammedTx(t)){
+        batch.set(collectionRef('transactions').doc(t.id), { deletedAt: Date.now(), updatedAt: Date.now() }, { merge: true });
+      }
+    }
+    batch.commit().then(function(){
+      toast('Recorrência encerrada', 'success');
+      renderRecurrencesSheet();
+    }).catch(function(error){
+      toast('Erro ao encerrar: ' + error.code, 'error');
+    });
+  });
+}
+
+function renderRecurrencesSheet(){
+  var host = document.getElementById('recur-list');
+  if (!host) return;
+  host.innerHTML = '';
+  var groups = getFixedGroups();
+  var arr = [];
+  for (var gid in groups){
+    if (!Object.prototype.hasOwnProperty.call(groups, gid)) continue;
+    if (isFixedGroupCancelled(gid)) continue;
+    var g = groups[gid];
+    if (!g.latest) continue;
+    arr.push(g);
+  }
+  arr.sort(function(a,b){ return (Number(b.latest.amount)||0) - (Number(a.latest.amount)||0); });
+  if (!arr.length){
+    host.innerHTML = '<div style="color:var(--text-3);font-size:13px;padding:8px 0;">Nenhuma recorrência ativa. Lance uma despesa e escolha "Fixo mensal" nas opções avançadas para ela repetir todo mês.</div>';
+    return;
+  }
+  for (var i=0;i<arr.length;i++){
+    (function(g){
+      var latest = g.latest;
+      var cat = categoryById(latest.categoryId);
+      var day = latest.fixedDayOfMonth || parseDateLocal(latest.date).getDate();
+      var typeLabel = latest.type === 'income' ? 'receita' : 'despesa';
+      var row = document.createElement('div');
+      row.className = 'hist-row';
+      row.innerHTML = '<div><div style="font-weight:800;">' + (cat && cat.icon ? cat.icon + ' ' : '') + escapeHtml(latest.description) + '</div><div style="font-size:12px;color:var(--text-3);">' + fmtBRL(Number(latest.amount)||0) + ' · todo dia ' + day + ' · ' + typeLabel + ' · ' + escapeHtml(responsibleName(latest.userId)) + '</div></div><button>Encerrar</button>';
+      row.querySelector('button').onclick = function(){
+        cancelFixedGroup(g.groupId, latest.description);
+      };
+      host.appendChild(row);
+    })(arr[i]);
+  }
+}
+
+/* =========================================================
+   COMPROMISSOS FUTUROS — fixas + parcelas, mês a mês
+   Junta o que já está programado no banco com a projeção
+   virtual das fixas ativas (que repetem até serem encerradas).
+   ========================================================= */
+function buildFutureCommitments(nMonths){
+  nMonths = nMonths || 6;
+  var nowKey = currentMonthKey();
+  var months = [];
+  var byKey = {};
+  for (var i=1;i<=nMonths;i++){
+    var key = addToMonthKey(nowKey, i);
+    var m = { key: key, label: monthKeyLabel(key), items: [], total: 0 };
+    months.push(m);
+    byKey[key] = m;
+  }
+
+  for (var t=0;t<STATE.transactions.length;t++){
+    var tx = STATE.transactions[t];
+    if (!tx || tx.deletedAt || tx.type !== 'expense') continue;
+    if (isNeutralCategory(tx.categoryId)) continue;
+    var key2 = monthKeyOf(tx.date);
+    var bucket = byKey[key2];
+    if (!bucket) continue;
+    if (!isFixedOrInstallmentTx(tx) && tx.scheduledStatus !== 'scheduled') continue;
+    bucket.items.push({
+      description: tx.description,
+      amount: Number(tx.amount) || 0,
+      kind: tx.recurrenceType === 'fixed' ? 'fixa' : 'parcela'
+    });
+  }
+
+  // Fixas ativas continuam além das prévias já criadas no banco:
+  // projeta virtualmente até o fim da janela de 6 meses.
+  var groups = getFixedGroups();
+  for (var gid in groups){
+    if (!Object.prototype.hasOwnProperty.call(groups, gid)) continue;
+    if (isFixedGroupCancelled(gid)) continue;
+    var g = groups[gid];
+    if (!g.latest || g.latest.type !== 'expense') continue;
+    if (isNeutralCategory(g.latest.categoryId)) continue;
+    for (var j=0;j<months.length;j++){
+      if (g.monthKeys[months[j].key]) continue;
+      months[j].items.push({
+        description: g.latest.description,
+        amount: Number(g.latest.amount) || 0,
+        kind: 'fixa'
+      });
+    }
+  }
+
+  for (var m2=0;m2<months.length;m2++){
+    months[m2].items.sort(function(a,b){ return b.amount - a.amount; });
+    var total = 0;
+    for (var x=0;x<months[m2].items.length;x++) total += months[m2].items[x].amount;
+    months[m2].total = total;
+  }
+  return months;
+}
+
+function renderCommitmentsSheet(){
+  var host = document.getElementById('commit-list');
+  if (!host) return;
+  host.innerHTML = '';
+  var months = buildFutureCommitments(6);
+  var hasAny = false;
+  for (var i=0;i<months.length;i++) if (months[i].items.length) hasAny = true;
+  if (!hasAny){
+    host.innerHTML = '<div style="color:var(--text-3);font-size:13px;padding:8px 0;">Nenhum compromisso futuro programado. Fixas e parcelas aparecem aqui automaticamente.</div>';
+    return;
+  }
+  for (var m=0;m<months.length;m++){
+    var month = months[m];
+    var header = document.createElement('div');
+    header.className = 'tx-day-header commit-month-total';
+    header.innerHTML = '<span>' + escapeHtml(month.label) + '</span><span style="color:var(--text-2);">' + fmtBRL(month.total) + '</span>';
+    host.appendChild(header);
+    if (!month.items.length){
+      var none = document.createElement('div');
+      none.style.cssText = 'color:var(--text-3);font-size:12px;padding:2px 0 6px;';
+      none.textContent = 'Sem compromissos';
+      host.appendChild(none);
+      continue;
+    }
+    for (var k=0;k<month.items.length;k++){
+      var it = month.items[k];
+      var row = document.createElement('div');
+      row.className = 'cat-list-row';
+      row.innerHTML = '<div><div style="font-weight:800;">' + escapeHtml(it.description) + '</div><div style="font-size:11px;color:var(--text-3);">' + it.kind + '</div></div><div class="num" style="font-weight:800;">' + fmtBRL(it.amount) + '</div>';
+      host.appendChild(row);
+    }
+  }
+}
+
 function txInMonth(date, userFilter){
   var y = date.getFullYear(), m = date.getMonth();
   return STATE.transactions.filter(function(t){
@@ -3018,6 +3148,7 @@ function renderMonth(){
 
   var list = txInMonth(d, userFilter);
   var income=0, expense=0, scheduledExpense=0, incomeCount=0, expenseCount=0, scheduledCount=0, byCat={};
+  var fixedRealized=0, variableRealized=0;
   var scheduledList = [];
 
   for (var i=0;i<list.length;i++){
@@ -3036,11 +3167,14 @@ function renderMonth(){
         expense += amountN;
         expenseCount++;
         byCat[t.categoryId] = (byCat[t.categoryId] || 0) + amountN;
+        if (isFixedOrInstallmentTx(t)) fixedRealized += amountN;
+        else variableRealized += amountN;
       }
     }
   }
 
   var committedExpense = expense + scheduledExpense;
+  var fixedCommitted = fixedRealized + scheduledExpense;
   var balance = income - expense;
   var limit = getMonthlyExpenseLimit();
   var availableLimit = limit - committedExpense;
@@ -3054,7 +3188,7 @@ function renderMonth(){
   var prev = totalsForMonth(previousMonthDate(d), userFilter);
   var prevLabel = monthShort(previousMonthDate(d).getMonth());
   var balCompare = document.getElementById('m-balance-compare');
-  balCompare.innerHTML = 'Limite ' + fmtBRL(limit) + ' − realizadas ' + fmtBRL(expense) + (scheduledExpense ? ' − programadas ' + fmtBRL(scheduledExpense) : '') + '<br><span style="color:var(--text-3);">Saldo real do mês: ' + fmtBRL(balance) + '</span>';
+  balCompare.innerHTML = 'Limite ' + fmtBRL(limit) + ' − fixos/parcelas ' + fmtBRL(fixedCommitted) + ' − variáveis ' + fmtBRL(variableRealized) + '<br><span style="color:var(--text-3);">Saldo real do mês (entrou − saiu): ' + fmtBRL(balance) + '</span>';
 
   document.getElementById('m-income').textContent = fmtBRLShort(income);
   document.getElementById('m-expense').textContent = fmtBRLShort(expense);
@@ -3076,8 +3210,8 @@ function renderMonth(){
     var totalDays = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
     var remainingDays = Math.max(0, totalDays - dayNum);
 
-    // Projeção v2.5.7: fixos e parcelas entram no total do mês,
-    // mas NÃO entram na média diária. A média passa a considerar apenas
+    // Projeção: fixos e parcelas entram no total do mês,
+    // mas NÃO entram na média diária. A média considera apenas
     // gastos variáveis realizados, evitando projeções absurdas no começo do mês.
     var fixedInstallmentExpense = 0;
     var variableExpense = 0;
@@ -3583,253 +3717,16 @@ function addHistoricalEntry(){
   }).catch(function(error){ toast('Erro: ' + error.code, 'error'); });
 }
 
-
-/* =========================================================
-   FIGURINHAS COPA 2026 — V3 OPERAÇÃO ENXUTA
-   ========================================================= */
-var FIG_COPA = {
-  initialStickerStock: 4000,
-  initialAlbumStock: 0,
-  stickerCost: 5.25,
-  stickerPrice: 7.00,
-  albumCost: 0,
-  albumPrice: 0,
-  start: '2026-04-30',
-  end: '2026-07-19',
-  initialInvestment: 21000,
-  anchorBase: 600,
-  anchorPhaseWeight: 0.70
-};
-
-function figAddDays(dateStr, days){ var d=parseDateLocal(dateStr); d.setDate(d.getDate()+days); return ymd(d); }
-function figYesterday(){ var d=new Date(); d.setDate(d.getDate()-1); return ymd(d); }
-function figWeekdayName(dateStr){ return ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][parseDateLocal(dateStr).getDay()]; }
-function figWeekdayMultiplier(dateStr){ var d=parseDateLocal(dateStr).getDay(); var map={1:.85,2:.90,3:.95,4:1,5:1.15,6:1.35,0:1.20}; return map[d]||1; }
-function figPhase(dateStr){ if(dateStr<'2026-04-30') return {name:'Pré-início / teste',potential:'Moderado',weight:.70,coverage:2}; if(dateStr>='2026-04-30'&&dateStr<='2026-05-10') return {name:'Início / teste real',potential:'Moderado',weight:.70,coverage:2}; if(dateStr>='2026-05-11'&&dateStr<='2026-05-24') return {name:'Aquecimento inicial',potential:'Moderado para alto',weight:.90,coverage:2}; if(dateStr>='2026-05-25'&&dateStr<='2026-06-10') return {name:'Pré-Copa forte',potential:'Alto',weight:1.10,coverage:3}; if(dateStr>='2026-06-11'&&dateStr<='2026-06-27') return {name:'Fase de grupos',potential:'Muito alto',weight:1.50,coverage:4}; if(dateStr>='2026-06-28'&&dateStr<='2026-07-07') return {name:'Mata-mata inicial',potential:'Alto',weight:1.10,coverage:3}; if(dateStr>='2026-07-08'&&dateStr<='2026-07-13') return {name:'Reta final / semifinais',potential:'Moderado',weight:.70,coverage:2}; if(dateStr>='2026-07-14'&&dateStr<='2026-07-19') return {name:'Semana final',potential:'Baixo para moderado',weight:.50,coverage:1}; return {name:'Pós-Copa',potential:'Muito baixo',weight:.25,coverage:0}; }
-function figNumber(v,fallback){ if(v===null||v===undefined||v==='') return fallback; var n=parseFloat(String(v).replace(',','.')); return isNaN(n)?fallback:n; }
-function figInteger(v,fallback){ var n=figNumber(v,fallback); if(n===null||n===undefined||isNaN(n)) return fallback; return Math.max(0,Math.round(n)); }
-function figFmtInt(n){ n=Math.round(n||0); return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
-function figClamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
-function figDateBRShort(dateStr){ return formatDateBR(dateStr).slice(0,5); }
-
-function figDataMap(){ var map={}; for(var i=0;i<STATE.figurinhas.length;i++){ var item=STATE.figurinhas[i]; if(item&&item.date&&!item.deletedAt) map[item.date]=item; } return map; }
-function figDocForDate(map,dateStr){
-  var doc=map[dateStr]||{};
-  var legacyStickers = doc.stickersSold; if(legacyStickers===undefined) legacyStickers = doc.realSales;
-  var legacyStickerBuy = doc.stickersPurchased; if(legacyStickerBuy===undefined) legacyStickerBuy = doc.purchaseQty;
-  var machineFee = Math.max(0,figNumber(doc.machineFee,0));
-  var otherExpense = Math.max(0,figNumber(doc.otherExpense, doc.extraExpense && !doc.machineFee ? doc.extraExpense : 0));
-  var otherIncome = Math.max(0,figNumber(doc.otherIncome, doc.extraRevenue || 0));
-  var albumRevenue = Math.max(0,figNumber(doc.albumRevenue,0));
-  return {
-    id:doc.id||dateStr,
-    date:dateStr,
-    stickersSold:(legacyStickers===null||legacyStickers===undefined||legacyStickers==='')?null:figInteger(legacyStickers,null),
-    albumsSold:figInteger(doc.albumsSold,0),
-    albumRevenue:albumRevenue,
-    stickersPurchased:figInteger(legacyStickerBuy,0),
-    albumsPurchased:figInteger(doc.albumsPurchased,0),
-    machineFee:machineFee,
-    otherExpense:otherExpense,
-    otherIncome:otherIncome,
-    extraExpense:machineFee+otherExpense,
-    note:doc.note||'',
-    extraExpenseLabel:doc.extraExpenseLabel||''
-  };
-}
-function figHasRealSale(doc){ return doc&&doc.stickersSold!==null&&doc.stickersSold!==undefined&&doc.stickersSold!==''&&!isNaN(Number(doc.stickersSold)); }
-function figHasAnyMovement(doc){ return figHasRealSale(doc)||(doc.albumsSold||0)||(doc.stickersPurchased||0)||(doc.albumsPurchased||0)||(doc.machineFee||0)||(doc.otherExpense||0)||(doc.otherIncome||0)||(doc.albumRevenue||0)||(doc.note||'').trim(); }
-
-function figEarliestOperationalDate(){
-  var minDate = FIG_COPA.start;
-  var yest = figYesterday();
-  if(yest < minDate) minDate = yest;
-  var map=figDataMap();
-  for(var k in map){ if(map.hasOwnProperty(k) && k < minDate) minDate = k; }
-  return minDate;
-}
-function figDateRange(){ var out=[]; var start=figEarliestOperationalDate(); var d=parseDateLocal(start); var end=parseDateLocal(FIG_COPA.end); while(d<=end){ out.push(ymd(d)); d.setDate(d.getDate()+1); } return out; }
-function figReferenceDate(){
-  var y=figYesterday();
-  var today=ymd(new Date());
-  var doc=figDocForDate(figDataMap(), y);
-  // Uso real: por padrão abre em ontem; se ontem já foi fechado, abre em hoje automaticamente.
-  if(figHasAnyMovement(doc)) return today;
-  return y;
-}
-function figOriginalProjection(dateStr){ var ph=figPhase(dateStr); return Math.max(0, Math.round(FIG_COPA.anchorBase * (ph.weight / FIG_COPA.anchorPhaseWeight) * figWeekdayMultiplier(dateStr))); }
-function figAverage(arr){ if(!arr||!arr.length) return 1; var s=0; for(var i=0;i<arr.length;i++) s+=arr[i]; return s/arr.length; }
-function figProjectionConfidence(n){ if(n<=0) return {label:'baixa',desc:'sem dias reais',level:0}; if(n<=2) return {label:'baixa',desc:n+' dia(s) real(is)',level:1}; if(n<=6) return {label:'média',desc:n+' dias reais',level:2}; if(n<=13) return {label:'boa',desc:n+' dias reais',level:3}; return {label:'alta',desc:n+' dias reais',level:4}; }
-function figCalibrationForDate(dateStr, indices){
-  var n=indices.length;
-  if(!n) return {factor:1, confidence:figProjectionConfidence(0), weekdayFactor:1, rawGeneral:1};
-  var vals=[]; for(var i=0;i<n;i++) vals.push(indices[i].idx);
-  var allAvg=figAverage(vals); var last3=[]; var last7=[];
-  for(var a=Math.max(0,n-3); a<n; a++) last3.push(indices[a].idx);
-  for(var b=Math.max(0,n-7); b<n; b++) last7.push(indices[b].idx);
-  var avg3=figAverage(last3), avg7=figAverage(last7);
-  var factor;
-  if(n<=2) factor = 0.80 + 0.20*allAvg;
-  else if(n<=6) factor = 0.60 + 0.40*allAvg;
-  else if(n<=13) factor = 0.20 + 0.50*avg3 + 0.30*avg7;
-  else factor = 0.40*avg3 + 0.30*avg7 + 0.30*allAvg;
-  var targetWd=parseDateLocal(dateStr).getDay(); var wdVals=[];
-  for(var j=0;j<n;j++){ if(indices[j].weekday===targetWd) wdVals.push(indices[j].idx); }
-  if(wdVals.length>=2){ var wdAvg=figAverage(wdVals); var ratio=allAvg>0?wdAvg/allAvg:1; var w=Math.min(0.20, wdVals.length*0.05); factor = factor * (1+(ratio-1)*w); }
-  factor = figClamp(factor, 0.55, 1.65);
-  return {factor:factor, confidence:figProjectionConfidence(n), weekdayFactor:1, rawGeneral:allAvg};
-}
-function figBuildProjection(){
-  var dates=figDateRange(); var map=figDataMap(); var docs={}; var projectedByDate={}; var originalByDate={}; var calibrationByDate={}; var indices=[];
-  for(var i=0;i<dates.length;i++){
-    var dateStr=dates[i]; var doc=figDocForDate(map,dateStr); docs[dateStr]=doc;
-    var original=figOriginalProjection(dateStr); originalByDate[dateStr]=original;
-    var calibration=figCalibrationForDate(dateStr, indices); calibrationByDate[dateStr]=calibration;
-    projectedByDate[dateStr]=Math.max(0, Math.round(original * calibration.factor));
-    if(figHasRealSale(doc) && original>0){ indices.push({date:dateStr, idx:(doc.stickersSold||0)/original, weekday:parseDateLocal(dateStr).getDay()}); }
-  }
-  var currentCalibration=figCalibrationForDate(figReferenceDate(), indices);
-  return {dates:dates,docs:docs,projectedByDate:projectedByDate,originalByDate:originalByDate,calibrationByDate:calibrationByDate,indices:indices,currentCalibration:currentCalibration};
-}
-function figRoundToThousand(qty){ qty=Math.max(0,Math.ceil(qty||0)); if(qty<=0) return 0; return Math.ceil(qty/1000)*1000; }
-function figStatus(stock,recommended,dateStr){ if(recommended<=0){ if(stock>0) return {label:'Excesso / escoar',key:'excess'}; return {label:'Sem necessidade',key:'safe'}; } var ratio=stock/recommended; if(dateStr>='2026-06-28'&&ratio>1.20) return {label:'Excesso / começar a escoar',key:'excess'}; if(ratio<.70) return {label:'Risco de faltar',key:'risk'}; if(ratio<1) return {label:'Atenção',key:'warn'}; if(ratio<=1.40) return {label:'Seguro',key:'safe'}; return {label:'Excesso',key:'excess'}; }
-function figRealStockUntil(dateStr){ var model=figBuildProjection(); var packs=FIG_COPA.initialStickerStock; var albums=FIG_COPA.initialAlbumStock; for(var i=0;i<model.dates.length;i++){ var d=model.dates[i]; if(d>dateStr) break; var doc=model.docs[d]; packs+=doc.stickersPurchased||0; albums+=doc.albumsPurchased||0; if(figHasRealSale(doc)) packs-=doc.stickersSold||0; albums-=doc.albumsSold||0; } return {packs:Math.max(0,packs), albums:Math.max(0,albums)}; }
-function figRecommendedStockFor(dateStr,model){ model=model||figBuildProjection(); var dates=model.dates; var idx=dates.indexOf(dateStr); if(idx<0) idx=0; var ph=figPhase(dateStr); var coverage=Math.min(4,Math.max(0,ph.coverage||0)); var total=0; for(var i=0;i<coverage;i++){ var d=dates[idx+i]; if(!d) break; total+=model.projectedByDate[d]||0; } return Math.round(total); }
-function figTotals(model){
-  model=model||figBuildProjection();
-  var stickersSold=0,albumsSold=0,stickersPurchased=0,albumsPurchased=0,albumRevenue=0,otherIncome=0,extraExpense=0,machineFee=0,otherExpense=0,projectedTotalStickers=0;
-  for(var i=0;i<model.dates.length;i++){ var d=model.dates[i]; var doc=model.docs[d]; if(figHasRealSale(doc)) stickersSold+=doc.stickersSold||0; albumsSold+=doc.albumsSold||0; stickersPurchased+=doc.stickersPurchased||0; albumsPurchased+=doc.albumsPurchased||0; albumRevenue+=doc.albumRevenue||0; otherIncome+=doc.otherIncome||0; machineFee+=doc.machineFee||0; otherExpense+=doc.otherExpense||0; extraExpense+=(doc.extraExpense||0); projectedTotalStickers+=figHasRealSale(doc)?(doc.stickersSold||0):(model.projectedByDate[d]||0); }
-  return {stickersSold:stickersSold,albumsSold:albumsSold,stickersPurchased:stickersPurchased,albumsPurchased:albumsPurchased,albumRevenue:albumRevenue,otherIncome:otherIncome,extraExpense:extraExpense,machineFee:machineFee,otherExpense:otherExpense,projectedTotalStickers:projectedTotalStickers};
-}
-function figInitialStockCost(){ return FIG_COPA.initialInvestment || (FIG_COPA.initialStickerStock*FIG_COPA.stickerCost + FIG_COPA.initialAlbumStock*FIG_COPA.albumCost); }
-function figRestockCostForDoc(doc){ return (doc.stickersPurchased||0)*FIG_COPA.stickerCost + (doc.albumsPurchased||0)*FIG_COPA.albumCost; }
-function figSoldCostForDoc(doc){ return (figHasRealSale(doc)?doc.stickersSold:0)*FIG_COPA.stickerCost + (doc.albumsSold||0)*FIG_COPA.albumCost; }
-function figRevenueForDoc(doc){ return (figHasRealSale(doc)?doc.stickersSold:0)*FIG_COPA.stickerPrice + (doc.albumRevenue||0) + (doc.otherIncome||0); }
-function figSalesGrossProfitForDoc(doc){ var revenue=figRevenueForDoc(doc); var soldCost=figSoldCostForDoc(doc); return revenue - soldCost - (doc.extraExpense||0); }
-function figRealizedProfitForDoc(doc){ return figSalesGrossProfitForDoc(doc); }
-function figSimulationRows(fromDate){ var model=figBuildProjection(); var dates=model.dates; var startIndex=dates.indexOf(fromDate); if(startIndex<0) startIndex=0; var prev=figAddDays(fromDate,-1); var stock=figRealStockUntil(prev).packs; var rows=[]; for(var i=startIndex;i<dates.length;i++){ var d=dates[i]; var doc=model.docs[d]; var opening=stock; var saleUsed=figHasRealSale(doc)?(doc.stickersSold||0):(model.projectedByDate[d]||0); stock=opening+(doc.stickersPurchased||0)-saleUsed; var rec=figRecommendedStockFor(d,model); rows.push({date:d,day:figWeekdayName(d),phase:figPhase(d).name,potential:figPhase(d).potential,projectedSale:model.projectedByDate[d]||0,originalSale:model.originalByDate[d]||0,calibration:(model.calibrationByDate[d]||{factor:1}).factor,confidence:(model.calibrationByDate[d]||{confidence:{label:'baixa'}}).confidence.label,realSales:figHasRealSale(doc)?doc.stickersSold:null,saleUsed:saleUsed,openingStock:opening,finalStock:stock,recommendedStock:rec,recommendedPurchase:figRoundToThousand(rec-figRealStockUntil(d).packs)}); } return rows; }
-function figWeeklyRows(){ var model=figBuildProjection(); var rows=[]; var bucket=null; for(var i=0;i<model.dates.length;i++){ var d=model.dates[i]; var doc=model.docs[d]; if(!figHasAnyMovement(doc)) continue; var date=parseDateLocal(d); var dow=date.getDay(); var monday=new Date(date.getTime()); monday.setDate(date.getDate()-((dow+6)%7)); var sunday=new Date(monday.getTime()); sunday.setDate(monday.getDate()+6); var key=ymd(monday); if(!bucket||bucket.key!==key){ bucket={key:key,label:figDateBRShort(ymd(monday))+' a '+figDateBRShort(ymd(sunday)),stickers:0,albums:0,revenue:0,profit:0}; rows.push(bucket); } if(figHasRealSale(doc)) bucket.stickers+=doc.stickersSold||0; bucket.albums+=doc.albumsSold||0; bucket.revenue+=figRevenueForDoc(doc); bucket.profit+=figRealizedProfitForDoc(doc); } rows.sort(function(a,b){ return b.key.localeCompare(a.key); }); return rows; }
-
-function figLoadFormForDate(dateStr){ var doc=figDocForDate(figDataMap(),dateStr); document.getElementById('fig-real-sales').value=figHasRealSale(doc)?doc.stickersSold:''; var albumSold=document.getElementById('fig-albums-sold'); if(albumSold) albumSold.value=doc.albumsSold||''; var albumRev=document.getElementById('fig-album-revenue'); if(albumRev) albumRev.value=doc.albumRevenue||''; document.getElementById('fig-purchase-qty').value=doc.stickersPurchased||''; var albBuy=document.getElementById('fig-albums-purchased'); if(albBuy) albBuy.value=doc.albumsPurchased||''; document.getElementById('fig-machine-fee').value=doc.machineFee||''; document.getElementById('fig-extra-expense').value=doc.otherExpense||''; document.getElementById('fig-extra-revenue').value=doc.otherIncome||''; document.getElementById('fig-extra-expense-label').value=doc.extraExpenseLabel||''; document.getElementById('fig-note').value=doc.note||''; renderFigDaySummary(); }
-function figReadFormEntry(){ var dateEl=document.getElementById('fig-date-input'); var dateStr=dateEl&&dateEl.value?dateEl.value:figReferenceDate(); var saleRaw=document.getElementById('fig-real-sales').value; var purchaseRaw=document.getElementById('fig-purchase-qty').value; var albumSoldEl=document.getElementById('fig-albums-sold'); var albumRevEl=document.getElementById('fig-album-revenue'); var albumBuyEl=document.getElementById('fig-albums-purchased'); var machineFee=figNumber(document.getElementById('fig-machine-fee').value,0); var otherExpense=figNumber(document.getElementById('fig-extra-expense').value,0); var otherIncome=figNumber(document.getElementById('fig-extra-revenue').value,0); var stickers=saleRaw===''?null:figInteger(saleRaw,0); var stickerBuy=purchaseRaw===''?0:figInteger(purchaseRaw,0); return {householdId:HOUSEHOLD_ID,date:dateStr,stickersSold:stickers,realSales:stickers,albumsSold:figInteger(albumSoldEl?albumSoldEl.value:'',0),albumRevenue:Math.max(0,figNumber(albumRevEl?albumRevEl.value:'',0)),stickersPurchased:stickerBuy,purchaseQty:stickerBuy,albumsPurchased:figInteger(albumBuyEl?albumBuyEl.value:'',0),machineFee:Math.max(0,machineFee),otherExpense:Math.max(0,otherExpense),otherIncome:Math.max(0,otherIncome),extraExpense:Math.max(0,machineFee)+Math.max(0,otherExpense),extraRevenue:Math.max(0,otherIncome),extraExpenseLabel:document.getElementById('fig-extra-expense-label').value||'',note:document.getElementById('fig-note').value||'',updatedAt:Date.now(),deletedAt:null}; }
-function renderFigDaySummary(){
-  var host=document.getElementById('fig-day-summary');
-  var replenish=document.getElementById('fig-replenishment-cost');
-  var sales=figInteger((document.getElementById('fig-real-sales')||{}).value,0)||0;
-  var albums=figInteger((document.getElementById('fig-albums-sold')||{}).value,0)||0;
-  var albumRevenue=figNumber((document.getElementById('fig-album-revenue')||{}).value,0)||0;
-  var stickerBuy=figInteger((document.getElementById('fig-purchase-qty')||{}).value,0)||0;
-  var albumBuy=figInteger((document.getElementById('fig-albums-purchased')||{}).value,0)||0;
-  var revenue=sales*FIG_COPA.stickerPrice+albumRevenue;
-  var cmv=sales*FIG_COPA.stickerCost+(albums*FIG_COPA.albumCost);
-  var restockCost=stickerBuy*FIG_COPA.stickerCost+(albumBuy*FIG_COPA.albumCost);
-  var fee=figNumber((document.getElementById('fig-machine-fee')||{}).value,0)||0;
-  var other=figNumber((document.getElementById('fig-extra-expense')||{}).value,0)||0;
-  var extraRev=figNumber((document.getElementById('fig-extra-revenue')||{}).value,0)||0;
-  // Lucro do dia = margem do que foi vendido, não faturamento e não compra de reposição.
-  // Ex.: 1.000 pacotes vendidos => 1.000 × (7,00 - 5,25) = R$ 1.750 antes de taxas/despesas.
-  var profit=revenue+extraRev-cmv-fee-other;
-
-  if(replenish){
-    if(stickerBuy||albumBuy){
-      replenish.innerHTML='Reposição calculada: <strong>'+fmtBRL(restockCost)+'</strong><br>Pacotes: '+figFmtInt(stickerBuy)+' × R$ 5,25 = '+fmtBRL(stickerBuy*FIG_COPA.stickerCost)+(albumBuy?'<br>Álbuns: '+figFmtInt(albumBuy)+' comprado(s) · custo unitário ainda não configurado':'');
-    } else {
-      replenish.innerHTML='Reposição: digite a compra de pacotes/álbuns para calcular o custo de estoque.';
-    }
-  }
-
-  if(!host) return;
-  host.innerHTML='<div class="fds-card"><div class="fds-label">Faturamento do dia</div><div class="fds-value">'+fmtBRL(revenue+extraRev)+'</div></div><div class="fds-card"><div class="fds-label">Custo das vendas</div><div class="fds-value bad">'+fmtBRL(cmv)+'</div></div><div class="fds-card"><div class="fds-label">Lucro do dia</div><div class="fds-value '+(profit>=0?'good':'bad')+'">'+fmtBRL(profit)+'</div></div><div class="fig-inline-result" style="grid-column:1/-1;">Pacotes vendidos: <strong>'+figFmtInt(sales)+' × (R$ 7,00 - R$ 5,25)</strong> = '+fmtBRL(sales*(FIG_COPA.stickerPrice-FIG_COPA.stickerCost))+'<br>Receita álbuns/outros: '+fmtBRL(albumRevenue+extraRev)+' · Taxa maquineta/despesas: '+fmtBRL(fee+other)+'<br>Reposição de estoque: '+fmtBRL(restockCost)+' <span style="color:var(--text-3);">(controle de compra, não reduz o lucro da venda do dia)</span></div>';
-}
-function figSetToday(){ var el=document.getElementById('fig-date-input'); if(!el) return; el.value=ymd(new Date()); figLoadFormForDate(el.value); renderFigurinhasCopa(); }
-function figUpsertLocalFigurinhas(payload){
-  if(!STATE.figurinhas) STATE.figurinhas=[];
-  var found=false;
-  for(var i=0;i<STATE.figurinhas.length;i++){
-    if(STATE.figurinhas[i]&&STATE.figurinhas[i].date===payload.date){
-      STATE.figurinhas[i]=payload;
-      found=true;
-      break;
-    }
-  }
-  if(!found) STATE.figurinhas.push(payload);
-}
-function saveFigurinhasDay(){
-  var payload=figReadFormEntry();
-  var msg=document.getElementById('fig-save-msg');
-  var btn=document.getElementById('fig-save-day');
-  if(msg) msg.textContent='salvando…';
-  if(btn) btn.disabled=true;
-
-  // Atualiza localmente antes do retorno do Firebase para a projeção recalibrar na hora.
-  figUpsertLocalFigurinhas(payload);
-
-  collectionRef('figurinhasCopa').doc(payload.date).set(payload,{merge:true}).then(function(){
-    if(msg) msg.textContent='salvo';
-    setTimeout(function(){ if(msg&&msg.textContent==='salvo') msg.textContent=''; },1200);
-    toast('Dia salvo','success');
-
-    // Se ontem foi fechado, abre hoje automaticamente para compra/reposição ou ajustes do dia.
-    var dateEl=document.getElementById('fig-date-input');
-    var smart=figReferenceDate();
-    if(dateEl && payload.date===figYesterday() && smart!==payload.date){
-      dateEl.value=smart;
-      figLoadFormForDate(smart);
-    }
-    renderFigurinhasCopa();
-  }).catch(function(error){
-    if(msg) msg.textContent='erro ao salvar';
-    toast('Erro ao salvar Figurinhas: '+error.code,'error');
-    renderFigurinhasCopa();
-  }).finally(function(){ if(btn) btn.disabled=false; });
-}
-function figCard(label,value,sub,important,statusHtml,extraClass){ return '<div class="fig-card '+(important?'important ':'')+(extraClass||'')+'"><div class="f-label">'+label+'</div><div class="f-value">'+value+'</div>'+(sub?'<div class="f-sub">'+sub+'</div>':'')+(statusHtml||'')+'</div>'; }
-function figCardSmall(label,value,sub,important){ return figCard(label,value,sub,important,'',''); }
-function renderFigModelBox(model,ref){ var host=document.getElementById('fig-model-box'); if(!host) return; var cal=model.calibrationByDate[ref]||model.currentCalibration||{factor:1,confidence:figProjectionConfidence(0),rawGeneral:1}; var pct=Math.round((cal.factor-1)*100); var signal=pct>=0?'+':''; host.innerHTML='<strong>Modelo:</strong> ajuste '+signal+pct+'% · confiança '+cal.confidence.label+' · '+cal.confidence.desc+'.'; }
-function renderFigurinhasCopa(){
-  var cards=document.getElementById('fig-cards'); if(!cards) return;
-  var dateEl=document.getElementById('fig-date-input'); if(dateEl&&!dateEl.value) dateEl.value=figReferenceDate(); var ref=dateEl&&dateEl.value?dateEl.value:figReferenceDate();
-  var model=figBuildProjection(); renderFigModelBox(model,ref); renderFigDaySummary();
-  var totals=figTotals(model); var stock=figRealStockUntil(ref); var recommendedStock=figRecommendedStockFor(ref,model); var recommendedPurchase=figRoundToThousand(recommendedStock-stock.packs); var status=figStatus(stock.packs,recommendedStock,ref);
-  var revenueReal=totals.stickersSold*FIG_COPA.stickerPrice+totals.albumRevenue+totals.otherIncome;
-  var soldCostReal=(totals.stickersSold*FIG_COPA.stickerCost)+(totals.albumsSold*FIG_COPA.albumCost);
-  var purchaseCostReal=(totals.stickersPurchased*FIG_COPA.stickerCost)+(totals.albumsPurchased*FIG_COPA.albumCost);
-  var initialCost=figInitialStockCost();
-  var salesProfit=revenueReal-soldCostReal-totals.extraExpense;
-  var operationResult=revenueReal-initialCost-purchaseCostReal-totals.extraExpense;
-  var recovered=Math.min(revenueReal, initialCost);
-  var missing=Math.max(0, initialCost-revenueReal);
-  var recoveredPct=initialCost>0?Math.min(100, Math.round((revenueReal/initialCost)*100)):100;
-  var weekRows=figWeeklyRows(); var currentWeek=weekRows.length?weekRows[0]:null;
-  cards.innerHTML=
-    figCard('Estoque','Pacotes '+figFmtInt(stock.packs)+'<br>Álbuns '+figFmtInt(stock.albums),'Real até '+formatDateBR(ref),false,'','main')+
-    figCard('Lucro das vendas',fmtBRL(salesProfit),'Margem dos vendidos: '+fmtBRL(revenueReal-soldCostReal)+' · taxas/despesas: '+fmtBRL(totals.extraExpense),false,'','')+
-    figCard('Resultado da operação',fmtBRL(operationResult),'Recebido: '+fmtBRL(revenueReal)+' · estoque inicial: '+fmtBRL(initialCost)+' · reposições: '+fmtBRL(purchaseCostReal)+' · despesas: '+fmtBRL(totals.extraExpense),false,'','')+
-    figCard('Aporte recuperado',recoveredPct+'%','Recuperado: '+fmtBRL(recovered)+' · falta: '+fmtBRL(missing),false,'','')+
-    figCard('Comprar hoje','Pacotes '+figFmtInt(recommendedPurchase),'Custo estimado: '+fmtBRL(recommendedPurchase*FIG_COPA.stickerCost)+' · '+status.label,true,'','buy')+
-    figCard('Semana atual',currentWeek?(figFmtInt(currentWeek.stickers)+' pacotes<br>'+figFmtInt(currentWeek.albums)+' álbuns'):'Sem vendas','Lucro das vendas: '+fmtBRL(currentWeek?currentWeek.profit:0),false,'','');
-  renderFigNextDays(ref); renderFigHistoryList(); renderFigWeeklyList();
-}
-function renderFigNextDays(ref){ var host=document.getElementById('fig-next-days'); if(!host) return; var rows=figSimulationRows(ref).slice(1,4); if(rows.length<3) rows=figSimulationRows(ref).slice(0,3); var html='<div class="fig-next-3">'; for(var i=0;i<rows.length;i++){ var r=rows[i]; html+='<div class="fig-next-day-card"><div><div class="date">'+figDateBRShort(r.date)+'</div><div class="meta">'+r.day.slice(0,3)+'</div></div><div><div class="meta">'+escapeHtml(r.phase)+'</div><div class="meta">ajuste '+Math.round((r.calibration-1)*100)+'% · '+r.confidence+'</div></div><div class="qty">'+figFmtInt(r.projectedSale)+'<small>pacotes</small></div></div>'; } html+='</div>'; host.innerHTML=html; }
-function renderFigHistoryList(){ var host=document.getElementById('fig-history-list'); if(!host) return; var model=figBuildProjection(); var items=[]; for(var i=0;i<model.dates.length;i++){ var d=model.dates[i]; var doc=model.docs[d]; if(figHasAnyMovement(doc)) items.push(doc); } items.sort(function(a,b){ return b.date.localeCompare(a.date); }); items=items.slice(0,8); if(!items.length){ host.innerHTML='<div class="fig-inline-result">Nenhum lançamento salvo ainda.</div>'; return; } var html=''; for(var j=0;j<items.length;j++){ var it=items[j]; var profit=figRealizedProfitForDoc(it); html+='<div class="fig-history-row" data-date="'+it.date+'"><div class="fig-history-date">'+figDateBRShort(it.date)+'</div><div class="fig-history-main"><div class="fig-history-title">Pacotes: '+figFmtInt(figHasRealSale(it)?it.stickersSold:0)+' vend. · '+figFmtInt(it.stickersPurchased||0)+' comp.</div><div class="fig-history-sub">Álbuns: '+figFmtInt(it.albumsSold||0)+' vend. · '+figFmtInt(it.albumsPurchased||0)+' comp. · Receita '+fmtBRL(figRevenueForDoc(it))+'</div></div><div class="fig-history-profit">'+fmtBRL(profit)+'</div></div>'; } host.innerHTML=html; var rows=host.querySelectorAll('.fig-history-row'); for(var r=0;r<rows.length;r++){ rows[r].onclick=function(){ var date=this.getAttribute('data-date'); var inp=document.getElementById('fig-date-input'); if(inp) inp.value=date; figLoadFormForDate(date); renderFigurinhasCopa(); toast('Dia carregado para edição','success'); }; } }
-function renderFigWeeklyList(){ var host=document.getElementById('fig-weekly-list'); if(!host) return; var rows=figWeeklyRows().slice(0,6); if(!rows.length){ host.innerHTML='<div class="fig-inline-result">As semanas aparecem depois dos primeiros lançamentos.</div>'; return; } var html=''; for(var i=0;i<rows.length;i++){ var w=rows[i]; html+='<div class="fig-week-row"><div><div class="fig-week-name">'+w.label+'</div><div class="fig-week-sub">'+figFmtInt(w.stickers)+' pacotes · '+figFmtInt(w.albums)+' álbuns · faturamento '+fmtBRL(w.revenue)+'</div></div><div class="fig-week-profit">'+fmtBRL(w.profit)+'</div></div>'; } host.innerHTML=html; }
-function toggleFigDetailTable(){}
-function openFigurinhasCopaSheet(){ var dateEl=document.getElementById('fig-date-input'); if(dateEl) dateEl.value=figReferenceDate(); if(dateEl) figLoadFormForDate(dateEl.value); renderFigurinhasCopa(); openSheet('sheet-figurinhas-copa'); }
-function handleFigInputChange(e){ renderFigDaySummary(); }
-function formatDateBR(dateStr){ var d=parseDateLocal(dateStr); return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear(); }
-
-
 function exportData(){
   var dump = {
-    version: 2,
+    version: 3,
     exportedAt: new Date().toISOString(),
     householdId: HOUSEHOLD_ID,
     transactions: STATE.transactions,
     categories: STATE.categories.filter(function(c){ return !c.builtin; }),
     learned: STATE.learned,
     historical: STATE.historical,
-    budgets: STATE.budgets,
-    figurinhasCopa: STATE.figurinhas
+    budgets: STATE.budgets
   };
   var blob = new Blob([JSON.stringify(dump, null, 2)], { type:'application/json' });
   var url = URL.createObjectURL(blob);
@@ -3866,7 +3763,6 @@ function importData(file){
         addMany('learnedDescriptions', data.learned);
         addMany('historicalSummaries', data.historical);
         addMany('budgets', data.budgets);
-        addMany('figurinhasCopa', data.figurinhasCopa);
         batch.commit().then(function(){ toast('Backup importado', 'success'); }).catch(function(error){ toast('Erro ao importar: ' + error.code, 'error'); });
       });
     } catch(err){ toast('Arquivo inválido', 'error'); }
@@ -4025,7 +3921,8 @@ function wire(){
         if (act === 'manage-cats'){ STATE.catEditMode = false; renderCategoriesSheet(); openSheet('sheet-cats'); }
         else if (act === 'historical'){ renderHistoricalSheet(); openSheet('sheet-historical'); }
         else if (act === 'monthly-limit'){ openMonthlyLimitSheet(); }
-        else if (act === 'figurinhas-copa'){ openFigurinhasCopaSheet(); }
+        else if (act === 'recurrences'){ renderRecurrencesSheet(); openSheet('sheet-recurrences'); }
+        else if (act === 'commitments'){ renderCommitmentsSheet(); openSheet('sheet-commitments'); }
         else if (act === 'export'){ exportData(); }
         else if (act === 'import'){ document.getElementById('import-file').click(); }
         else if (act === 'logout'){ auth.signOut(); }
@@ -4040,25 +3937,6 @@ function wire(){
   if (mlSave) mlSave.onclick = saveMonthlyExpenseLimit;
   var mlInput = document.getElementById('monthly-limit-input');
   if (mlInput) mlInput.addEventListener('input', updateMonthlyLimitPreview);
-
-  var figBody = document.getElementById('fig-table-body');
-  if (figBody) {
-    figBody.addEventListener('change', handleFigInputChange);
-  }
-  var figDateInput = document.getElementById('fig-date-input');
-  if (figDateInput) {
-    figDateInput.addEventListener('change', function(){
-      figLoadFormForDate(this.value || figReferenceDate());
-      renderFigurinhasCopa();
-    });
-  }
-  var figTodayBtn = document.getElementById('fig-today-btn');
-  if (figTodayBtn) figTodayBtn.onclick = figSetToday;
-  var figSaveDay = document.getElementById('fig-save-day');
-  if (figSaveDay) figSaveDay.onclick = saveFigurinhasDay;
-  ['fig-real-sales','fig-albums-sold','fig-album-revenue','fig-purchase-qty','fig-albums-purchased','fig-machine-fee','fig-extra-expense','fig-extra-revenue'].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener('input', handleFigInputChange); });
-  var figDetailToggle = document.getElementById('fig-detail-toggle');
-  if (figDetailToggle) figDetailToggle.onclick = toggleFigDetailTable;
 
   var catsToggle = document.getElementById('cats-edit-toggle');
   if (catsToggle){
@@ -4087,6 +3965,33 @@ function init(){
   authEl.classList.remove('active');
   appEl.classList.remove('active');
 
+  // ===== BOOT OTIMISTA (correção do "fica voltando pro login") =====
+  // Se já houve login neste aparelho, abre o app NA HORA com os dados do cache local.
+  // O Firebase confirma a sessão em segundo plano; se ela tiver realmente caído,
+  // aí sim o app volta para a tela de login.
+  var cachedUid = null, cachedEmail = '';
+  try {
+    cachedUid = localStorage.getItem('fad:lastUid');
+    cachedEmail = localStorage.getItem('fad:lastEmail') || '';
+  } catch (e) {}
+
+  if (cachedUid && UID_TO_USER[cachedUid]){
+    var cachedUser = UID_TO_USER[cachedUid];
+    STATE.currentAppUser = cachedUser;
+    STATE.draft.userId = cachedUser.id;
+    STATE.optimisticBooted = true;
+    loadAppCache();
+    window.__FAD_BOOT_DONE = true;
+    if (window.__FAD_BOOT_FAILSAFE) clearTimeout(window.__FAD_BOOT_FAILSAFE);
+    bootEl.classList.remove('active');
+    authEl.classList.remove('active');
+    appEl.classList.add('active');
+    document.getElementById('header-sub-launch').textContent = 'Lançando como ' + cachedUser.name;
+    document.getElementById('settings-user').textContent = cachedUser.name + (cachedEmail ? ' · ' + cachedEmail : '');
+    document.getElementById('sync-status').textContent = 'verificando sessão…';
+    navigate('launch');
+  }
+
   var bootStartedAt = Date.now();
   var authAnswered = false;
 
@@ -4113,6 +4018,7 @@ function init(){
   }
 
   // Segunda proteção: se por algum motivo o Firebase não responder, não deixa tela preta.
+  // Com boot otimista o app já está aberto, então esta proteção só age quando não há sessão salva.
   setTimeout(function(){
     if (!authAnswered && !appEl.classList.contains('active')) {
       showLoginAfterBoot('Demorou para verificar a sessão. Faça login novamente.');
@@ -4129,6 +4035,8 @@ function init(){
       clearSync();
       STATE.currentFirebaseUser = null;
       STATE.currentAppUser = null;
+      STATE.optimisticBooted = false;
+      forgetSession();
       appEl.classList.remove('active');
       setLoginLoading(false);
       showLoginAfterBoot();
